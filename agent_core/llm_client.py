@@ -157,6 +157,7 @@ class LLMClient:
                 response_format={
                     "type": "json_object",
                 },
+                temperature=0.0,
                 max_tokens=4096,
                 # 结构化抽取任务不需要复杂推理，
                 # 关闭thinking可以降低延迟。
