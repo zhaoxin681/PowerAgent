@@ -62,21 +62,20 @@ class OperatingCondition(StrictBaseModel):
         description="运行条件数值，统一保留为字符串",
     )
     unit: str = Field(
-        default="",
-        description="运行条件单位，例如℃、A、V或%",
+        description="运行条件单位：没有单位时返回空字符串",
     )
 
 
 class PowerSystemIssue(StrictBaseModel):
-    """用户输入经过解析后形成的动力系统问题对象。"""
+    """用户输入经过解析后形成的动力系统问题对象。动力系统问题的标准化结构"""
 
     raw_text: str = Field(
         min_length=1,
-        description="用户原始问题或异常现象描述",
+        description="用户输入的原始文本，必须完整保留",
     )
 
     subsystem: Subsystem = Field(
-        description="异常所属的动力系统子系统",
+        description="问题所属的动力系统子系统",
     )
 
     task_type: TaskType = Field(
@@ -84,37 +83,31 @@ class PowerSystemIssue(StrictBaseModel):
     )
 
     symptoms: list[str] = Field(
-        default_factory=list,
-        description="从用户输入中提取出的异常现象",
+        description="用户明确描述的异常现象；没有时返回空列表",
     )
 
     operating_conditions: list[OperatingCondition] = Field(
-        default_factory=list,
-        description="异常发生时的运行条件",
+        description="异常发生时的运行条件；没有时返回空列表",
     )
 
     user_hypotheses: list[str] = Field(
-        default_factory=list,
-        description="用户明确提出的可能原因，不是Agent生成的诊断结论",
+        description="用户明确提出的可能原因，不是Agent生成的诊断结论；没有时返回空列表",
     )
 
     requested_outputs: list[str] = Field(
-        default_factory=list,
-        description="用户要求生成的分析结果或交付物",
+        description="用户要求生成的分析结果或交付物；没有时返回空列表",
     )
 
     missing_information: list[str] = Field(
-        default_factory=list,
-        description="完成任务仍然缺少的信息",
+        description="完成任务仍然缺少的信息；没有时返回空列表",
     )
 
     severity: Severity = Field(
-        default=Severity.UNKNOWN,
-        description="异常严重程度",
+        description="根据用户输入能够判断的问题严重程度",
     )
 
     confidence: float = Field(
         ge=0.0,
         le=1.0,
-        description="结构化解析结果的置信度",
+        description="本次结构化解析结果的置信度",
     )
