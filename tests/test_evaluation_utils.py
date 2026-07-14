@@ -18,6 +18,7 @@ def test_matches_concept_group_with_synonym() -> None:
     alternatives = [
         "压差扩大",
         "压差持续增大",
+        "压差持续扩大",
     ]
 
     assert matches_concept_group(
