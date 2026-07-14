@@ -2,391 +2,7 @@
 
 该文件由评测脚本自动生成。
 
-Bad Case数量：10
-
-## PSI-002
-
-### 输入
-
-高温环境下，电池包最高与最低温差达到12℃。请制定问题归因路径、验证实验，并给出电池团队和热管理团队的分工方案。
-
-### 未通过项目
-
-required_concepts, overall
-
-### 预测结果
-
-```json
-{
-  "raw_text": "高温环境下，电池包最高与最低温差达到12℃。请制定问题归因路径、验证实验，并给出电池团队和热管理团队的分工方案。",
-  "subsystem": "thermal",
-  "task_type": "rnd_analysis",
-  "symptoms": [
-    "电池包最高与最低温差达到12℃"
-  ],
-  "operating_conditions": [
-    {
-      "name": "环境温度",
-      "value": "高温",
-      "unit": ""
-    }
-  ],
-  "user_hypotheses": [],
-  "requested_outputs": [
-    "问题归因路径",
-    "验证实验方案",
-    "电池团队和热管理团队的分工方案"
-  ],
-  "missing_information": [
-    "具体高温数值",
-    "电池包结构信息",
-    "冷却系统类型",
-    "运行工况（如SOC、充放电状态）"
-  ],
-  "severity": "medium",
-  "confidence": 0.85
-}
-```
-
-### 检查详情
-
-```json
-{
-  "subsystem": {
-    "passed": true,
-    "expected": "thermal",
-    "actual": "thermal"
-  },
-  "task_type": {
-    "passed": true,
-    "expected": "rnd_analysis",
-    "actual": "rnd_analysis"
-  },
-  "severity": {
-    "passed": true,
-    "expected": [
-      "medium",
-      "high"
-    ],
-    "actual": "medium"
-  },
-  "raw_text": {
-    "passed": true,
-    "expected": "高温环境下，电池包最高与最低温差达到12℃。请制定问题归因路径、验证实验，并给出电池团队和热管理团队的分工方案。",
-    "actual": "高温环境下，电池包最高与最低温差达到12℃。请制定问题归因路径、验证实验，并给出电池团队和热管理团队的分工方案。"
-  },
-  "required_concepts": {
-    "passed": false,
-    "matched": 4,
-    "total": 5,
-    "details": [
-      {
-        "field": "symptoms",
-        "alternatives": [
-          "温差达到12℃",
-          "温差12℃"
-        ],
-        "actual_text": "电池包最高与最低温差达到12℃",
-        "matched": true
-      },
-      {
-        "field": "operating_conditions",
-        "alternatives": [
-          "高温环境"
-        ],
-        "actual_text": "环境温度 高温 ",
-        "matched": false
-      },
-      {
-        "field": "requested_outputs",
-        "alternatives": [
-          "问题归因路径",
-          "归因路径"
-        ],
-        "actual_text": "问题归因路径 验证实验方案 电池团队和热管理团队的分工方案",
-        "matched": true
-      },
-      {
-        "field": "requested_outputs",
-        "alternatives": [
-          "验证实验",
-          "实验方案"
-        ],
-        "actual_text": "问题归因路径 验证实验方案 电池团队和热管理团队的分工方案",
-        "matched": true
-      },
-      {
-        "field": "requested_outputs",
-        "alternatives": [
-          "团队分工",
-          "分工方案"
-        ],
-        "actual_text": "问题归因路径 验证实验方案 电池团队和热管理团队的分工方案",
-        "matched": true
-      }
-    ]
-  },
-  "must_be_empty": {
-    "passed": true,
-    "correct": 1,
-    "total": 1,
-    "details": [
-      {
-        "field": "user_hypotheses",
-        "passed": true,
-        "actual": []
-      }
-    ]
-  },
-  "overall": {
-    "passed": false
-  }
-}
-```
-
-### 人工分析
-
-- 错误类型：
-- 可能原因：
-- Prompt修改建议：
-
-## PSI-003
-
-### 输入
-
-什么是电池包SOC不一致？它为什么会限制充电功率？
-
-### 未通过项目
-
-required_concepts, overall
-
-### 预测结果
-
-```json
-{
-  "raw_text": "什么是电池包SOC不一致？它为什么会限制充电功率？",
-  "subsystem": "battery",
-  "task_type": "knowledge_query",
-  "symptoms": [],
-  "operating_conditions": [],
-  "user_hypotheses": [],
-  "requested_outputs": [],
-  "missing_information": [],
-  "severity": "low",
-  "confidence": 0.95
-}
-```
-
-### 检查详情
-
-```json
-{
-  "subsystem": {
-    "passed": true,
-    "expected": "battery",
-    "actual": "battery"
-  },
-  "task_type": {
-    "passed": true,
-    "expected": "knowledge_query",
-    "actual": "knowledge_query"
-  },
-  "severity": {
-    "passed": true,
-    "expected": [
-      "low"
-    ],
-    "actual": "low"
-  },
-  "raw_text": {
-    "passed": true,
-    "expected": "什么是电池包SOC不一致？它为什么会限制充电功率？",
-    "actual": "什么是电池包SOC不一致？它为什么会限制充电功率？"
-  },
-  "required_concepts": {
-    "passed": false,
-    "matched": 0,
-    "total": 2,
-    "details": [
-      {
-        "field": "requested_outputs",
-        "alternatives": [
-          "soc不一致",
-          "SOC不一致"
-        ],
-        "actual_text": "",
-        "matched": false
-      },
-      {
-        "field": "requested_outputs",
-        "alternatives": [
-          "限制充电功率",
-          "影响充电功率"
-        ],
-        "actual_text": "",
-        "matched": false
-      }
-    ]
-  },
-  "must_be_empty": {
-    "passed": true,
-    "correct": 3,
-    "total": 3,
-    "details": [
-      {
-        "field": "symptoms",
-        "passed": true,
-        "actual": []
-      },
-      {
-        "field": "operating_conditions",
-        "passed": true,
-        "actual": []
-      },
-      {
-        "field": "user_hypotheses",
-        "passed": true,
-        "actual": []
-      }
-    ]
-  },
-  "overall": {
-    "passed": false
-  }
-}
-```
-
-### 人工分析
-
-- 错误类型：
-- 可能原因：
-- Prompt修改建议：
-
-## PSI-004
-
-### 输入
-
-我上传的快充日志包含时间、电流、电压、SOC和充电功率，请分析功率在SOC 80%后下降的规律，并输出关键拐点。
-
-### 未通过项目
-
-severity, required_concepts, overall
-
-### 预测结果
-
-```json
-{
-  "raw_text": "我上传的快充日志包含时间、电流、电压、SOC和充电功率，请分析功率在SOC 80%后下降的规律，并输出关键拐点。",
-  "subsystem": "charging",
-  "task_type": "data_analysis",
-  "symptoms": [],
-  "operating_conditions": [],
-  "user_hypotheses": [],
-  "requested_outputs": [
-    "功率在SOC 80%后下降的规律",
-    "关键拐点"
-  ],
-  "missing_information": [
-    "快充日志数据文件未提供"
-  ],
-  "severity": "unknown",
-  "confidence": 0.9
-}
-```
-
-### 检查详情
-
-```json
-{
-  "subsystem": {
-    "passed": true,
-    "expected": "charging",
-    "actual": "charging"
-  },
-  "task_type": {
-    "passed": true,
-    "expected": "data_analysis",
-    "actual": "data_analysis"
-  },
-  "severity": {
-    "passed": false,
-    "expected": [
-      "low",
-      "medium"
-    ],
-    "actual": "unknown"
-  },
-  "raw_text": {
-    "passed": true,
-    "expected": "我上传的快充日志包含时间、电流、电压、SOC和充电功率，请分析功率在SOC 80%后下降的规律，并输出关键拐点。",
-    "actual": "我上传的快充日志包含时间、电流、电压、SOC和充电功率，请分析功率在SOC 80%后下降的规律，并输出关键拐点。"
-  },
-  "required_concepts": {
-    "passed": false,
-    "matched": 1,
-    "total": 4,
-    "details": [
-      {
-        "field": "symptoms",
-        "alternatives": [
-          "soc80%后功率下降",
-          "SOC 80%后下降"
-        ],
-        "actual_text": "",
-        "matched": false
-      },
-      {
-        "field": "operating_conditions",
-        "alternatives": [
-          "soc80%",
-          "SOC 80%"
-        ],
-        "actual_text": "",
-        "matched": false
-      },
-      {
-        "field": "requested_outputs",
-        "alternatives": [
-          "下降规律",
-          "变化规律"
-        ],
-        "actual_text": "功率在SOC 80%后下降的规律 关键拐点",
-        "matched": false
-      },
-      {
-        "field": "requested_outputs",
-        "alternatives": [
-          "关键拐点",
-          "拐点"
-        ],
-        "actual_text": "功率在SOC 80%后下降的规律 关键拐点",
-        "matched": true
-      }
-    ]
-  },
-  "must_be_empty": {
-    "passed": true,
-    "correct": 1,
-    "total": 1,
-    "details": [
-      {
-        "field": "user_hypotheses",
-        "passed": true,
-        "actual": []
-      }
-    ]
-  },
-  "overall": {
-    "passed": false
-  }
-}
-```
-
-### 人工分析
-
-- 错误类型：
-- 可能原因：
-- Prompt修改建议：
+Bad Case数量：7
 
 ## PSI-005
 
@@ -413,8 +29,7 @@ required_concepts, overall
     "当前PI参数值",
     "电机参数（如电感、电阻）",
     "负载条件",
-    "响应时间要求",
-    "超调量允许范围"
+    "响应时间和超调量的当前指标"
   ],
   "severity": "low",
   "confidence": 0.8
@@ -651,10 +266,12 @@ severity, overall
     "异常循环点"
   ],
   "missing_information": [
-    "电池循环数据（容量、内阻随循环次数的变化数据）"
+    "电池循环数据的具体数值",
+    "循环次数",
+    "容量和内阻的测量值"
   ],
   "severity": "unknown",
-  "confidence": 0.8
+  "confidence": 0.7
 }
 ```
 
@@ -768,7 +385,7 @@ required_concepts, overall
   "task_type": "fault_diagnosis",
   "symptoms": [
     "充电中断",
-    "仪表提示充电通信异常"
+    "充电通信异常"
   ],
   "operating_conditions": [
     {
@@ -787,7 +404,8 @@ required_concepts, overall
     "充电桩型号",
     "车辆型号",
     "充电桩与车辆通信协议版本",
-    "中断时的故障码"
+    "中断时的故障码",
+    "充电桩日志"
   ],
   "severity": "medium",
   "confidence": 0.85
@@ -832,7 +450,7 @@ required_concepts, overall
           "连续三次中断",
           "三次中断"
         ],
-        "actual_text": "充电中断 仪表提示充电通信异常",
+        "actual_text": "充电中断 充电通信异常",
         "matched": false
       },
       {
@@ -841,7 +459,7 @@ required_concepts, overall
           "充电通信异常",
           "通信异常"
         ],
-        "actual_text": "充电中断 仪表提示充电通信异常",
+        "actual_text": "充电中断 充电通信异常",
         "matched": true
       },
       {
@@ -932,10 +550,10 @@ severity, required_concepts, overall
   "requested_outputs": [],
   "missing_information": [
     "冷却液出口温度正常范围",
-    "电机或电池功率",
-    "冷却液流量",
-    "散热器状态",
-    "风扇状态"
+    "水泵实际转速或流量",
+    "散热器风扇状态",
+    "冷却液液位",
+    "节温器状态"
   ],
   "severity": "medium",
   "confidence": 0.8
@@ -1197,11 +815,12 @@ required_concepts, overall
     "电池、充电和热管理团队联合验证计划"
   ],
   "missing_information": [
-    "电池类型",
-    "SOC范围",
+    "电池类型和规格",
+    "充电桩规格",
     "环境温度",
-    "冷却系统状态",
-    "充电桩型号"
+    "SOC范围",
+    "充电时长",
+    "冷却系统状态"
   ],
   "severity": "high",
   "confidence": 0.85

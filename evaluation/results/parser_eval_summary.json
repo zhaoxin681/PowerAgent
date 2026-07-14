@@ -4,24 +4,24 @@
   "call_success_rate": 1.0,
   "subsystem_accuracy": 0.9167,
   "task_type_accuracy": 1.0,
-  "severity_accuracy": 0.6667,
+  "severity_accuracy": 0.75,
   "raw_text_accuracy": 1.0,
-  "concept_coverage": 0.6429,
+  "concept_coverage": 0.7805,
   "empty_field_accuracy": 1.0,
-  "overall_case_pass_rate": 0.1667,
-  "average_latency_seconds": 1.6838,
+  "overall_case_pass_rate": 0.4167,
+  "average_latency_seconds": 1.5845,
   "counts": {
     "total_cases": 12,
     "call_success": 12,
     "subsystem_correct": 11,
     "task_type_correct": 12,
-    "severity_correct": 8,
+    "severity_correct": 9,
     "raw_text_correct": 12,
-    "concept_matched": 27,
-    "concept_total": 42,
+    "concept_matched": 32,
+    "concept_total": 41,
     "empty_correct": 24,
     "empty_total": 24,
-    "case_passed": 2,
-    "total_latency_seconds": 20.205835999920964
+    "case_passed": 5,
+    "total_latency_seconds": 19.014060399495065
   }
 }
