@@ -7,6 +7,8 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from enum import Enum
+
 
 # 每次技能调用时的运行时上下文（元数据）
 class SkillContext(BaseModel):
@@ -67,3 +69,20 @@ class SkillDefinition(BaseModel):
         min_length=1,
         description="Name of the Pydantic model used to validate skill output.",
     ) # 用于校验该技能调用时传入/传出的数据结构
+
+
+class RiskLevel(str, Enum):
+    """Skill统一使用的风险等级。"""
+
+    NORMAL = "normal"
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+
+class RecommendedAction(str, Enum):
+    """充电分析Skill的建议动作。"""
+
+    CONTINUE_CHARGING = "continue_charging"
+    REDUCE_POWER = "reduce_power"
+    STOP_CHARGING = "stop_charging"
