@@ -16,6 +16,12 @@ from agent_core.llm_client import (
 )
 from agent_core.schemas import PowerSystemIssue
 
+from types import SimpleNamespace
+
+from agent_core.tool_models import (
+    ToolSelectionResponse,
+)
+
 # 准备测试数据
 USER_INPUT = (
     "车辆行驶过程中，第36号单体电压"
@@ -297,3 +303,140 @@ def test_authentication_error_is_not_retried() -> None:
 
     assert create_mock.call_count == 1
     sleep_mock.assert_not_called()
+
+
+# （考虑工具）增加成功调用测试
+def test_request_tool_call_returns_internal_model() -> None:
+    """Tool Calling响应应转换为内部统一数据模型。"""
+    # 模拟真实OpenAI/DeepSeek SDK返回对象的结构
+    mock_response = SimpleNamespace(
+        id="response-001",
+        choices=[
+            SimpleNamespace(
+                finish_reason="tool_calls",
+                message=SimpleNamespace(
+                    content=None,
+                    tool_calls=[
+                        SimpleNamespace(
+                            id="call-001",
+                            function=SimpleNamespace(
+                                name="battery_analysis",
+                                arguments=(
+                                    '{"cell_voltages_v":'
+                                    '[3.65,3.64,3.50]}'
+                                ),
+                            ),
+                        )
+                    ],
+                ),
+            )
+        ],
+        usage=None,
+    )
+
+    # 伪造整个客户端调用链
+    mock_completions = SimpleNamespace(
+        create=lambda **kwargs: mock_response
+    )
+    mock_client = SimpleNamespace(
+        chat=SimpleNamespace(
+            completions=mock_completions
+        )
+    )
+
+    # 实例化被测的LLMClient，注入假的client
+    client = LLMClient(
+        api_key="test-key",
+        client=mock_client,
+        retry_config=RetryConfig(
+            max_attempts=1,
+        ),
+    )
+
+    # 调用被测方法
+    result = client.request_tool_call(
+        developer_prompt="选择一个工具。",
+        user_input="分析单体电压。",
+        tools=[
+            {
+                "type": "function",
+                "function": {
+                    "name": "battery_analysis",
+                    "description": "分析电池电压。",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {},
+                    },
+                },
+            }
+        ],
+    )
+
+    assert isinstance(
+        result,
+        ToolSelectionResponse,
+    )
+    assert len(result.tool_calls) == 1
+    assert (
+        result.tool_calls[0].tool_name
+        == "battery_analysis"
+    )
+
+# 增加不调用工具测试
+def test_request_tool_call_allows_text_only_response() -> None:
+    """信息不足时应允许模型不调用工具。"""
+
+    mock_response = SimpleNamespace(
+        id="response-002",
+        choices=[
+            SimpleNamespace(
+                finish_reason="stop",
+                message=SimpleNamespace(
+                    content="缺少单体电压数据。",
+                    tool_calls=None,
+                ),
+            )
+        ],
+        usage=None,
+    )
+
+    mock_completions = SimpleNamespace(
+        create=lambda **kwargs: mock_response
+    )
+    mock_client = SimpleNamespace(
+        chat=SimpleNamespace(
+            completions=mock_completions
+        )
+    )
+
+    client = LLMClient(
+        api_key="test-key",
+        client=mock_client,
+        retry_config=RetryConfig(
+            max_attempts=1,
+        ),
+    )
+
+    result = client.request_tool_call(
+        developer_prompt="选择一个工具。",
+        user_input="帮我分析电压。",
+        tools=[
+            {
+                "type": "function",
+                "function": {
+                    "name": "battery_analysis",
+                    "description": "分析电池电压。",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {},
+                    },
+                },
+            }
+        ],
+    )
+
+    assert result.tool_calls == []
+    assert (
+        result.assistant_content
+        == "缺少单体电压数据。"
+    )

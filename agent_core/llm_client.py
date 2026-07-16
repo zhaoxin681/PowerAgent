@@ -25,6 +25,11 @@ from pydantic import BaseModel, ValidationError
 
 from agent_core.logging_config import get_logger
 
+from agent_core.tool_models import (
+    ToolCallDecision,
+    ToolSelectionResponse,
+)
+
 
 SchemaType = TypeVar("SchemaType", bound=BaseModel)
 
@@ -400,70 +405,226 @@ class LLMClient:
         raise LLMResponseError(
             "LLM调用流程异常结束。"
         )
+    
 
-    # 负责真正发起一次API调用
-    def _call_once(
+    def request_tool_call(
         self,
         *,
-        system_prompt: str,
+        developer_prompt: str,
         user_input: str,
-        response_model: type[SchemaType],
-    ) -> tuple[SchemaType, Any]:
-        """执行一次DeepSeek API调用。"""
+        tools: list[dict[str, Any]],
+    ) -> ToolSelectionResponse:
+        """调用DeepSeek并返回供应商无关的工具选择结果。"""
 
-        try:
-            response = (
-                self._client.chat.completions.create(
-                    model=self.model,
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": system_prompt,
-                        },
-                        {
-                            "role": "user",
-                            "content": user_input,
-                        },
-                    ],
-                    response_format={
-                        "type": "json_object",
-                    },
-                    temperature=0.0,
-                    max_tokens=self.max_tokens,
-                    extra_body={
-                        "thinking": {
-                            "type": "disabled",
-                        }
+        if not developer_prompt.strip():
+            raise ValueError(
+                "developer_prompt不能为空。"
+            )
+
+        if not user_input.strip():
+            raise ValueError(
+                "user_input不能为空。"
+            )
+
+        if not tools:
+            raise ValueError(
+                "tools不能为空。"
+            )
+
+        request_id = uuid.uuid4().hex
+
+        input_fingerprint = hashlib.sha256(
+            user_input.encode("utf-8")
+        ).hexdigest()[:12]
+
+        total_start_time = time.perf_counter()
+
+        for attempt in range(
+            1,
+            self.retry_config.max_attempts + 1,
+        ):
+            attempt_start_time = time.perf_counter()
+
+            self._logger.info(
+                "开始调用LLM工具选择接口。",
+                extra={
+                    "event": "llm_tool_request_started",
+                    "request_id": request_id,
+                    "model": self.model,
+                    "attempt": attempt,
+                    "max_attempts": (
+                        self.retry_config.max_attempts
+                    ),
+                    "input_chars": len(user_input),
+                    "input_fingerprint": input_fingerprint,
+                    "tool_count": len(tools),
+                },
+            )
+
+            try:
+                result, response = self._call_tool_once(
+                    developer_prompt=developer_prompt,
+                    user_input=user_input,
+                    tools=tools,
+                )
+
+                attempt_latency_ms = round(
+                    (
+                        time.perf_counter()
+                        - attempt_start_time
+                    )
+                    * 1000,
+                    2,
+                )
+
+                total_latency_ms = round(
+                    (
+                        time.perf_counter()
+                        - total_start_time
+                    )
+                    * 1000,
+                    2,
+                )
+
+                usage = self._extract_usage(response)
+
+                self._logger.info(
+                    "LLM工具选择成功。",
+                    extra={
+                        "event": "llm_tool_request_succeeded",
+                        "request_id": request_id,
+                        "api_response_id": getattr(
+                            response,
+                            "id",
+                            None,
+                        ),
+                        "model": self.model,
+                        "attempt": attempt,
+                        "attempt_latency_ms": (
+                            attempt_latency_ms
+                        ),
+                        "total_latency_ms": total_latency_ms,
+                        "tool_call_count": len(
+                            result.tool_calls
+                        ),
+                        "prompt_tokens": usage[
+                            "prompt_tokens"
+                        ],
+                        "completion_tokens": usage[
+                            "completion_tokens"
+                        ],
+                        "total_tokens": usage[
+                            "total_tokens"
+                        ],
                     },
                 )
+
+                return result
+
+            except LLMClientError as exc:
+                retryable = exc.retryable
+
+                attempts_exhausted = (
+                    attempt
+                    >= self.retry_config.max_attempts
+                )
+
+                should_retry = (
+                    retryable
+                    and not attempts_exhausted
+                )
+
+                if not should_retry:
+                    total_latency_ms = round(
+                        (
+                            time.perf_counter()
+                            - total_start_time
+                        )
+                        * 1000,
+                        2,
+                    )
+
+                    self._logger.error(
+                        "LLM工具选择失败。",
+                        extra={
+                            "event": (
+                                "llm_tool_request_failed"
+                            ),
+                            "request_id": request_id,
+                            "model": self.model,
+                            "attempt": attempt,
+                            "max_attempts": (
+                                self.retry_config.max_attempts
+                            ),
+                            "retryable": retryable,
+                            "error_type": (
+                                type(exc).__name__
+                            ),
+                            "total_latency_ms": (
+                                total_latency_ms
+                            ),
+                        },
+                    )
+
+                    raise
+
+                delay = self._calculate_retry_delay(
+                    failed_attempt=attempt,
+                )
+
+                self._logger.warning(
+                    "LLM工具选择失败，准备重试。",
+                    extra={
+                        "event": "llm_tool_request_retry",
+                        "request_id": request_id,
+                        "model": self.model,
+                        "attempt": attempt,
+                        "next_attempt": attempt + 1,
+                        "max_attempts": (
+                            self.retry_config.max_attempts
+                        ),
+                        "error_type": type(exc).__name__,
+                        "retry_delay_seconds": delay,
+                    },
+                )
+
+                self._sleep(delay)
+
+        raise LLMResponseError(
+            "LLM工具选择流程异常结束。"
+        )
+
+
+    def _create_chat_completion(
+        self,
+        **request_kwargs: Any,
+    ) -> Any:
+        """执行一次OpenAI兼容请求，并统一转换SDK异常。"""
+
+        try:
+            return self._client.chat.completions.create(
+                **request_kwargs
             )
-        # 把SDK原生异常翻译成更细致的业务异常
         except LLMClientError:
             # 便于Mock测试直接抛出领域异常。
             raise
-
         except AuthenticationError as exc:
             raise LLMAuthenticationError(
                 "DeepSeek API认证失败，"
                 "请检查DEEPSEEK_API_KEY。"
             ) from exc
-
         except RateLimitError as exc:
             raise LLMRateLimitError(
                 "DeepSeek API达到频率或并发限制。"
             ) from exc
-
         except APITimeoutError as exc:
             raise LLMConnectionError(
                 "DeepSeek请求超时。"
             ) from exc
-
         except APIConnectionError as exc:
             raise LLMConnectionError(
                 "无法连接DeepSeek API。"
             ) from exc
-
-        # 按具体的HTTP状态码细分成更精确的异常类型
         except APIStatusError as exc:
             status_code = int(
                 getattr(
@@ -473,31 +634,61 @@ class LLMClient:
                 )
                 or 0
             )
-
             if status_code == 402:
                 raise LLMInsufficientBalanceError(
                     "DeepSeek账户余额不足。"
                 ) from exc
-
-            if status_code == 422:
+            if status_code in {400, 422}:
                 raise LLMInvalidRequestError(
                     "DeepSeek请求参数不合法。"
                 ) from exc
-
             if status_code == 429:
                 raise LLMRateLimitError(
                     "DeepSeek API达到频率限制。"
                 ) from exc
-
             if status_code >= 500:
                 raise LLMServerError(
                     f"DeepSeek服务端错误：{status_code}。"
                 ) from exc
-
             raise LLMResponseError(
-                f"DeepSeek API返回异常状态码："
+                "DeepSeek API返回异常状态码："
                 f"{status_code}。"
-            ) from exc  # 兜底
+            ) from exc
+
+
+    # 负责真正发起一次API调用
+    def _call_once(
+        self,
+        *,
+        system_prompt: str,
+        user_input: str,
+        response_model: type[SchemaType],
+    ) -> tuple[SchemaType, Any]:
+        """执行一次DeepSeek结构化输出调用。"""
+
+        response = self._create_chat_completion(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": system_prompt,
+                },
+                {
+                    "role": "user",
+                    "content": user_input,
+                },
+            ],
+            response_format={
+                "type": "json_object",
+            },
+            temperature=0.0,
+            max_tokens=self.max_tokens,
+            extra_body={
+                "thinking": {
+                    "type": "disabled",
+                }
+            },
+        )
 
         if not getattr(response, "choices", None):
             raise LLMEmptyResponseError(
@@ -528,17 +719,14 @@ class LLMClient:
                 "DeepSeek返回了空内容。"
             )
 
-        # 用Pydantic校验并解析
         try:
             parsed_result = (
                 response_model.model_validate_json(
                     content
                 )
             )
-
         except ValidationError as exc:
             error_count = exc.error_count()
-
             raise LLMValidationError(
                 "DeepSeek返回了JSON，"
                 "但未通过Pydantic校验；"
@@ -546,6 +734,153 @@ class LLMClient:
             ) from exc
 
         return parsed_result, response
+    
+
+    def _call_tool_once(
+        self,
+        *,
+        developer_prompt: str,
+        user_input: str,
+        tools: list[dict[str, Any]],
+    ) -> tuple[ToolSelectionResponse, Any]:
+        """执行一次DeepSeek Tool Calling请求。"""
+
+        response = self._create_chat_completion(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": developer_prompt,
+                },
+                {
+                    "role": "user",
+                    "content": user_input,
+                },
+            ],
+            tools=tools,
+            tool_choice="auto",
+            temperature=0.0,
+            max_tokens=self.max_tokens,
+            stream=False,
+            extra_body={
+                "thinking": {
+                    "type": "disabled",
+                }
+            },
+        )
+
+        if not getattr(response, "choices", None):
+            raise LLMEmptyResponseError(
+                "DeepSeek响应中没有choices。"
+            )
+
+        choice = response.choices[0]
+
+        if getattr(choice, "finish_reason", None) == "length":
+            raise LLMTruncatedResponseError(
+                "DeepSeek Tool Calling输出因长度限制被截断。"
+            )
+
+        message = getattr(
+            choice,
+            "message",
+            None,
+        )
+
+        if message is None:
+            raise LLMEmptyResponseError(
+                "DeepSeek响应中没有message。"
+            )
+
+        # 提取tool_calls和文本内容，做归一化处理
+        raw_tool_calls = (
+            getattr(
+                message,
+                "tool_calls",
+                None,
+            )
+            or []
+        )
+
+        raw_content = getattr(
+            message,
+            "content",
+            None,
+        )
+
+        assistant_content = (
+            raw_content.strip()
+            if isinstance(raw_content, str)
+            and raw_content.strip()
+            else None
+        )
+
+        # 没有工具调用时，允许模型通过普通文本说明信息不足。
+        # 但工具调用和文本都为空时，视为无效响应。
+        if not raw_tool_calls and assistant_content is None:
+            raise LLMEmptyResponseError(
+                "DeepSeek既未返回工具调用，也未返回文本内容。"
+            )
+
+        # 逐个校验并转换每一个工具调用
+        decisions: list[ToolCallDecision] = []
+
+        try:
+            for tool_call in raw_tool_calls:
+                function = getattr(
+                    tool_call,
+                    "function",
+                    None,
+                )
+
+                call_id = getattr(
+                    tool_call,
+                    "id",
+                    None,
+                )
+                tool_name = getattr(
+                    function,
+                    "name",
+                    None,
+                )
+                arguments_json = getattr(
+                    function,
+                    "arguments",
+                    None,
+                )
+
+                if (
+                    not isinstance(call_id, str)
+                    or not call_id.strip()
+                    or not isinstance(tool_name, str)
+                    or not tool_name.strip()
+                    or not isinstance(arguments_json, str)
+                ):
+                    raise LLMResponseError(
+                        "DeepSeek返回了不完整的工具调用数据。"
+                    )
+
+                decisions.append(
+                    ToolCallDecision(
+                        call_id=call_id,
+                        tool_name=tool_name,
+                        arguments_json=arguments_json,
+                    )
+                )
+
+        except ValidationError as exc:
+            raise LLMValidationError(
+                "DeepSeek返回的工具调用未通过内部数据模型校验；"
+                f"错误数量：{exc.error_count()}。"
+            ) from exc
+
+        return (
+            ToolSelectionResponse(
+                tool_calls=decisions,
+                assistant_content=assistant_content,
+            ),
+            response,
+        )
 
     # 解决Deepseek无法自动严格约束输出格式的问题/需要在提示词里手动、明确地告诉模型该怎么输出
     @staticmethod
