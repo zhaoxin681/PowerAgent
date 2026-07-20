@@ -29,6 +29,19 @@ from skills.battery_analysis_skill import (
 )
 from skills.diagnosis_skill import DiagnosisOutput
 from skills.schemas import RiskLevel
+from skills.cloud_dispatch_skill import (
+    CloudDispatchOutput,
+    DispatchStatus,
+    DispatchStrategy,
+)
+from skills.digital_twin_skill import (
+    DigitalTwinOutput,
+)
+from skills.optimization_skill import (
+    CandidateEvaluation,
+    OptimizationOutput,
+    OptimizationStatus,
+)
 
 
 def make_issue(
@@ -344,4 +357,152 @@ def test_review_keeps_diagnosis_as_candidate(
     assert not any(
         "已确认" in item
         for item in result.findings
+    )
+
+def test_review_accepts_optimization_workflow_outputs(
+) -> None:
+    """数字孪生、参数寻优和模拟下发结果应被统一审核。"""
+
+    prediction = DigitalTwinOutput(
+        predicted_soc_pct=86.0,
+        predicted_pack_voltage_v=390.0,
+        predicted_maximum_temperature_c=35.0,
+        soc_increase_pct=6.0,
+        voltage_margin_v=10.0,
+        temperature_margin_c=15.0,
+        violated_constraints=[],
+        is_feasible=True,
+        risk_level=RiskLevel.NORMAL,
+        model_assumptions=[
+            "使用简化模型进行预测。"
+        ],
+        rule_evidence=[
+            "候选参数满足数字孪生安全约束。"
+        ],
+    )
+
+    candidate = CandidateEvaluation(
+        candidate_charging_current_a=18.0,
+        cooling_power_w=0.0,
+        score=0.90,
+        prediction=prediction,
+    )
+
+    optimization_output = OptimizationOutput(
+        status=OptimizationStatus.SUCCESS,
+        recommended_candidate=candidate,
+        alternative_candidates=[],
+        evaluated_candidates=[candidate],
+        evaluated_candidate_count=1,
+        feasible_candidate_count=1,
+        selection_reason=(
+            "推荐方案满足全部约束且综合评分最高。"
+        ),
+    )
+
+    dispatch_output = CloudDispatchOutput(
+        status=DispatchStatus.READY,
+        strategy=DispatchStrategy(
+            strategy_id="STRATEGY-001",
+            strategy_version="1.0.0",
+            target_device_id="PACK-001",
+            charging_current_a=18.0,
+            cooling_power_w=0.0,
+            valid_for_minutes=30,
+            simulation_only=True,
+        ),
+        source_candidate=candidate,
+        safety_checks_passed=True,
+        requires_manual_review=False,
+        blocking_reasons=[],
+        decision_evidence=[
+            "推荐参数通过下发层独立安全检查。"
+        ],
+        rollback_recommendation=(
+            "状态异常时停止采用该策略并恢复安全参数。"
+        ),
+        source_trace_id="trace_review_optimization",
+    )
+
+    tool_results = [
+        ToolCallingResult(
+            status=ToolCallingStatus.SUCCESS,
+            trace_id="trace_review_optimization",
+            tool_name="digital_twin",
+            output=prediction.model_dump(
+                mode="json"
+            ),
+        ),
+        ToolCallingResult(
+            status=ToolCallingStatus.SUCCESS,
+            trace_id="trace_review_optimization",
+            tool_name="parameter_optimization",
+            output=optimization_output.model_dump(
+                mode="json"
+            ),
+        ),
+        ToolCallingResult(
+            status=ToolCallingStatus.SUCCESS,
+            trace_id="trace_review_optimization",
+            tool_name="cloud_dispatch",
+            output=dispatch_output.model_dump(
+                mode="json"
+            ),
+        ),
+    ]
+
+    result = ReviewAgent().review(
+        issue=make_issue(
+            severity=Severity.LOW
+        ),
+        plan=[
+            make_step(
+                target="digital_twin",
+                status=WorkflowStepStatus.SUCCESS,
+                sequence=0,
+            ),
+            make_step(
+                target="parameter_optimization",
+                status=WorkflowStepStatus.SUCCESS,
+                sequence=1,
+            ),
+            make_step(
+                target="cloud_dispatch",
+                status=WorkflowStepStatus.SUCCESS,
+                sequence=2,
+            ),
+        ],
+        tool_results=tool_results,
+        rag_answers=[],
+        errors=[],
+        decision=WorkflowDecision.FINISH,
+    )
+
+    assert result.approved_for_report is True
+
+    assert (
+        result.status
+        == ReviewStatus.APPROVED_WITH_WARNINGS
+    )
+
+    assert result.needs_human_review is False
+
+    assert any(
+        "推荐充电电流" in item
+        for item in result.findings
+    )
+
+    assert any(
+        "模拟云端策略状态" in item
+        for item in result.findings
+    )
+
+    assert any(
+        "simulation_only=True" in item
+        for item in result.evidence
+    )
+
+    assert not any(
+        "暂不支持审核工具" in item
+        for item in result.unresolved_items
     )

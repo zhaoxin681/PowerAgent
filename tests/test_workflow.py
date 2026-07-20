@@ -21,6 +21,7 @@ from agent_core.workflow import (
 )
 from agent_core.workflow_models import (
     ReportStatus,
+    ReviewStatus,
 )
 from rag.schemas import (
     RAGAnswer,
@@ -29,7 +30,20 @@ from rag.schemas import (
 from skills.battery_analysis_skill import (
     BatteryAnalysisSkill,
 )
+from skills.cloud_dispatch_skill import (
+    CloudDispatchSkill,
+)
 from skills.diagnosis_skill import DiagnosisSkill
+
+from skills.digital_twin_skill import (
+    DigitalTwinSkill,
+)
+from skills.optimization_skill import (
+    OptimizationSkill,
+)
+from agent_core.tool_models import (
+    ToolCallingStatus,
+)
 
 
 class FakeIssueParser:
@@ -77,6 +91,7 @@ def make_issue(
     task_type: TaskType,
     subsystem: Subsystem = Subsystem.BATTERY,
     with_symptom: bool = False,
+    severity: Severity = Severity.MEDIUM,
 ) -> PowerSystemIssue:
     """创建工作流测试问题。"""
 
@@ -93,7 +108,7 @@ def make_issue(
         user_hypotheses=[],
         requested_outputs=[],
         missing_information=[],
-        severity=Severity.MEDIUM,
+        severity=severity,
         confidence=0.95,
     )
 
@@ -305,32 +320,136 @@ def test_diagnosis_workflow_executes_three_steps(
         == ReportStatus.GENERATED
     )
 
-
-def test_deferred_optimization_is_blocked(
+# 寻优闭环测试
+def test_parameter_optimization_workflow_executes_three_steps(
 ) -> None:
-    """第五周能力不得在第四周产生虚假结果。"""
+    """参数寻优应执行预测、寻优和模拟下发。"""
+
+    registry = SkillRegistry()
+
+    registry.register(
+        DigitalTwinSkill()
+    )
+    registry.register(
+        OptimizationSkill()
+    )
+    registry.register(
+        CloudDispatchSkill()
+    )
 
     workflow, rag_pipeline = build_workflow(
         issue=make_issue(
-            task_type=(
-                TaskType.PARAMETER_OPTIMIZATION
-            )
+        task_type=TaskType.PARAMETER_OPTIMIZATION,
+        subsystem=Subsystem.CHARGING,
+        severity=Severity.LOW,
         ),
-        registry=SkillRegistry(),
+        registry=registry,
     )
 
     state = workflow.invoke(
-        "请优化电池诊断阈值",
-        trace_id="workflow_deferred_001",
+        "预测充电状态并推荐安全充电参数",
+        trace_id="workflow_optimization_001",
+        skill_inputs={
+            "digital_twin": {
+                "current_soc_pct": 80.0,
+                "current_pack_voltage_v": 380.0,
+                "current_maximum_temperature_c": 30.0,
+                "current_charging_current_a": 20.0,
+                "candidate_charging_current_a": 15.0,
+                "forecast_minutes": 20.0,
+                "cooling_power_w": 0.0,
+                "maximum_pack_voltage_v": 400.0,
+                "maximum_charging_current_a": 50.0,
+            },
+            "parameter_optimization": {
+                "current_soc_pct": 80.0,
+                "current_pack_voltage_v": 380.0,
+                "current_maximum_temperature_c": 30.0,
+                "current_charging_current_a": 20.0,
+                "candidate_charging_currents_a": [
+                    10.0,
+                    20.0,
+                ],
+                "candidate_cooling_powers_w": [
+                    0.0,
+                ],
+                "forecast_minutes": 20.0,
+                "maximum_pack_voltage_v": 400.0,
+                "maximum_charging_current_a": 50.0,
+            },
+            "cloud_dispatch": {
+                "current_risk_level": "normal",
+                "strategy_id": "STRATEGY-001",
+                "strategy_version": "1.0.0",
+                "target_device_id": "PACK-001",
+                "valid_for_minutes": 30,
+                "allow_automatic_dispatch": True,
+                "force_manual_review": False,
+                "maximum_dispatch_current_a": 30.0,
+                "maximum_dispatch_cooling_power_w": 50.0,
+            },
+        },
     )
 
-    assert rag_pipeline.call_count == 0
-    assert state["tool_results"] == []
-    assert state["rag_answers"] == []
+    assert state["is_finished"] is True
+    assert state["errors"] == []
 
+    assert [
+        step.status.value
+        for step in state["plan"]
+    ] == [
+        "success",
+        "success",
+        "success",
+    ]
+
+    review_result = state["review_result"]
+
+    assert review_result is not None
+    assert review_result.approved_for_report is True
     assert (
-        state["final_report"].status
-        == ReportStatus.BLOCKED
+        review_result.status
+        == ReviewStatus.APPROVED_WITH_WARNINGS
+    )
+    assert review_result.needs_human_review is False
+
+    assert not any(
+        "暂不支持审核工具" in item
+        for item in review_result.unresolved_items
     )
 
-    assert state["needs_human_review"] is True
+    assert any(
+        "推荐充电电流" in item
+        for item in review_result.findings
+    )
+
+    assert any(
+        "模拟云端策略状态" in item
+        for item in review_result.findings
+    )
+
+    final_report = state["final_report"]
+
+    assert final_report is not None
+    assert final_report.status == ReportStatus.GENERATED
+    assert final_report.report is not None
+
+    assert any(
+        "推荐充电电流" in item
+        for item in final_report.report.key_findings
+    )
+
+    assert any(
+        "模拟云端策略状态" in item
+        for item in final_report.report.key_findings
+    )
+
+    assert any(
+        "simulation_only=True" in item
+        for item in final_report.report.evidence
+    )
+
+    assert any(
+        "简化模型" in item
+        for item in final_report.report.unresolved_items
+    )

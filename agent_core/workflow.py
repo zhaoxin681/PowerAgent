@@ -69,6 +69,9 @@ from skills.charging_analysis_skill import (
     ChargingAnalysisOutput,
 )
 from skills.diagnosis_skill import DiagnosisOutput
+from skills.optimization_skill import (
+    OptimizationOutput,
+)
 from skills.thermal_analysis_skill import (
     ThermalAnalysisOutput,
 )
@@ -654,6 +657,12 @@ class PowerAgentWorkflow:
                     state
                 )
             )
+        elif step.target == "cloud_dispatch":
+            arguments = (
+                self._build_cloud_dispatch_arguments(
+                    state
+                )
+            )
         else:
             arguments = state.get(
                 "skill_inputs",
@@ -1130,6 +1139,69 @@ class PowerAgentWorkflow:
                 )
             ),
         }
+    
+    @classmethod
+    def _build_cloud_dispatch_arguments(
+        cls,
+        state: PowerAgentState,
+    ) -> dict[str, Any] | None:
+        """根据显式配置和参数寻优结果构造下发输入。"""
+
+        dispatch_inputs = state.get(
+            "skill_inputs",
+            {},
+        ).get("cloud_dispatch")
+
+        if dispatch_inputs is None:
+            return None
+
+        optimization_result = (
+            cls._find_latest_successful_tool_result(
+                state=state,
+                tool_name="parameter_optimization",
+            )
+        )
+
+        if (
+            optimization_result is None
+            or optimization_result.output is None
+        ):
+            return None
+
+        optimization_output = (
+            OptimizationOutput.model_validate(
+                optimization_result.output
+            )
+        )
+
+        arguments = dict(dispatch_inputs)
+
+        # 上游真实执行结果覆盖外部同名字段，
+        # 防止调用方伪造参数寻优状态或推荐方案。
+        arguments.update(
+            {
+                "optimization_status": (
+                    optimization_output.status
+                ),
+                "recommended_candidate": (
+                    optimization_output
+                    .recommended_candidate
+                    .model_dump(mode="json")
+                    if (
+                        optimization_output
+                        .recommended_candidate
+                        is not None
+                    )
+                    else None
+                ),
+                "optimization_reason": (
+                    optimization_output
+                    .selection_reason
+                ),
+            }
+        )
+
+        return arguments
 
     @staticmethod
     def _replace_step_status(
@@ -1173,3 +1245,26 @@ class PowerAgentWorkflow:
         """保留顺序并去除重复字符串。"""
 
         return list(dict.fromkeys(items))
+    
+    @staticmethod
+    def _find_latest_successful_tool_result(
+        *,
+        state: PowerAgentState,
+        tool_name: str,
+    ) -> ToolCallingResult | None:
+        """查找指定Skill最近一次成功执行结果。"""
+
+        for result in reversed(
+            state.get(
+                "tool_results",
+                [],
+            )
+        ):
+            if (
+                result.tool_name == tool_name
+                and result.status
+                == ToolCallingStatus.SUCCESS
+            ):
+                return result
+
+        return None

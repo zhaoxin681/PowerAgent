@@ -65,16 +65,13 @@ class RouterAgent:
         TaskType.KNOWLEDGE_QUERY,
         TaskType.DATA_ANALYSIS,
         TaskType.FAULT_DIAGNOSIS,
+        TaskType.PARAMETER_OPTIMIZATION,
         TaskType.REPORT_GENERATION,
     } # 可以真正执行的任务类型集合
 
     # 已经能够识别，但当前阶段尚未接入执行能力的任务。
     _DEFERRED_REASONS = {
-        TaskType.PARAMETER_OPTIMIZATION: (
-            "已识别为参数寻优任务，"
-            "但Optimization Skill将在第五周接入。"
-        ),
-        TaskType.RND_ANALYSIS: (
+            TaskType.RND_ANALYSIS: (
             "已识别为研发分析任务，"
             "但研发流程自动化工作流将在第六周接入。"
         ),

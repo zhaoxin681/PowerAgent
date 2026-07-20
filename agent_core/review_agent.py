@@ -44,6 +44,17 @@ from skills.schemas import (
 from skills.thermal_analysis_skill import (
     ThermalAnalysisOutput,
 )
+from skills.cloud_dispatch_skill import (
+    CloudDispatchOutput,
+    DispatchStatus,
+)
+from skills.digital_twin_skill import (
+    DigitalTwinOutput,
+)
+from skills.optimization_skill import (
+    OptimizationOutput,
+    OptimizationStatus,
+)
 
 
 class ReviewAgent:
@@ -64,6 +75,9 @@ class ReviewAgent:
         "battery_analysis": BatteryAnalysisOutput,
         "thermal_analysis": ThermalAnalysisOutput,
         "charging_analysis": ChargingAnalysisOutput,
+        "digital_twin": DigitalTwinOutput,
+        "parameter_optimization": OptimizationOutput,
+        "cloud_dispatch": CloudDispatchOutput,
         "diagnosis": DiagnosisOutput,
     }
 
@@ -455,6 +469,51 @@ class ReviewAgent:
                 recommendations,
                 evidence,
             )
+        
+        if (
+            tool_name == "digital_twin"
+            and isinstance(
+                output,
+                DigitalTwinOutput,
+            )
+        ):
+            return self._extract_digital_twin_output(
+                output,
+                findings,
+                recommendations,
+                evidence,
+                unresolved_items,
+            )
+
+        if (
+            tool_name == "parameter_optimization"
+            and isinstance(
+                output,
+                OptimizationOutput,
+            )
+        ):
+            return self._extract_optimization_output(
+                output,
+                findings,
+                recommendations,
+                evidence,
+                unresolved_items,
+            )
+
+        if (
+            tool_name == "cloud_dispatch"
+            and isinstance(
+                output,
+                CloudDispatchOutput,
+            )
+        ):
+            return self._extract_cloud_dispatch_output(
+                output,
+                findings,
+                recommendations,
+                evidence,
+                unresolved_items,
+            )
 
         if (
             tool_name == "diagnosis"
@@ -620,6 +679,238 @@ class ReviewAgent:
         )
 
         return output.risk_level
+    
+    @staticmethod
+    def _extract_digital_twin_output(
+        output: DigitalTwinOutput,
+        findings: list[str],
+        recommendations: list[str],
+        evidence: list[str],
+        unresolved_items: list[str],
+    ) -> RiskLevel:
+        """提取数字孪生预测结果和模型边界。"""
+
+        findings.append(
+            "数字孪生预测SOC为"
+            f"{output.predicted_soc_pct:.2f}%，"
+            "预测电池组电压为"
+            f"{output.predicted_pack_voltage_v:.2f} V，"
+            "预测最高温度为"
+            f"{output.predicted_maximum_temperature_c:.2f} ℃。"
+        )
+
+        findings.append(
+            "预测电压安全裕度为"
+            f"{output.voltage_margin_v:.2f} V，"
+            "温度安全裕度为"
+            f"{output.temperature_margin_c:.2f} ℃。"
+        )
+
+        if output.is_feasible:
+            findings.append(
+                "候选参数在当前简化数字孪生模型和"
+                "安全边界下可行。"
+            )
+
+            recommendations.append(
+                "在实际应用前结合高保真模型、"
+                "历史数据或台架试验复核预测结果。"
+            )
+
+        else:
+            findings.append(
+                "候选参数未通过数字孪生安全检查，"
+                "触发约束："
+                + "、".join(
+                    output.violated_constraints
+                )
+                + "。"
+            )
+
+            recommendations.append(
+                "调整候选充电电流、冷却功率或"
+                "预测时间后重新执行数字孪生预测。"
+            )
+
+        evidence.extend(
+            output.rule_evidence
+        )
+
+        unresolved_items.append(
+            "数字孪生结果基于简化模型假设，"
+            "尚未经过真实设备或高保真模型校准。"
+        )
+
+        return output.risk_level
+    
+    @staticmethod
+    def _extract_optimization_output(
+        output: OptimizationOutput,
+        findings: list[str],
+        recommendations: list[str],
+        evidence: list[str],
+        unresolved_items: list[str],
+    ) -> RiskLevel:
+        """提取参数寻优结果和推荐候选。"""
+
+        findings.append(
+            "参数寻优共评估"
+            f"{output.evaluated_candidate_count}"
+            "个候选方案，其中"
+            f"{output.feasible_candidate_count}"
+            "个满足安全约束。"
+        )
+
+        evidence.append(
+            "参数寻优选择依据："
+            f"{output.selection_reason}"
+        )
+
+        if (
+            output.status
+            == OptimizationStatus.NO_FEASIBLE_SOLUTION
+        ):
+            findings.append(
+                "当前候选搜索空间内未找到"
+                "满足全部安全约束的方案。"
+            )
+
+            recommendations.append(
+                "调整候选电流、冷却能力、预测时长"
+                "或约束边界后重新执行参数寻优。"
+            )
+
+            unresolved_items.append(
+                "当前参数搜索空间不存在可下发的"
+                "安全推荐方案。"
+            )
+
+            return RiskLevel.MEDIUM
+
+        recommended = output.recommended_candidate
+
+        if recommended is None:
+            unresolved_items.append(
+                "参数寻优成功状态缺少推荐候选方案。"
+            )
+
+            return RiskLevel.MEDIUM
+
+        findings.append(
+            "推荐充电电流为"
+            f"{recommended.candidate_charging_current_a:.2f} A，"
+            "推荐等效冷却功率为"
+            f"{recommended.cooling_power_w:.2f} W，"
+            "综合评分为"
+            f"{recommended.score:.4f}。"
+        )
+
+        findings.append(
+            "推荐方案预测SOC为"
+            f"{recommended.prediction.predicted_soc_pct:.2f}%，"
+            "预测电压为"
+            f"{recommended.prediction.predicted_pack_voltage_v:.2f} V，"
+            "预测最高温度为"
+            f"{recommended.prediction.predicted_maximum_temperature_c:.2f} ℃。"
+        )
+
+        evidence.extend(
+            (
+                "推荐方案依据："
+                f"{item}"
+                for item in (
+                    recommended.prediction.rule_evidence
+                )
+            )
+        )
+
+        recommendations.append(
+            "在策略下发前复核推荐方案的安全裕度、"
+            "设备权限和模型适用边界。"
+        )
+
+        return recommended.prediction.risk_level
+    
+
+    @staticmethod
+    def _extract_cloud_dispatch_output(
+        output: CloudDispatchOutput,
+        findings: list[str],
+        recommendations: list[str],
+        evidence: list[str],
+        unresolved_items: list[str],
+    ) -> RiskLevel:
+        """提取模拟云端策略及审批状态。"""
+
+        findings.append(
+            "模拟云端策略状态为"
+            f"{output.status.value}。"
+        )
+
+        if output.strategy is not None:
+            findings.append(
+                "模拟策略建议充电电流为"
+                f"{output.strategy.charging_current_a:.2f} A，"
+                "建议等效冷却功率为"
+                f"{output.strategy.cooling_power_w:.2f} W，"
+                "有效时间为"
+                f"{output.strategy.valid_for_minutes}分钟。"
+            )
+
+            evidence.append(
+                "模拟策略标识："
+                f"{output.strategy.strategy_id}，"
+                "版本："
+                f"{output.strategy.strategy_version}，"
+                "目标设备："
+                f"{output.strategy.target_device_id}。"
+            )
+
+            evidence.append(
+                "该策略simulation_only="
+                f"{output.strategy.simulation_only}，"
+                "不代表真实设备控制命令。"
+            )
+
+        evidence.extend(
+            output.decision_evidence
+        )
+
+        evidence.append(
+            "下发工作流追踪标识："
+            f"{output.source_trace_id}。"
+        )
+
+        recommendations.append(
+            output.rollback_recommendation
+        )
+
+        if output.blocking_reasons:
+            unresolved_items.append(
+                "模拟策略被阻断，原因："
+                + "、".join(
+                    output.blocking_reasons
+                )
+                + "。"
+            )
+
+        if output.requires_manual_review:
+            unresolved_items.append(
+                "当前模拟策略必须经过动力系统"
+                "专业人员复核后才能继续处理。"
+            )
+
+        risk_mapping = {
+            DispatchStatus.READY: RiskLevel.NORMAL,
+            DispatchStatus.DRAFT: RiskLevel.NORMAL,
+            DispatchStatus.REQUIRES_REVIEW: (
+                RiskLevel.MEDIUM
+            ),
+            DispatchStatus.BLOCKED: RiskLevel.HIGH,
+        }
+
+        return risk_mapping[output.status]
+
 
     def _extract_diagnosis_output(
         self,
@@ -690,6 +981,34 @@ class ReviewAgent:
                     RiskLevel.HIGH,
                 }
             )
+
+        if (
+            tool_name == "digital_twin"
+            and isinstance(output, DigitalTwinOutput)
+        ):
+            return (
+                not output.is_feasible
+                or output.risk_level
+                in {
+                    RiskLevel.MEDIUM,
+                    RiskLevel.HIGH,
+                }
+            )
+
+        if (
+            tool_name == "parameter_optimization"
+            and isinstance(output, OptimizationOutput)
+        ):
+            return (
+                output.status
+                == OptimizationStatus.NO_FEASIBLE_SOLUTION
+            )
+
+        if (
+            tool_name == "cloud_dispatch"
+            and isinstance(output, CloudDispatchOutput)
+        ):
+            return output.requires_manual_review
 
         if hasattr(output, "risk_level"):
             risk_level = getattr(

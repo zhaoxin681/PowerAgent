@@ -132,6 +132,9 @@ class PlannerAgent:
 
     # 1. 类级配置
     RAG_TARGET = "rag_pipeline"
+    DIGITAL_TWIN_TARGET = "digital_twin"
+    OPTIMIZATION_TARGET = "parameter_optimization"
+    CLOUD_DISPATCH_TARGET = "cloud_dispatch"
 
     _ANALYSIS_SKILL_BY_SUBSYSTEM = {
         Subsystem.BATTERY: "battery_analysis",
@@ -246,6 +249,12 @@ class PlannerAgent:
 
         elif issue.task_type == TaskType.FAULT_DIAGNOSIS:
             return self._build_diagnosis_result(
+                issue=issue,
+                router_decision=router_decision,
+            )
+
+        elif issue.task_type == TaskType.PARAMETER_OPTIMIZATION:
+            return self._build_parameter_optimization_result(
                 issue=issue,
                 router_decision=router_decision,
             )
@@ -485,6 +494,83 @@ class PlannerAgent:
                 input_keys=[
                     "tool_results",
                     "rag_answers",
+                ],
+                output_key="tool_results",
+            ),
+        ]
+
+        return self._validate_and_build_ready_result(
+            issue=issue,
+            router_decision=router_decision,
+            steps=steps,
+        )
+
+    def _build_parameter_optimization_result(
+        self,
+        *,
+        issue: PowerSystemIssue,
+        router_decision: RouterDecision,
+    ) -> PlannerResult:
+        """生成预测、参数寻优和模拟策略下发计划。"""
+
+        supported_subsystems = {
+            Subsystem.BATTERY,
+            Subsystem.THERMAL,
+            Subsystem.CHARGING,
+            Subsystem.MULTI_SYSTEM,
+        }
+
+        if issue.subsystem not in supported_subsystems:
+            return PlannerResult(
+                route=issue.task_type,
+                status=PlannerStatus.UNSUPPORTED,
+                reason=(
+                    "当前参数寻优工作流只支持电池、"
+                    "热管理、充电及其多系统协同任务。"
+                ),
+                missing_information=list(
+                    issue.missing_information
+                ),
+                needs_human_review=(
+                    router_decision.needs_human_review
+                ),
+            )
+
+        steps = [
+            self._make_step(
+                sequence=0,
+                action=(
+                    "预测候选控制参数下的动力系统未来状态"
+                ),
+                target=self.DIGITAL_TWIN_TARGET,
+                input_keys=[
+                    "skill_inputs",
+                    "issue",
+                ],
+                output_key="tool_results",
+            ),
+            self._make_step(
+                sequence=1,
+                action=(
+                    "搜索并排序满足安全约束的参数组合"
+                ),
+                target=self.OPTIMIZATION_TARGET,
+                input_keys=[
+                    "skill_inputs",
+                    "tool_results",
+                ],
+                output_key="tool_results",
+            ),
+            self._make_step(
+                sequence=2,
+                action=(
+                    "将推荐参数转换为可审核的模拟云端策略"
+                ),
+                target=self.CLOUD_DISPATCH_TARGET,
+                input_keys=[
+                    "skill_inputs",
+                    "tool_results",
+                    "issue",
                 ],
                 output_key="tool_results",
             ),

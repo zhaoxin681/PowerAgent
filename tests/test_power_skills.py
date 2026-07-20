@@ -1,5 +1,5 @@
 """首批动力系统Skills核心功能测试。
-将创建的6个真实技能一起注册到Registry里，模拟真实端对端调用场景，验证整套系统组合起来是否协同工作正常"""
+将创建的9个真实技能一起注册到Registry里，模拟真实端对端调用场景，验证整套系统组合起来是否协同工作正常"""
 
 from __future__ import annotations
 
@@ -39,13 +39,16 @@ def test_default_skills_can_register_and_generate_schemas() -> None:
     assert names == [
         "battery_analysis",
         "charging_analysis",
+        "cloud_dispatch",
         "diagnosis",
+        "digital_twin",
         "knowledge_lookup",
+        "parameter_optimization",
         "report_generation",
         "thermal_analysis",
     ]
 
-    assert len(registry.get_tool_schemas()) == 6
+    assert len(registry.get_tool_schemas()) == 9
 
 # 验证电压/温度分析
 def test_battery_and_thermal_risk_rules() -> None:

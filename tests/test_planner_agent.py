@@ -25,6 +25,9 @@ DEFAULT_SKILL_NAMES = (
     "battery_analysis",
     "thermal_analysis",
     "charging_analysis",
+    "digital_twin",
+    "parameter_optimization",
+    "cloud_dispatch",
     "diagnosis",
     "report_generation",
 )
@@ -178,23 +181,16 @@ def test_plan_battery_diagnosis_builds_ordered_steps(
         "step_2",
     ]
 
-# 3. DEFERRED路由->无步骤
-def test_plan_deferred_route_has_no_steps() -> None:
-    """后续阶段任务不得生成虚假执行计划。"""
+# 3. 
+def test_plan_parameter_optimization_builds_ordered_steps() -> None:
+    """参数寻优应组合预测、寻优和模拟下发能力。"""
 
     issue = make_issue(
-        subsystem=Subsystem.BATTERY,
+        subsystem=Subsystem.CHARGING,
         task_type=(
             TaskType.PARAMETER_OPTIMIZATION
         ),
-    )
-
-    decision = RouterDecision(
-        route=TaskType.PARAMETER_OPTIMIZATION,
-        status=RouteStatus.DEFERRED,
-        reason="第五周接入参数寻优能力",
-        missing_information=[],
-        needs_human_review=False,
+        with_context=True,
     )
 
     result = PlannerAgent(
@@ -203,11 +199,51 @@ def test_plan_deferred_route_has_no_steps() -> None:
         )
     ).plan(
         issue,
-        decision,
+        make_available_decision(
+            TaskType.PARAMETER_OPTIMIZATION
+        ),
     )
 
-    assert result.status == PlannerStatus.DEFERRED
-    assert result.steps == []
+    assert result.status == PlannerStatus.READY
+
+    assert [
+        step.target
+        for step in result.steps
+    ] == [
+        "digital_twin",
+        "parameter_optimization",
+        "cloud_dispatch",
+    ]
+
+    assert [
+        step.sequence
+        for step in result.steps
+    ] == [0, 1, 2]
+
+    assert [
+        step.step_id
+        for step in result.steps
+    ] == [
+        "step_0",
+        "step_1",
+        "step_2",
+    ]
+
+    assert result.steps[0].input_keys == [
+        "skill_inputs",
+        "issue",
+    ]
+
+    assert result.steps[1].input_keys == [
+        "skill_inputs",
+        "tool_results",
+    ]
+
+    assert result.steps[2].input_keys == [
+        "skill_inputs",
+        "tool_results",
+        "issue",
+    ]
 
 # 4. 多系统数据分析->需要更多信息
 def test_plan_multi_system_analysis_needs_information(

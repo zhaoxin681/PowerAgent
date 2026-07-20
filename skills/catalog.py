@@ -11,8 +11,11 @@ from skills.battery_analysis_skill import (
 from skills.charging_analysis_skill import (
     ChargingAnalysisSkill,
 )
+from skills.cloud_dispatch_skill import CloudDispatchSkill
 from skills.diagnosis_skill import DiagnosisSkill
+from skills.digital_twin_skill import DigitalTwinSkill
 from skills.knowledge_skill import KnowledgeLookupSkill
+from skills.optimization_skill import OptimizationSkill
 from skills.report_skill import ReportGenerationSkill
 from skills.thermal_analysis_skill import (
     ThermalAnalysisSkill,
@@ -33,6 +36,9 @@ def create_default_skills() -> tuple[
         BatteryAnalysisSkill(),
         ThermalAnalysisSkill(),
         ChargingAnalysisSkill(),
+        DigitalTwinSkill(),
+        OptimizationSkill(),
+        CloudDispatchSkill(),
         DiagnosisSkill(),
         ReportGenerationSkill(),
     )
