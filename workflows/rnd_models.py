@@ -18,6 +18,17 @@ from agent_core.schemas import (
 
 from skills.schemas import RiskLevel
 
+from agent_core.state import (
+    WorkflowError,
+    WorkflowTraceEvent,
+)
+from agent_core.tool_models import ToolCallingResult
+from agent_core.workflow_models import (
+    FinalWorkflowReport,
+    ReviewResult,
+)
+from rag.schemas import RAGAnswer
+
 
 class EvidenceSource(str, Enum):
     """研发分析中已知事实的来源。"""
@@ -768,3 +779,66 @@ class RndAnalysisResult(StrictBaseModel):
             raise ValueError(
                 "高风险或审批事项必须要求人工复核"
             )
+        
+
+class RndAnalysisContext(StrictBaseModel):
+    """由通用PowerAgent工作流转换得到的研发分析上下文。"""
+
+    request: RndAnalysisRequest
+    issue: PowerSystemIssue
+
+    tool_results: list[ToolCallingResult] = Field(
+        default_factory=list,
+    )
+    rag_answers: list[RAGAnswer] = Field(
+        default_factory=list,
+    )
+    review_result: ReviewResult | None = None
+    final_report: FinalWorkflowReport | None = None
+
+    workflow_errors: list[WorkflowError] = Field(
+        default_factory=list,
+    )
+    execution_trace: list[WorkflowTraceEvent] = Field(
+        default_factory=list,
+    )
+
+    known_facts: list[KnownFact] = Field(
+        default_factory=list,
+    )
+    missing_information: list[MissingInformation] = Field(
+        default_factory=list,
+    )
+
+    upstream_finished: bool
+    upstream_failed: bool
+    needs_human_review: bool
+
+    failure_reason: str | None = Field(
+        default=None,
+        min_length=1,
+    )
+
+    @model_validator(mode="after")
+    def validate_failure_state(
+        self,
+    ) -> "RndAnalysisContext":
+        """失败状态必须与失败原因一致。"""
+
+        if (
+            self.upstream_failed
+            and self.failure_reason is None
+        ):
+            raise ValueError(
+                "上游工作流失败时必须包含failure_reason"
+            )
+
+        if (
+            not self.upstream_failed
+            and self.failure_reason is not None
+        ):
+            raise ValueError(
+                "上游工作流未失败时不能包含failure_reason"
+            )
+
+        return self
