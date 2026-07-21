@@ -258,6 +258,9 @@ class PlannerAgent:
                 issue=issue,
                 router_decision=router_decision,
             )
+        
+        elif issue.task_type == TaskType.RND_ANALYSIS:
+            steps = self._build_rnd_analysis_plan()
 
         elif issue.task_type == TaskType.REPORT_GENERATION:
             return self._build_report_generation_result(
@@ -593,6 +596,27 @@ class PlannerAgent:
                 action="检索知识库并生成证据约束回答",
                 target=self.RAG_TARGET,
                 input_keys=["raw_input", "issue"],
+                output_key="rag_answers",
+            )
+        ]
+    
+    def _build_rnd_analysis_plan(
+        self,
+    ) -> list[WorkflowStep]:
+        """构建研发问题证据检索计划。"""
+
+        return [
+            self._make_step(
+                sequence=0,
+                action=(
+                    "检索与研发异常、候选原因和"
+                    "验证方法相关的动力系统知识"
+                ),
+                target=self.RAG_TARGET,
+                input_keys=[
+                    "raw_input",
+                    "issue",
+                ],
                 output_key="rag_answers",
             )
         ]

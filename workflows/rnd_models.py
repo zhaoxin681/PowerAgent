@@ -433,6 +433,39 @@ class RndRisk(StrictBaseModel):
             )
 
         return self
+
+class RndGenerationOutput(StrictBaseModel):
+    """LLM只负责生成的研发方案部分。"""
+
+    summary: str = Field(min_length=1)
+
+    hypotheses: list[
+        RootCauseHypothesis
+    ] = Field(min_length=1)
+
+    experiments: list[
+        ValidationExperiment
+    ] = Field(min_length=1)
+
+    team_assignments: list[
+        TeamAssignment
+    ] = Field(min_length=1)
+
+    dependencies: list[
+        CollaborationDependency
+    ] = Field(default_factory=list)
+
+    risks: list[RndRisk] = Field(
+        default_factory=list
+    )
+
+    overall_risk_level: RiskLevel
+
+    needs_human_review: bool
+
+    unresolved_items: list[str] = Field(
+        default_factory=list
+    )
     
 
 # 子模型的顶层聚合模型，代表一次研发问题分析的完整结构化产出。

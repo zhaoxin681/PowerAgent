@@ -66,16 +66,14 @@ class RouterAgent:
         TaskType.DATA_ANALYSIS,
         TaskType.FAULT_DIAGNOSIS,
         TaskType.PARAMETER_OPTIMIZATION,
+        TaskType.RND_ANALYSIS,
         TaskType.REPORT_GENERATION,
     } # 可以真正执行的任务类型集合
 
-    # 已经能够识别，但当前阶段尚未接入执行能力的任务。
-    _DEFERRED_REASONS = {
-            TaskType.RND_ANALYSIS: (
-            "已识别为研发分析任务，"
-            "但研发流程自动化工作流将在第六周接入。"
-        ),
-    }
+    _DEFERRED_REASONS: dict[
+        TaskType,
+        str,
+    ] = {}
 
     # 构造函数
     def __init__(

@@ -21,6 +21,41 @@ from workflows.rnd_models import (
     EvidenceSource,
     RndAnalysisRequest,
 )
+from workflows.rnd_models import (
+    ExperimentCriterion,
+    RndAnalysisStatus,
+    RndGenerationOutput,
+    RndPriority,
+    RootCauseHypothesis,
+    RootCauseStatus,
+    TeamAssignment,
+    TeamName,
+    ValidationExperiment,
+)
+
+
+class FakeRndLLM:
+    """返回预设研发方案的结构化LLM。"""
+
+    def __init__(
+        self,
+        result: RndGenerationOutput,
+    ) -> None:
+        self.result = result
+
+    def parse_structured(
+        self,
+        *,
+        developer_prompt: str,
+        user_input: str,
+        response_model: type,
+    ) -> RndGenerationOutput:
+        assert (
+            response_model
+            is RndGenerationOutput
+        )
+        assert "known_facts" in user_input
+        return self.result
 
 
 class FakeBaseWorkflow:
@@ -218,3 +253,163 @@ def test_upstream_exception_builds_failed_context() -> None:
     assert context.needs_human_review is True
     assert context.failure_reason is not None
     assert context.known_facts == []
+
+
+def test_analyze_builds_full_rnd_result() -> None:
+    """研发上下文应生成完整根因、实验和团队任务。"""
+
+    base_workflow = FakeBaseWorkflow(
+        state={
+            "trace_id": "trace-rnd-001",
+            "issue": make_issue(),
+            "tool_results": [],
+            "rag_answers": [],
+            "review_result": make_review(),
+            "final_report": None,
+            "errors": [],
+            "execution_trace": [],
+            "needs_human_review": False,
+            "is_finished": True,
+        }
+    )
+
+    context_workflow = RndAnalysisWorkflow(
+        base_workflow=base_workflow
+    )
+    context = context_workflow.build_context(
+        make_request()
+    )
+
+    fact_id = context.known_facts[0].fact_id
+
+    generated = RndGenerationOutput(
+        summary="冷却能力不足是优先验证方向",
+        hypotheses=[
+            RootCauseHypothesis(
+                hypothesis_id=(
+                    "hyp_cooling_limit"
+                ),
+                description=(
+                    "高SOC阶段冷却能力不足"
+                    "可能触发充电限流"
+                ),
+                subsystem=Subsystem.THERMAL,
+                status=RootCauseStatus.SUPPORTED,
+                priority=RndPriority.P1,
+                supporting_fact_ids=[fact_id],
+                contradicting_fact_ids=[],
+                reasoning=(
+                    "温升与充电限流同步出现"
+                ),
+                confidence=0.75,
+                potential_impact=(
+                    "延长充电时间并增加热风险"
+                ),
+                needs_human_review=False,
+            )
+        ],
+        experiments=[
+            ValidationExperiment(
+                experiment_id="exp_cooling_ab",
+                title="冷却能力A/B对比实验",
+                linked_hypothesis_ids=[
+                    "hyp_cooling_limit"
+                ],
+                objective="验证冷却能力与限流关系",
+                required_inputs=[
+                    "充电电流",
+                    "温度",
+                ],
+                controlled_variables=[
+                    "环境温度",
+                    "初始SOC",
+                ],
+                steps=[
+                    "固定初始条件",
+                    "执行两档冷却能力快充",
+                ],
+                observed_metrics=[
+                    "最高温度",
+                    "后段充电电流",
+                ],
+                expected_observation=(
+                    "冷却增强后温度降低且限流减轻"
+                ),
+                criteria=[
+                    ExperimentCriterion(
+                        metric="后段充电电流",
+                        measurement_method=(
+                            "对比两组充电日志"
+                        ),
+                        pass_condition=(
+                            "增强冷却后电流明显提高"
+                        ),
+                        fail_condition=(
+                            "两组结果无明显差异"
+                        ),
+                    )
+                ],
+                stop_conditions=[
+                    "温度超过安全阈值"
+                ],
+                safety_requirements=[],
+                deliverables=[
+                    "实验日志",
+                    "对比分析报告",
+                ],
+                risk_level=RiskLevel.MEDIUM,
+                needs_human_approval=False,
+            )
+        ],
+        team_assignments=[
+            TeamAssignment(
+                assignment_id=(
+                    "assign_cooling_test"
+                ),
+                experiment_ids=[
+                    "exp_cooling_ab"
+                ],
+                owner=TeamName.TEST_VALIDATION,
+                collaborators=[
+                    TeamName.THERMAL_MANAGEMENT
+                ],
+                reviewers=[
+                    TeamName.FUNCTIONAL_SAFETY
+                ],
+                task="完成冷却能力A/B快充实验",
+                input_dependencies=[
+                    "试验车辆和冷却标定"
+                ],
+                deliverables=[
+                    "实验日志",
+                    "分析报告",
+                ],
+                completion_criteria=[
+                    "两组数据完整且能够比较"
+                ],
+                blockers=[],
+            )
+        ],
+        dependencies=[],
+        risks=[],
+        overall_risk_level=RiskLevel.MEDIUM,
+        needs_human_review=False,
+        unresolved_items=[],
+    )
+
+    workflow = RndAnalysisWorkflow(
+        base_workflow=base_workflow,
+        llm_client=FakeRndLLM(generated),
+    )
+
+    result = workflow.analyze(make_request())
+
+    assert result.status == RndAnalysisStatus.COMPLETED
+    assert len(result.hypotheses) == 1
+    assert len(result.experiments) == 1
+    assert len(result.team_assignments) == 1
+    assert (
+        result.hypotheses[0]
+        .supporting_fact_ids
+        == [fact_id]
+    )
