@@ -393,3 +393,48 @@ def test_evaluate_skill_result_fails_when_argument_missing() -> None:
     ]["passed"]
 
     assert not checks["overall"]["passed"]
+
+
+def test_evaluate_skill_result_accepts_expected_no_tool() -> None:
+    """信息不足且未调用工具时应正确通过。"""
+
+    case = EvaluationCase(
+        case_id="no_tool_001",
+        user_input="请预测一下电池未来状态。",
+        evaluators=[
+            EvaluatorType.SKILL_CALL,
+        ],
+        skill_expectation=(
+            SkillCallExpectation(
+                should_call_tool=False,
+                expected_skill=None,
+                expected_argument_keys=[],
+                expected_status="no_tool_selected",
+            )
+        ),
+    )
+
+    result = SimpleNamespace(
+        status=(
+            ToolCallingStatus.NO_TOOL_SELECTED
+        ),
+        tool_name=None,
+        arguments=None,
+        error_code="no_tool_selected",
+        error_message="信息不足，未调用工具。",
+    )
+
+    checks, counts = evaluate_skill_result(
+        case,
+        result,
+    )
+
+    assert checks["overall"]["passed"]
+
+    assert checks["execution"]["passed"]
+
+    assert counts["no_tool_total"] == 1
+
+    assert counts["no_tool_correct"] == 1
+
+    assert counts["expected_tool_call"] == 0

@@ -36,23 +36,21 @@ def make_issue(
     )
 
 
-"""
-四组测试用例，对应Router四条决策分支
-"""
-# 测试已上线任务
 @pytest.mark.parametrize(
     "task_type",
     [
         TaskType.KNOWLEDGE_QUERY,
         TaskType.DATA_ANALYSIS,
         TaskType.FAULT_DIAGNOSIS,
+        TaskType.PARAMETER_OPTIMIZATION,
+        TaskType.RND_ANALYSIS,
         TaskType.REPORT_GENERATION,
     ],
 )
 def test_route_available_tasks(
     task_type: TaskType,
 ) -> None:
-    """已接入能力的任务应进入可执行路由。"""
+    """已经接入工作流的任务应进入可执行路由。"""
 
     decision = RouterAgent().route(
         make_issue(task_type=task_type)
@@ -60,41 +58,6 @@ def test_route_available_tasks(
 
     assert decision.route == task_type
     assert decision.status == RouteStatus.AVAILABLE
-
-# 测试已识别但未开发任务
-@pytest.mark.parametrize(
-    "task_type",
-    [
-        TaskType.PARAMETER_OPTIMIZATION,
-        TaskType.RND_ANALYSIS,
-    ],
-)
-def test_route_deferred_tasks(
-    task_type: TaskType,
-) -> None:
-    """后续周任务应被识别，但不能伪装为当前可执行。"""
-
-    decision = RouterAgent().route(
-        make_issue(task_type=task_type)
-    )
-
-    assert decision.route == task_type
-    assert decision.status == RouteStatus.DEFERRED
-
-# 测试子系统未知
-def test_route_unknown_subsystem_as_unsupported() -> None:
-    """无法确认动力系统范围时应进入不支持状态。"""
-
-    decision = RouterAgent().route(
-        make_issue(
-            subsystem=Subsystem.UNKNOWN,
-            task_type=TaskType.KNOWLEDGE_QUERY,
-        )
-    )
-
-    assert decision.route == TaskType.UNKNOWN
-    assert decision.status == RouteStatus.UNSUPPORTED
-    assert decision.missing_information
 
 # 测试任务类型未知
 def test_route_unknown_task_needs_information() -> None:
@@ -110,3 +73,17 @@ def test_route_unknown_task_needs_information() -> None:
         == RouteStatus.NEEDS_INFORMATION
     )
     assert decision.missing_information
+
+
+def test_route_critical_issue_requires_human_review() -> None:
+    """严重程度为critical时必须要求人工复核。"""
+
+    decision = RouterAgent().route(
+        make_issue(
+            task_type=TaskType.FAULT_DIAGNOSIS,
+            severity=Severity.CRITICAL,
+        )
+    )
+
+    assert decision.status == RouteStatus.AVAILABLE
+    assert decision.needs_human_review

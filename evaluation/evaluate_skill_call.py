@@ -142,6 +142,22 @@ def evaluate_skill_result(
         == ToolCallingStatus.SUCCESS
     )
 
+    expected_tool_call = (
+        expected.should_call_tool
+    )
+
+    execution_passed = (
+        successful_execution
+        if expected_tool_call
+        else True
+    )
+
+    no_tool_correct = (
+        not expected_tool_call
+        and status_passed
+        and skill_passed
+    )
+
     overall_passed = all(
         [
             status_passed,
@@ -176,8 +192,12 @@ def evaluate_skill_result(
             "missing": missing_argument_keys,
         },
         "execution": {
-            "passed": successful_execution,
-            "expected": "success",
+            "passed": execution_passed,
+            "expected": (
+                "success"
+                if expected_tool_call
+                else "not_applicable"
+            ),
             "actual": actual_status,
         },
         "overall": {
@@ -204,8 +224,18 @@ def evaluate_skill_result(
         "required_argument_total": len(
             expected.expected_argument_keys
         ),
+        "expected_tool_call": int(
+            expected_tool_call
+        ),
         "execution_success": int(
-            successful_execution
+            expected_tool_call
+            and successful_execution
+        ),
+        "no_tool_total": int(
+            not expected_tool_call
+        ),
+        "no_tool_correct": int(
+            no_tool_correct
         ),
         "case_passed": int(
             overall_passed
@@ -373,6 +403,9 @@ def main() -> None:
         "required_argument_correct": 0,
         "required_argument_total": 0,
         "execution_success": 0,
+        "expected_tool_call": 0,
+        "no_tool_total": 0,
+        "no_tool_correct": 0,
         "case_passed": 0,
         "total_latency_seconds": 0.0,
     }
@@ -514,8 +547,12 @@ def main() -> None:
         ),
         "execution_success_rate": safe_rate(
             aggregate["execution_success"],
-            total,
-        ),
+            aggregate["expected_tool_call"],
+        ), # 应调用工具的样本中，实际成功执行的比例
+        "no_tool_accuracy": safe_rate(
+            aggregate["no_tool_correct"],
+            aggregate["no_tool_total"],
+        ),  # 不应调用工具的样本中，正确保持不调用的比例
         "overall_case_pass_rate": safe_rate(
             aggregate["case_passed"],
             total,

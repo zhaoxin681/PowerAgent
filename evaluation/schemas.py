@@ -22,6 +22,8 @@ from agent_core.workflow_models import (
     ReviewStatus,
 )
 
+from agent_core.router_agent import RouteStatus
+
 
 # 字段名字面量类型
 IssueListField = Literal[
@@ -124,25 +126,66 @@ class IssueExpectation(StrictBaseModel):
             )
 
         return self
-    
+
+
+class RouterIssueInput(StrictBaseModel):
+    """Router评测使用的最小结构化问题输入。"""
+
+    subsystem: Subsystem
+
+    task_type: TaskType
+
+    severity: Severity = Severity.LOW
+
+    missing_information: list[str] = Field(
+        default_factory=list,
+        description="进入Router前已经识别出的缺失信息",
+    )
+
+
 # 路由期望
 class RouteExpectation(StrictBaseModel):
-    """Router Agent期望结果。"""
+    """Router Agent输入和期望输出。"""
+
+    issue: RouterIssueInput
 
     route: TaskType
 
-    status: str = Field(
-        min_length=1,
-        description="Router期望返回的状态",
-    )
+    status: RouteStatus
 
-    needs_human_review: bool | None = Field(
-        default=None,
+    needs_human_review: bool
+
+    required_missing_information: list[str] = Field(
+        default_factory=list,
         description=(
-            "是否期望触发人工复核；"
-            "不参与检查时为None"
+            "Router输出中必须出现的新增或保留缺失信息"
         ),
     )
+
+    @field_validator(
+        "required_missing_information"
+    )
+    @classmethod
+    def validate_required_missing_information(
+        cls,
+        value: list[str],
+    ) -> list[str]:
+        """缺失信息要求不能包含空值或重复值。"""
+
+        if any(not item.strip() for item in value):
+            raise ValueError(
+                "required_missing_information"
+                "不能包含空字符串"
+            )
+
+        if len(set(value)) != len(value):
+            raise ValueError(
+                "required_missing_information"
+                "不能包含重复项"
+            )
+
+        return value
+    
 
 # 工具调用期望
 class SkillCallExpectation(StrictBaseModel):
