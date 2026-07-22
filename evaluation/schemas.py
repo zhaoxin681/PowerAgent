@@ -260,27 +260,92 @@ class SkillCallExpectation(StrictBaseModel):
 
 # 检索增强生成期望
 class RAGExpectation(StrictBaseModel):
-    """RAG检索与回答的期望结果。"""
+    """RAG检索与证据约束回答的期望结果。"""
 
-    should_answer: bool
+    should_answer: bool = Field(
+        description=(
+            "现有知识库是否能够可靠回答问题"
+        ),
+    )
 
-    should_refuse: bool
+    should_refuse: bool = Field(
+        description=(
+            "现有知识库是否应拒绝给出确定答案"
+        ),
+    )
+
+    retrieval_subsystem: Subsystem | None = Field(
+        default=None,
+        description=(
+            "执行检索时使用的子系统过滤条件"
+        ),
+    )
+
+    retrieval_topic: str | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "执行检索时使用的主题过滤条件"
+        ),
+    )
 
     top_k: int = Field(
         default=3,
         ge=1,
-        le=20,
+        le=10,
         description="计算知识命中率时使用的K值",
+    )
+
+    min_score: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description=(
+            "当前样本使用的最低相关性分数；"
+            "为None时使用Retriever默认配置"
+        ),
     )
 
     expected_chunk_ids: list[str] = Field(
         default_factory=list,
-        description="期望命中的知识块ID",
+        description=(
+            "期望命中的具体知识块ID；"
+            "仅在Chunk ID稳定时使用"
+        ),
+    )
+
+    expected_document_ids: list[str] = Field(
+        default_factory=list,
+        description="期望检索命中的文档ID",
     )
 
     expected_source_keywords: list[str] = Field(
         default_factory=list,
-        description="期望来源中包含的关键词",
+        description=(
+            "期望标题、章节或来源路径中"
+            "包含的关键词"
+        ),
+    )
+
+    expected_sufficient_evidence: bool = Field(
+        description=(
+            "期望RAGAnswer中的"
+            "sufficient_evidence结果"
+        ),
+    )
+
+    expected_needs_human_review: bool | None = Field(
+        default=None,
+        description=(
+            "是否期望触发人工复核；"
+            "不参与检查时为None"
+        ),
+    )
+
+    min_citation_count: int = Field(
+        default=0,
+        ge=0,
+        description="回答至少需要包含的合法引用数",
     )
 
     required_answer_concepts: list[
@@ -289,14 +354,42 @@ class RAGExpectation(StrictBaseModel):
         default_factory=list,
         description=(
             "回答必须覆盖的概念组；"
-            "每组命中任意表达即可"
+            "每组命中任意一种表达即可"
         ),
     )
 
     forbidden_claims: list[str] = Field(
         default_factory=list,
-        description="回答中禁止出现的无证据结论",
+        description=(
+            "回答中禁止出现的无证据结论"
+        ),
     )
+
+    @field_validator(
+        "expected_chunk_ids",
+        "expected_document_ids",
+        "expected_source_keywords",
+        "forbidden_claims",
+    )
+    @classmethod
+    def validate_string_lists(
+        cls,
+        value: list[str],
+    ) -> list[str]:
+        """禁止空字符串和重复标注。"""
+
+        if any(not item.strip() for item in value):
+            raise ValueError(
+                "RAG期望字符串列表不能包含空值"
+            )
+
+        if len(set(value)) != len(value):
+            raise ValueError(
+                "RAG期望字符串列表不能包含重复值"
+            )
+
+        return value
+
 
     @field_validator("required_answer_concepts")
     @classmethod
@@ -304,7 +397,7 @@ class RAGExpectation(StrictBaseModel):
         cls,
         value: list[list[str]],
     ) -> list[list[str]]:
-        """概念组必须包含至少一个有效表达。"""
+        """概念组必须包含有效且不重复的表达。"""
 
         for group in value:
             if (
@@ -316,21 +409,34 @@ class RAGExpectation(StrictBaseModel):
             ):
                 raise ValueError(
                     "required_answer_concepts中的"
-                    "每组概念都必须包含非空表达"
+                    "每组概念必须包含非空表达"
+                )
+
+            if len(set(group)) != len(group):
+                raise ValueError(
+                    "同一个回答概念组不能包含重复表达"
                 )
 
         return value
 
     @model_validator(mode="after")
-    def validate_answer_mode(
+    def validate_rag_expectation(
         self,
     ) -> "RAGExpectation":
-        """RAG必须明确选择回答或拒答。"""
+        """检查回答、拒答和证据状态的一致性。"""
 
         if self.should_answer == self.should_refuse:
             raise ValueError(
                 "should_answer与should_refuse"
                 "必须且只能有一个为true"
+            )
+
+        if (
+            self.should_refuse
+            and self.expected_sufficient_evidence
+        ):
+            raise ValueError(
+                "拒答样本不能期望证据充分"
             )
 
         return self

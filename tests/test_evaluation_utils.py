@@ -18,6 +18,7 @@ from evaluation.schemas import (
     EvaluatorType,
     IssueExpectation,
     SkillCallExpectation,
+    RAGExpectation,
 )
 from pathlib import Path
 
@@ -438,3 +439,63 @@ def test_evaluate_skill_result_accepts_expected_no_tool() -> None:
     assert counts["no_tool_correct"] == 1
 
     assert counts["expected_tool_call"] == 0
+
+
+def test_rag_expectation_supports_refusal() -> None:
+    """RAG拒答样本应允许证据不足状态。"""
+
+    expectation = RAGExpectation(
+        should_answer=False,
+        should_refuse=True,
+        retrieval_subsystem=Subsystem.THERMAL,
+        expected_document_ids=[
+            "battery_thermal_runaway",
+        ],
+        expected_sufficient_evidence=False,
+        expected_needs_human_review=True,
+        min_citation_count=1,
+        required_answer_concepts=[
+            [
+                "没有给出固定阈值",
+                "应以产品级策略为准",
+            ]
+        ],
+    )
+
+    assert expectation.should_refuse
+
+    assert (
+        expectation.expected_sufficient_evidence
+        is False
+    )
+
+
+def test_rag_expectation_rejects_conflicting_mode() -> None:
+    """RAG不能同时要求回答和拒答。"""
+
+    with pytest.raises(
+        ValidationError,
+        match=(
+            "should_answer与should_refuse"
+        ),
+    ):
+        RAGExpectation(
+            should_answer=True,
+            should_refuse=True,
+            expected_sufficient_evidence=True,
+        )
+
+
+def test_rag_expectation_rejects_empty_document_id() -> None:
+    """期望文档ID不能使用空字符串占位。"""
+
+    with pytest.raises(
+        ValidationError,
+        match="不能包含空值",
+    ):
+        RAGExpectation(
+            should_answer=True,
+            should_refuse=False,
+            expected_document_ids=[""],
+            expected_sufficient_evidence=True,
+        )

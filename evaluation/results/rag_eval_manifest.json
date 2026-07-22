@@ -1,0 +1,362 @@
+{
+  "collection_name": "poweragent_rag_eval_hash",
+  "persist_directory": "E:\\Poweragent\\data\\evaluation\\rag_chroma_hash",
+  "embedding_provider": "hash_ngram_1_3_256",
+  "chunk_size": 600,
+  "chunk_overlap": 80,
+  "document_count": 6,
+  "chunk_count": 42,
+  "vector_store_count": 42,
+  "documents": [
+    {
+      "document_id": "battery_internal_short_circuit",
+      "title": "锂离子电池内短路候选诊断",
+      "subsystem": "battery",
+      "topic": "internal_short_circuit",
+      "version": "1.0",
+      "source_path": "battery/battery_internal_short_circuit.md",
+      "content_sha256": "6178bf25a8cbfbea29d779612988e9998da335c98e71f81e142c40478fd2cd39"
+    },
+    {
+      "document_id": "charging_communication_faults",
+      "title": "充电机与BMS通信异常",
+      "subsystem": "charging",
+      "topic": "charging_communication",
+      "version": "1.0",
+      "source_path": "charging/charging_communication_faults.md",
+      "content_sha256": "22b41a41b8593a0360874e56dbead7254328621cf3badd013f642cfcf1524148"
+    },
+    {
+      "document_id": "power_system_safety_terms",
+      "title": "动力系统安全与诊断术语",
+      "subsystem": "multi_system",
+      "topic": "safety_terms",
+      "version": "1.0",
+      "source_path": "common/power_system_safety_terms.md",
+      "content_sha256": "b0f2bc86134aa25fd4cc14d5ef516dc9734b8ef29c38bfb7a66bc985f0b31926"
+    },
+    {
+      "document_id": "battery_digital_twin",
+      "title": "动力电池数字孪生基础",
+      "subsystem": "multi_system",
+      "topic": "battery_digital_twin",
+      "version": "1.0",
+      "source_path": "digital_twin/battery_digital_twin.md",
+      "content_sha256": "e37d91a303e7f19c9170cc2a019554cc62566b2ef3ba160dbeb7d7ed6090fbf8"
+    },
+    {
+      "document_id": "battery_fault_verification",
+      "title": "动力电池故障验证方法",
+      "subsystem": "multi_system",
+      "topic": "fault_verification",
+      "version": "1.0",
+      "source_path": "maintenance/battery_fault_verification.md",
+      "content_sha256": "104a96ef16bcdfce64910d529008bef0555331230846eebe34921e999cc03aff"
+    },
+    {
+      "document_id": "battery_thermal_runaway",
+      "title": "动力电池热失控风险识别",
+      "subsystem": "thermal",
+      "topic": "thermal_runaway",
+      "version": "1.0",
+      "source_path": "thermal/battery_thermal_runaway.md",
+      "content_sha256": "7f15cc1472c5023434dff3ca5ab31c0916b95708c3c97cea9f3639972a65190a"
+    }
+  ],
+  "chunks": [
+    {
+      "chunk_id": "battery_internal_short_circuit:7b5282965bfa7526",
+      "document_id": "battery_internal_short_circuit",
+      "section_path": "定义",
+      "chunk_index": 0,
+      "content_chars": 58
+    },
+    {
+      "chunk_id": "battery_internal_short_circuit:297da311e42bf058",
+      "document_id": "battery_internal_short_circuit",
+      "section_path": "典型现象",
+      "chunk_index": 1,
+      "content_chars": 70
+    },
+    {
+      "chunk_id": "battery_internal_short_circuit:a6783cbc2745451d",
+      "document_id": "battery_internal_short_circuit",
+      "section_path": "可能原因",
+      "chunk_index": 2,
+      "content_chars": 71
+    },
+    {
+      "chunk_id": "battery_internal_short_circuit:d98a238b060b1fc1",
+      "document_id": "battery_internal_short_circuit",
+      "section_path": "所需数据",
+      "chunk_index": 3,
+      "content_chars": 69
+    },
+    {
+      "chunk_id": "battery_internal_short_circuit:395d869458965a15",
+      "document_id": "battery_internal_short_circuit",
+      "section_path": "验证步骤",
+      "chunk_index": 4,
+      "content_chars": 77
+    },
+    {
+      "chunk_id": "battery_internal_short_circuit:e6d76ca14bff3a96",
+      "document_id": "battery_internal_short_circuit",
+      "section_path": "处置建议",
+      "chunk_index": 5,
+      "content_chars": 51
+    },
+    {
+      "chunk_id": "battery_internal_short_circuit:1285dc69499aa9ae",
+      "document_id": "battery_internal_short_circuit",
+      "section_path": "适用边界",
+      "chunk_index": 6,
+      "content_chars": 54
+    },
+    {
+      "chunk_id": "charging_communication_faults:d9f93c5e30307c54",
+      "document_id": "charging_communication_faults",
+      "section_path": "定义",
+      "chunk_index": 0,
+      "content_chars": 43
+    },
+    {
+      "chunk_id": "charging_communication_faults:6b86bd2ad14df3bd",
+      "document_id": "charging_communication_faults",
+      "section_path": "典型现象",
+      "chunk_index": 1,
+      "content_chars": 67
+    },
+    {
+      "chunk_id": "charging_communication_faults:c3fbc7c19098542a",
+      "document_id": "charging_communication_faults",
+      "section_path": "可能原因",
+      "chunk_index": 2,
+      "content_chars": 69
+    },
+    {
+      "chunk_id": "charging_communication_faults:3ae4e593b195cbb4",
+      "document_id": "charging_communication_faults",
+      "section_path": "所需数据",
+      "chunk_index": 3,
+      "content_chars": 62
+    },
+    {
+      "chunk_id": "charging_communication_faults:76454df161520c43",
+      "document_id": "charging_communication_faults",
+      "section_path": "验证步骤",
+      "chunk_index": 4,
+      "content_chars": 68
+    },
+    {
+      "chunk_id": "charging_communication_faults:cd4aed0401b0a782",
+      "document_id": "charging_communication_faults",
+      "section_path": "处置建议",
+      "chunk_index": 5,
+      "content_chars": 50
+    },
+    {
+      "chunk_id": "charging_communication_faults:cc1811a929d847a3",
+      "document_id": "charging_communication_faults",
+      "section_path": "适用边界",
+      "chunk_index": 6,
+      "content_chars": 50
+    },
+    {
+      "chunk_id": "power_system_safety_terms:e325507c25628967",
+      "document_id": "power_system_safety_terms",
+      "section_path": "定义",
+      "chunk_index": 0,
+      "content_chars": 47
+    },
+    {
+      "chunk_id": "power_system_safety_terms:9ca4f43a15e549b0",
+      "document_id": "power_system_safety_terms",
+      "section_path": "典型现象",
+      "chunk_index": 1,
+      "content_chars": 93
+    },
+    {
+      "chunk_id": "power_system_safety_terms:a9026aaff74474dc",
+      "document_id": "power_system_safety_terms",
+      "section_path": "可能原因",
+      "chunk_index": 2,
+      "content_chars": 68
+    },
+    {
+      "chunk_id": "power_system_safety_terms:b518f5c8efdfb783",
+      "document_id": "power_system_safety_terms",
+      "section_path": "所需数据",
+      "chunk_index": 3,
+      "content_chars": 59
+    },
+    {
+      "chunk_id": "power_system_safety_terms:6e0ea4746b136914",
+      "document_id": "power_system_safety_terms",
+      "section_path": "验证步骤",
+      "chunk_index": 4,
+      "content_chars": 63
+    },
+    {
+      "chunk_id": "power_system_safety_terms:3faf36e9bc809dfb",
+      "document_id": "power_system_safety_terms",
+      "section_path": "处置建议",
+      "chunk_index": 5,
+      "content_chars": 49
+    },
+    {
+      "chunk_id": "power_system_safety_terms:91f2b7a8efe0689e",
+      "document_id": "power_system_safety_terms",
+      "section_path": "适用边界",
+      "chunk_index": 6,
+      "content_chars": 54
+    },
+    {
+      "chunk_id": "battery_digital_twin:e42eb0f2e8e23318",
+      "document_id": "battery_digital_twin",
+      "section_path": "定义",
+      "chunk_index": 0,
+      "content_chars": 42
+    },
+    {
+      "chunk_id": "battery_digital_twin:be67e92d3c557b8b",
+      "document_id": "battery_digital_twin",
+      "section_path": "典型现象",
+      "chunk_index": 1,
+      "content_chars": 71
+    },
+    {
+      "chunk_id": "battery_digital_twin:ca6bf87e64d74656",
+      "document_id": "battery_digital_twin",
+      "section_path": "可能原因",
+      "chunk_index": 2,
+      "content_chars": 69
+    },
+    {
+      "chunk_id": "battery_digital_twin:25d2ab44a53322cd",
+      "document_id": "battery_digital_twin",
+      "section_path": "所需数据",
+      "chunk_index": 3,
+      "content_chars": 60
+    },
+    {
+      "chunk_id": "battery_digital_twin:f9ca2a52809c6cc5",
+      "document_id": "battery_digital_twin",
+      "section_path": "验证步骤",
+      "chunk_index": 4,
+      "content_chars": 65
+    },
+    {
+      "chunk_id": "battery_digital_twin:cbe4ef9cde7d44e0",
+      "document_id": "battery_digital_twin",
+      "section_path": "处置建议",
+      "chunk_index": 5,
+      "content_chars": 50
+    },
+    {
+      "chunk_id": "battery_digital_twin:c1d3645d5748b941",
+      "document_id": "battery_digital_twin",
+      "section_path": "适用边界",
+      "chunk_index": 6,
+      "content_chars": 49
+    },
+    {
+      "chunk_id": "battery_fault_verification:229e28c6bc4a4227",
+      "document_id": "battery_fault_verification",
+      "section_path": "定义",
+      "chunk_index": 0,
+      "content_chars": 45
+    },
+    {
+      "chunk_id": "battery_fault_verification:dc21e4b5dbf3651a",
+      "document_id": "battery_fault_verification",
+      "section_path": "典型现象",
+      "chunk_index": 1,
+      "content_chars": 66
+    },
+    {
+      "chunk_id": "battery_fault_verification:485dc5ba149d5da2",
+      "document_id": "battery_fault_verification",
+      "section_path": "可能原因",
+      "chunk_index": 2,
+      "content_chars": 56
+    },
+    {
+      "chunk_id": "battery_fault_verification:d298f862f1ee39f8",
+      "document_id": "battery_fault_verification",
+      "section_path": "所需数据",
+      "chunk_index": 3,
+      "content_chars": 63
+    },
+    {
+      "chunk_id": "battery_fault_verification:a73e5b34965d2981",
+      "document_id": "battery_fault_verification",
+      "section_path": "验证步骤",
+      "chunk_index": 4,
+      "content_chars": 64
+    },
+    {
+      "chunk_id": "battery_fault_verification:fc3c9c9908935eb5",
+      "document_id": "battery_fault_verification",
+      "section_path": "处置建议",
+      "chunk_index": 5,
+      "content_chars": 47
+    },
+    {
+      "chunk_id": "battery_fault_verification:73b367dad7fa32a0",
+      "document_id": "battery_fault_verification",
+      "section_path": "适用边界",
+      "chunk_index": 6,
+      "content_chars": 47
+    },
+    {
+      "chunk_id": "battery_thermal_runaway:3cea8d378dcca6ec",
+      "document_id": "battery_thermal_runaway",
+      "section_path": "定义",
+      "chunk_index": 0,
+      "content_chars": 44
+    },
+    {
+      "chunk_id": "battery_thermal_runaway:972e5d4663f1404b",
+      "document_id": "battery_thermal_runaway",
+      "section_path": "典型现象",
+      "chunk_index": 1,
+      "content_chars": 70
+    },
+    {
+      "chunk_id": "battery_thermal_runaway:ca66d3159d68d731",
+      "document_id": "battery_thermal_runaway",
+      "section_path": "可能原因",
+      "chunk_index": 2,
+      "content_chars": 66
+    },
+    {
+      "chunk_id": "battery_thermal_runaway:b71bacc12d6f67a6",
+      "document_id": "battery_thermal_runaway",
+      "section_path": "所需数据",
+      "chunk_index": 3,
+      "content_chars": 66
+    },
+    {
+      "chunk_id": "battery_thermal_runaway:495b7d947c05ffd8",
+      "document_id": "battery_thermal_runaway",
+      "section_path": "验证步骤",
+      "chunk_index": 4,
+      "content_chars": 70
+    },
+    {
+      "chunk_id": "battery_thermal_runaway:f93ab2525d9f9752",
+      "document_id": "battery_thermal_runaway",
+      "section_path": "处置建议",
+      "chunk_index": 5,
+      "content_chars": 56
+    },
+    {
+      "chunk_id": "battery_thermal_runaway:7d2928ec946122aa",
+      "document_id": "battery_thermal_runaway",
+      "section_path": "适用边界",
+      "chunk_index": 6,
+      "content_chars": 49
+    }
+  ]
+}
