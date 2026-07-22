@@ -1,0 +1,3931 @@
+{
+  "best_configuration": {
+    "min_score": 0.05,
+    "top_k": 5,
+    "document_hit_at_k": 1.0,
+    "mean_reciprocal_rank": 1.0,
+    "source_keyword_accuracy": 0.7895,
+    "retrieval_case_pass_rate": 0.6923,
+    "empty_retrieval_rate": 0.0,
+    "average_result_count": 5.0,
+    "cases": [
+      {
+        "case_id": "RAG-001",
+        "retrieved": [
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "典型现象",
+            "score": 0.2163
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "定义",
+            "score": 0.2066
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "可能原因",
+            "score": 0.1106
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "所需数据",
+            "score": 0.0939
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "验证步骤",
+            "score": 0.0898
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": true,
+        "retrieval_passed": true
+      },
+      {
+        "case_id": "RAG-002",
+        "retrieved": [
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "处置建议",
+            "score": 0.232
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "定义",
+            "score": 0.2148
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "可能原因",
+            "score": 0.1363
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "所需数据",
+            "score": 0.1194
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "验证步骤",
+            "score": 0.0769
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": false,
+        "retrieval_passed": false
+      },
+      {
+        "case_id": "RAG-003",
+        "retrieved": [
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "定义",
+            "score": 0.3432
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "可能原因",
+            "score": 0.3407
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "所需数据",
+            "score": 0.3226
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "验证步骤",
+            "score": 0.2439
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "处置建议",
+            "score": 0.2424
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": true,
+        "retrieval_passed": true
+      },
+      {
+        "case_id": "RAG-004",
+        "retrieved": [
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "适用边界",
+            "score": 0.1737
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "典型现象",
+            "score": 0.1245
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "定义",
+            "score": 0.0884
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "可能原因",
+            "score": 0.0856
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "所需数据",
+            "score": 0.0747
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": false,
+        "retrieval_passed": false
+      },
+      {
+        "case_id": "RAG-005",
+        "retrieved": [
+          {
+            "document_id": "power_system_safety_terms",
+            "section_path": "典型现象",
+            "score": 0.236
+          },
+          {
+            "document_id": "power_system_safety_terms",
+            "section_path": "所需数据",
+            "score": 0.1631
+          },
+          {
+            "document_id": "power_system_safety_terms",
+            "section_path": "定义",
+            "score": 0.1475
+          },
+          {
+            "document_id": "power_system_safety_terms",
+            "section_path": "处置建议",
+            "score": 0.1374
+          },
+          {
+            "document_id": "battery_fault_verification",
+            "section_path": "典型现象",
+            "score": 0.1208
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": true,
+        "retrieval_passed": true
+      },
+      {
+        "case_id": "RAG-006",
+        "retrieved": [
+          {
+            "document_id": "power_system_safety_terms",
+            "section_path": "验证步骤",
+            "score": 0.1825
+          },
+          {
+            "document_id": "power_system_safety_terms",
+            "section_path": "可能原因",
+            "score": 0.148
+          },
+          {
+            "document_id": "power_system_safety_terms",
+            "section_path": "处置建议",
+            "score": 0.1439
+          },
+          {
+            "document_id": "power_system_safety_terms",
+            "section_path": "典型现象",
+            "score": 0.1311
+          },
+          {
+            "document_id": "power_system_safety_terms",
+            "section_path": "所需数据",
+            "score": 0.1255
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": true,
+        "retrieval_passed": true
+      },
+      {
+        "case_id": "RAG-007",
+        "retrieved": [
+          {
+            "document_id": "battery_digital_twin",
+            "section_path": "可能原因",
+            "score": 0.3038
+          },
+          {
+            "document_id": "battery_digital_twin",
+            "section_path": "定义",
+            "score": 0.2741
+          },
+          {
+            "document_id": "battery_digital_twin",
+            "section_path": "所需数据",
+            "score": 0.231
+          },
+          {
+            "document_id": "battery_fault_verification",
+            "section_path": "可能原因",
+            "score": 0.2138
+          },
+          {
+            "document_id": "battery_digital_twin",
+            "section_path": "典型现象",
+            "score": 0.2095
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": true,
+        "retrieval_passed": true
+      },
+      {
+        "case_id": "RAG-008",
+        "retrieved": [
+          {
+            "document_id": "battery_digital_twin",
+            "section_path": "定义",
+            "score": 0.2991
+          },
+          {
+            "document_id": "battery_digital_twin",
+            "section_path": "典型现象",
+            "score": 0.1851
+          },
+          {
+            "document_id": "battery_digital_twin",
+            "section_path": "可能原因",
+            "score": 0.1589
+          },
+          {
+            "document_id": "battery_digital_twin",
+            "section_path": "适用边界",
+            "score": 0.1583
+          },
+          {
+            "document_id": "battery_digital_twin",
+            "section_path": "验证步骤",
+            "score": 0.1292
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": false,
+        "retrieval_passed": false
+      },
+      {
+        "case_id": "RAG-009",
+        "retrieved": [
+          {
+            "document_id": "battery_fault_verification",
+            "section_path": "可能原因",
+            "score": 0.2274
+          },
+          {
+            "document_id": "battery_fault_verification",
+            "section_path": "定义",
+            "score": 0.21
+          },
+          {
+            "document_id": "battery_fault_verification",
+            "section_path": "验证步骤",
+            "score": 0.1662
+          },
+          {
+            "document_id": "battery_digital_twin",
+            "section_path": "定义",
+            "score": 0.1638
+          },
+          {
+            "document_id": "battery_fault_verification",
+            "section_path": "典型现象",
+            "score": 0.1341
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": true,
+        "retrieval_passed": true
+      },
+      {
+        "case_id": "RAG-010",
+        "retrieved": [
+          {
+            "document_id": "battery_thermal_runaway",
+            "section_path": "定义",
+            "score": 0.3195
+          },
+          {
+            "document_id": "battery_thermal_runaway",
+            "section_path": "适用边界",
+            "score": 0.2831
+          },
+          {
+            "document_id": "battery_thermal_runaway",
+            "section_path": "典型现象",
+            "score": 0.2376
+          },
+          {
+            "document_id": "battery_thermal_runaway",
+            "section_path": "处置建议",
+            "score": 0.2049
+          },
+          {
+            "document_id": "battery_thermal_runaway",
+            "section_path": "验证步骤",
+            "score": 0.2011
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": true,
+        "retrieval_passed": true
+      },
+      {
+        "case_id": "RAG-011",
+        "retrieved": [
+          {
+            "document_id": "battery_thermal_runaway",
+            "section_path": "定义",
+            "score": 0.2107
+          },
+          {
+            "document_id": "battery_thermal_runaway",
+            "section_path": "典型现象",
+            "score": 0.1219
+          },
+          {
+            "document_id": "battery_thermal_runaway",
+            "section_path": "适用边界",
+            "score": 0.1105
+          },
+          {
+            "document_id": "battery_thermal_runaway",
+            "section_path": "所需数据",
+            "score": 0.1052
+          },
+          {
+            "document_id": "battery_thermal_runaway",
+            "section_path": "处置建议",
+            "score": 0.064
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": true,
+        "retrieval_passed": true
+      },
+      {
+        "case_id": "RAG-012",
+        "retrieved": [
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "适用边界",
+            "score": 0.1786
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "处置建议",
+            "score": 0.1263
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "典型现象",
+            "score": 0.1047
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "定义",
+            "score": 0.103
+          },
+          {
+            "document_id": "charging_communication_faults",
+            "section_path": "所需数据",
+            "score": 0.0713
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": true,
+        "retrieval_passed": true
+      },
+      {
+        "case_id": "RAG-013",
+        "retrieved": [
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "定义",
+            "score": 0.1622
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "典型现象",
+            "score": 0.1591
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "所需数据",
+            "score": 0.151
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "处置建议",
+            "score": 0.1003
+          },
+          {
+            "document_id": "battery_internal_short_circuit",
+            "section_path": "可能原因",
+            "score": 0.0844
+          }
+        ],
+        "document_hit": true,
+        "source_keywords_passed": false,
+        "retrieval_passed": false
+      }
+    ]
+  },
+  "configurations": [
+    {
+      "min_score": 0.0,
+      "top_k": 3,
+      "document_hit_at_k": 1.0,
+      "mean_reciprocal_rank": 1.0,
+      "source_keyword_accuracy": 0.6842,
+      "retrieval_case_pass_rate": 0.6923,
+      "empty_retrieval_rate": 0.0,
+      "average_result_count": 3.0,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.2163
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2066
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1106
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.232
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2148
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1363
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1737
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1245
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.0884
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.236
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1631
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "定义",
+              "score": 0.1475
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "验证步骤",
+              "score": 0.1825
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "可能原因",
+              "score": 0.148
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "处置建议",
+              "score": 0.1439
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "所需数据",
+              "score": 0.231
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.1851
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.1589
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2274
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "定义",
+              "score": 0.21
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "验证步骤",
+              "score": 0.1662
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.2376
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.2107
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.1219
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.1105
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1786
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.1263
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1047
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.1622
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.1591
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.151
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.05,
+      "top_k": 3,
+      "document_hit_at_k": 1.0,
+      "mean_reciprocal_rank": 1.0,
+      "source_keyword_accuracy": 0.6842,
+      "retrieval_case_pass_rate": 0.6923,
+      "empty_retrieval_rate": 0.0,
+      "average_result_count": 3.0,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.2163
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2066
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1106
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.232
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2148
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1363
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1737
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1245
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.0884
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.236
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1631
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "定义",
+              "score": 0.1475
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "验证步骤",
+              "score": 0.1825
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "可能原因",
+              "score": 0.148
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "处置建议",
+              "score": 0.1439
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "所需数据",
+              "score": 0.231
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.1851
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.1589
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2274
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "定义",
+              "score": 0.21
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "验证步骤",
+              "score": 0.1662
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.2376
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.2107
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.1219
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.1105
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1786
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.1263
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1047
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.1622
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.1591
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.151
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.1,
+      "top_k": 3,
+      "document_hit_at_k": 1.0,
+      "mean_reciprocal_rank": 1.0,
+      "source_keyword_accuracy": 0.6842,
+      "retrieval_case_pass_rate": 0.6923,
+      "empty_retrieval_rate": 0.0,
+      "average_result_count": 2.9231,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.2163
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2066
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1106
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.232
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2148
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1363
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1737
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1245
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.236
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1631
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "定义",
+              "score": 0.1475
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "验证步骤",
+              "score": 0.1825
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "可能原因",
+              "score": 0.148
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "处置建议",
+              "score": 0.1439
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "所需数据",
+              "score": 0.231
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.1851
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.1589
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2274
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "定义",
+              "score": 0.21
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "验证步骤",
+              "score": 0.1662
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.2376
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.2107
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.1219
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.1105
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1786
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.1263
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1047
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.1622
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.1591
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.151
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.15,
+      "top_k": 3,
+      "document_hit_at_k": 1.0,
+      "mean_reciprocal_rank": 1.0,
+      "source_keyword_accuracy": 0.5263,
+      "retrieval_case_pass_rate": 0.4615,
+      "empty_retrieval_rate": 0.0,
+      "average_result_count": 2.1538,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.2163
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2066
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.232
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2148
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1737
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.236
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1631
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "验证步骤",
+              "score": 0.1825
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "所需数据",
+              "score": 0.231
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.1851
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.1589
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2274
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "定义",
+              "score": 0.21
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "验证步骤",
+              "score": 0.1662
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.2376
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.2107
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1786
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.1622
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.1591
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.151
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.2,
+      "top_k": 3,
+      "document_hit_at_k": 0.6923,
+      "mean_reciprocal_rank": 0.6923,
+      "source_keyword_accuracy": 0.3158,
+      "retrieval_case_pass_rate": 0.3077,
+      "empty_retrieval_rate": 0.3077,
+      "average_result_count": 1.3846,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.2163
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2066
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.232
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2148
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.236
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "所需数据",
+              "score": 0.231
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2274
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "定义",
+              "score": 0.21
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.2376
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.2107
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.25,
+      "top_k": 3,
+      "document_hit_at_k": 0.3077,
+      "mean_reciprocal_rank": 0.3077,
+      "source_keyword_accuracy": 0.1053,
+      "retrieval_case_pass_rate": 0.1538,
+      "empty_retrieval_rate": 0.6923,
+      "average_result_count": 0.6154,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.0,
+      "top_k": 5,
+      "document_hit_at_k": 1.0,
+      "mean_reciprocal_rank": 1.0,
+      "source_keyword_accuracy": 0.7895,
+      "retrieval_case_pass_rate": 0.6923,
+      "empty_retrieval_rate": 0.0,
+      "average_result_count": 5.0,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.2163
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2066
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1106
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.0939
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "验证步骤",
+              "score": 0.0898
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.232
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2148
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1363
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.1194
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "验证步骤",
+              "score": 0.0769
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "验证步骤",
+              "score": 0.2439
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.2424
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1737
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1245
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.0884
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.0856
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.0747
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.236
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1631
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "定义",
+              "score": 0.1475
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "处置建议",
+              "score": 0.1374
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "典型现象",
+              "score": 0.1208
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "验证步骤",
+              "score": 0.1825
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "可能原因",
+              "score": 0.148
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "处置建议",
+              "score": 0.1439
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.1311
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1255
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "所需数据",
+              "score": 0.231
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2138
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.2095
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.1851
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.1589
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "适用边界",
+              "score": 0.1583
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "验证步骤",
+              "score": 0.1292
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2274
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "定义",
+              "score": 0.21
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "验证步骤",
+              "score": 0.1662
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.1638
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "典型现象",
+              "score": 0.1341
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.2376
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "处置建议",
+              "score": 0.2049
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "验证步骤",
+              "score": 0.2011
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.2107
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.1219
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.1105
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "所需数据",
+              "score": 0.1052
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "处置建议",
+              "score": 0.064
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1786
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.1263
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1047
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.103
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.0713
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.1622
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.1591
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.151
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.1003
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.0844
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.05,
+      "top_k": 5,
+      "document_hit_at_k": 1.0,
+      "mean_reciprocal_rank": 1.0,
+      "source_keyword_accuracy": 0.7895,
+      "retrieval_case_pass_rate": 0.6923,
+      "empty_retrieval_rate": 0.0,
+      "average_result_count": 5.0,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.2163
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2066
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1106
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.0939
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "验证步骤",
+              "score": 0.0898
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.232
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2148
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1363
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.1194
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "验证步骤",
+              "score": 0.0769
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "验证步骤",
+              "score": 0.2439
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.2424
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1737
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1245
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.0884
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.0856
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.0747
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.236
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1631
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "定义",
+              "score": 0.1475
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "处置建议",
+              "score": 0.1374
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "典型现象",
+              "score": 0.1208
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "验证步骤",
+              "score": 0.1825
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "可能原因",
+              "score": 0.148
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "处置建议",
+              "score": 0.1439
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.1311
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1255
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "所需数据",
+              "score": 0.231
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2138
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.2095
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.1851
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.1589
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "适用边界",
+              "score": 0.1583
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "验证步骤",
+              "score": 0.1292
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2274
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "定义",
+              "score": 0.21
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "验证步骤",
+              "score": 0.1662
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.1638
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "典型现象",
+              "score": 0.1341
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.2376
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "处置建议",
+              "score": 0.2049
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "验证步骤",
+              "score": 0.2011
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.2107
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.1219
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.1105
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "所需数据",
+              "score": 0.1052
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "处置建议",
+              "score": 0.064
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1786
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.1263
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1047
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.103
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.0713
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.1622
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.1591
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.151
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.1003
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.0844
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.1,
+      "top_k": 5,
+      "document_hit_at_k": 1.0,
+      "mean_reciprocal_rank": 1.0,
+      "source_keyword_accuracy": 0.7368,
+      "retrieval_case_pass_rate": 0.6923,
+      "empty_retrieval_rate": 0.0,
+      "average_result_count": 4.3077,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.2163
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2066
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1106
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.232
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2148
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "可能原因",
+              "score": 0.1363
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.1194
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "验证步骤",
+              "score": 0.2439
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.2424
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1737
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1245
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.236
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1631
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "定义",
+              "score": 0.1475
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "处置建议",
+              "score": 0.1374
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "典型现象",
+              "score": 0.1208
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "验证步骤",
+              "score": 0.1825
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "可能原因",
+              "score": 0.148
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "处置建议",
+              "score": 0.1439
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.1311
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1255
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "所需数据",
+              "score": 0.231
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2138
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.2095
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.1851
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.1589
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "适用边界",
+              "score": 0.1583
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "验证步骤",
+              "score": 0.1292
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2274
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "定义",
+              "score": 0.21
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "验证步骤",
+              "score": 0.1662
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.1638
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "典型现象",
+              "score": 0.1341
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.2376
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "处置建议",
+              "score": 0.2049
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "验证步骤",
+              "score": 0.2011
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.2107
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.1219
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.1105
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "所需数据",
+              "score": 0.1052
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1786
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.1263
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "典型现象",
+              "score": 0.1047
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.103
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.1622
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.1591
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.151
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.1003
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.15,
+      "top_k": 5,
+      "document_hit_at_k": 1.0,
+      "mean_reciprocal_rank": 1.0,
+      "source_keyword_accuracy": 0.5789,
+      "retrieval_case_pass_rate": 0.4615,
+      "empty_retrieval_rate": 0.0,
+      "average_result_count": 2.7692,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.2163
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2066
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.232
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2148
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "验证步骤",
+              "score": 0.2439
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.2424
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1737
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.236
+            },
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "所需数据",
+              "score": 0.1631
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "验证步骤",
+              "score": 0.1825
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "所需数据",
+              "score": 0.231
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2138
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.2095
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.1851
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.1589
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "适用边界",
+              "score": 0.1583
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2274
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "定义",
+              "score": 0.21
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "验证步骤",
+              "score": 0.1662
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.1638
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.2376
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "处置建议",
+              "score": 0.2049
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "验证步骤",
+              "score": 0.2011
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.2107
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "适用边界",
+              "score": 0.1786
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.1622
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.1591
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "所需数据",
+              "score": 0.151
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.2,
+      "top_k": 5,
+      "document_hit_at_k": 0.6923,
+      "mean_reciprocal_rank": 0.6923,
+      "source_keyword_accuracy": 0.3158,
+      "retrieval_case_pass_rate": 0.3077,
+      "empty_retrieval_rate": 0.3077,
+      "average_result_count": 1.8462,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "典型现象",
+              "score": 0.2163
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2066
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "处置建议",
+              "score": 0.232
+            },
+            {
+              "document_id": "battery_internal_short_circuit",
+              "section_path": "定义",
+              "score": 0.2148
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "验证步骤",
+              "score": 0.2439
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "处置建议",
+              "score": 0.2424
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [
+            {
+              "document_id": "power_system_safety_terms",
+              "section_path": "典型现象",
+              "score": 0.236
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "所需数据",
+              "score": 0.231
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2138
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "典型现象",
+              "score": 0.2095
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "可能原因",
+              "score": 0.2274
+            },
+            {
+              "document_id": "battery_fault_verification",
+              "section_path": "定义",
+              "score": 0.21
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "典型现象",
+              "score": 0.2376
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "处置建议",
+              "score": 0.2049
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "验证步骤",
+              "score": 0.2011
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.2107
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    },
+    {
+      "min_score": 0.25,
+      "top_k": 5,
+      "document_hit_at_k": 0.3077,
+      "mean_reciprocal_rank": 0.3077,
+      "source_keyword_accuracy": 0.1053,
+      "retrieval_case_pass_rate": 0.1538,
+      "empty_retrieval_rate": 0.6923,
+      "average_result_count": 0.6154,
+      "cases": [
+        {
+          "case_id": "RAG-001",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-002",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-003",
+          "retrieved": [
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "定义",
+              "score": 0.3432
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "可能原因",
+              "score": 0.3407
+            },
+            {
+              "document_id": "charging_communication_faults",
+              "section_path": "所需数据",
+              "score": 0.3226
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-004",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-005",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-006",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-007",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "可能原因",
+              "score": 0.3038
+            },
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2741
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": true,
+          "retrieval_passed": true
+        },
+        {
+          "case_id": "RAG-008",
+          "retrieved": [
+            {
+              "document_id": "battery_digital_twin",
+              "section_path": "定义",
+              "score": 0.2991
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-009",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-010",
+          "retrieved": [
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "定义",
+              "score": 0.3195
+            },
+            {
+              "document_id": "battery_thermal_runaway",
+              "section_path": "适用边界",
+              "score": 0.2831
+            }
+          ],
+          "document_hit": true,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-011",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-012",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        },
+        {
+          "case_id": "RAG-013",
+          "retrieved": [],
+          "document_hit": false,
+          "source_keywords_passed": false,
+          "retrieval_passed": false
+        }
+      ]
+    }
+  ]
+}

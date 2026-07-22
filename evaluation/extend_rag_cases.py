@@ -56,8 +56,8 @@ def make_rag_case(
             should_answer=should_answer,
             should_refuse=should_refuse,
             retrieval_subsystem=subsystem,
-            top_k=3,
-            min_score=None,
+            top_k=5,
+            min_score=0.10,
             expected_document_ids=(
                 expected_document_ids
             ),
