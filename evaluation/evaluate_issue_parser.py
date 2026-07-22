@@ -7,7 +7,12 @@ import json
 import re
 import time
 from pathlib import Path
-from typing import Any
+from evaluation.dataset import load_evaluation_cases
+from evaluation.schemas import (
+    EvaluationCase,
+    EvaluatorType,
+    IssueExpectation,
+)
 
 from agent_core.issue_parser import PowerSystemIssueParser
 from agent_core.llm_client import LLMClientError
@@ -18,14 +23,14 @@ from agent_core.schemas import PowerSystemIssue
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 DEFAULT_CASE_FILE = (
-    PROJECT_ROOT / "evaluation" / "parser_test_cases.jsonl"
+    PROJECT_ROOT / "evaluation" / "test_cases.jsonl"
 ) # jsonl每行都是一个完整的JSON对象
 
 RESULTS_DIR = PROJECT_ROOT / "evaluation" / "results"
 
 RESULT_FILE = RESULTS_DIR / "parser_eval_results.jsonl"
 SUMMARY_FILE = RESULTS_DIR / "parser_eval_summary.json"
-BAD_CASE_FILE = PROJECT_ROOT / "evaluation" / "bad_cases.md"
+BAD_CASE_FILE = RESULTS_DIR / "parser_bad_cases.md"
 
 
 def normalize_text(text: str) -> str:
@@ -89,73 +94,66 @@ def matches_concept_group(
     )
 
 
-def load_test_cases(path: Path) -> list[dict[str, Any]]:
-    """读取JSONL测试集。"""
-
-    cases: list[dict[str, Any]] = []
-
-    with path.open("r", encoding="utf-8") as file:
-        for line_number, line in enumerate(file, start=1):
-            stripped_line = line.strip()
-
-            if not stripped_line:
-                continue
-
-            try:
-                cases.append(json.loads(stripped_line))
-            except json.JSONDecodeError as exc:
-                raise ValueError(
-                    f"测试集第{line_number}行不是合法JSON：{exc}"
-                ) from exc
-
-    return cases
-
-
 def evaluate_prediction(
-    case: dict[str, Any],
+    case: EvaluationCase,
     prediction: PowerSystemIssue,
-) -> tuple[dict[str, Any], dict[str, int]]:
+) -> tuple[dict[str, object], dict[str, int]]:
     """比较单条预测结果和人工标注结果。"""
 
-    expected = case["expected"]
+    expected = case.issue_expectation
+    if expected is None:
+        raise ValueError(
+            f"样本{case.case_id}缺少issue_expectation"
+        )
 
     actual_subsystem = prediction.subsystem.value
     actual_task_type = prediction.task_type.value
     actual_severity = prediction.severity.value
 
     subsystem_passed = (
-        actual_subsystem == expected["subsystem"]
+        prediction.subsystem == expected.subsystem
     )
 
     task_type_passed = (
-        actual_task_type == expected["task_type"]
+        prediction.task_type == expected.task_type
     )
 
     severity_passed = (
-        actual_severity in expected["severity_allowed"]
+        prediction.severity
+        in expected.severity_allowed
     )
 
-    raw_text_passed = prediction.raw_text == case["input"]
+    raw_text_passed = (
+        not expected.exact_raw_text
+        or prediction.raw_text == case.user_input
+    )
 
-    checks: dict[str, Any] = {
+    checks: dict[str, object] = {
         "subsystem": {
             "passed": subsystem_passed,
-            "expected": expected["subsystem"],
+            "expected": expected.subsystem.value,
             "actual": actual_subsystem,
         },
         "task_type": {
             "passed": task_type_passed,
-            "expected": expected["task_type"],
+            "expected": expected.task_type.value,
             "actual": actual_task_type,
         },
         "severity": {
             "passed": severity_passed,
-            "expected": expected["severity_allowed"],
+            "expected": [
+                item.value
+                for item in expected.severity_allowed
+            ],
             "actual": actual_severity,
         },
         "raw_text": {
             "passed": raw_text_passed,
-            "expected": case["input"],
+            "expected": (
+                case.user_input
+                if expected.exact_raw_text
+                else "不要求完全一致"
+            ),
             "actual": prediction.raw_text,
         },
     }
@@ -163,38 +161,34 @@ def evaluate_prediction(
     # 概念覆盖度检查
     concept_matched = 0
     concept_total = 0
-    concept_details: list[dict[str, Any]] = []
+    concept_details: list[dict[str, object]] = []
 
-    required_concepts = expected.get(
-        "required_concepts",
-        {},
-    )
-
-    for field_name, concept_groups in required_concepts.items():
+    for concept in expected.required_concepts:
         actual_field_text = flatten_field(
             prediction,
-            field_name,
+            concept.field_name,
         )
 
-        for alternatives in concept_groups:
-            matched = matches_concept_group(
-                actual_field_text,
-                alternatives,
-            )
+        matched = matches_concept_group(
+            actual_field_text,
+            concept.alternatives,
+        )
 
-            concept_total += 1
+        concept_total += 1
 
-            if matched:
-                concept_matched += 1
+        if matched:
+            concept_matched += 1
 
-            concept_details.append(
-                {
-                    "field": field_name,
-                    "alternatives": alternatives,
-                    "actual_text": actual_field_text,
-                    "matched": matched,
-                }
-            )
+        concept_details.append(
+            {
+                "field": concept.field_name,
+                "alternatives": (
+                    concept.alternatives
+                ),
+                "actual_text": actual_field_text,
+                "matched": matched,
+            }
+        )
 
     concept_passed = concept_matched == concept_total
 
@@ -208,9 +202,9 @@ def evaluate_prediction(
     # 空字段检查
     empty_correct = 0
     empty_total = 0
-    empty_details: list[dict[str, Any]] = []
+    empty_details: list[dict[str, object]] = []
 
-    for field_name in expected.get("must_be_empty", []):
+    for field_name in expected.must_be_empty:
         field_value = getattr(prediction, field_name)
 
         passed = isinstance(field_value, list) and len(field_value) == 0
@@ -291,7 +285,7 @@ def safe_rate(
 
 
 def build_bad_case_markdown(
-    results: list[dict[str, Any]],
+    results: list[dict[str, object]],
 ) -> str:
     """将未通过样本整理成Markdown报告。"""
 
@@ -435,19 +429,12 @@ def main() -> None:
 
     args = parse_arguments()
 
-    cases = load_test_cases(args.case_file)
-
-    if args.case_id:
-        selected_ids = set(args.case_id)
-
-        cases = [
-            case
-            for case in cases
-            if case["id"] in selected_ids
-        ]
-
-    if args.limit is not None:
-        cases = cases[: args.limit]
+    cases = load_evaluation_cases(
+        args.case_file,
+        evaluator=EvaluatorType.ISSUE_PARSER,
+        case_ids=args.case_id,
+        limit=args.limit,
+    )
 
     if not cases:
         raise ValueError("没有可运行的测试样本。")
@@ -456,7 +443,7 @@ def main() -> None:
 
     parser = PowerSystemIssueParser()
 
-    results: list[dict[str, Any]] = []
+    results: list[dict[str, object]] = []
 
     aggregate = {
         "total_cases": len(cases),
@@ -476,13 +463,13 @@ def main() -> None:
     for index, case in enumerate(cases, start=1):
         print(
             f"[{index}/{len(cases)}] "
-            f"正在评估 {case['id']}..."
+            f"正在评估 {case.case_id}..."
         )
 
         start_time = time.perf_counter()
 
         try:
-            prediction = parser.parse(case["input"])
+            prediction = parser.parse(case.user_input)
 
             latency = time.perf_counter() - start_time
 
@@ -492,8 +479,8 @@ def main() -> None:
             )
 
             result = {
-                "id": case["id"],
-                "input": case["input"],
+                "id": case.case_id,
+                "input": case.user_input,
                 "passed": checks["overall"]["passed"],
                 "latency_seconds": round(latency, 4),
                 "prediction": prediction.model_dump(
@@ -513,8 +500,8 @@ def main() -> None:
             latency = time.perf_counter() - start_time
 
             result = {
-                "id": case["id"],
-                "input": case["input"],
+                "id": case.case_id,
+                "input": case.user_input,
                 "passed": False,
                 "latency_seconds": round(latency, 4),
                 "prediction": None,
