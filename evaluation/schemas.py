@@ -24,6 +24,8 @@ from agent_core.workflow_models import (
 
 from agent_core.router_agent import RouteStatus
 
+from skills.schemas import RiskLevel
+
 
 # 字段名字面量类型
 IssueListField = Literal[
@@ -44,6 +46,46 @@ class EvaluatorType(str, Enum):
     SKILL_CALL = "skill_call"
     RAG = "rag"
     REPORT = "report"
+
+
+class ReviewReportScenario(str, Enum):
+    """Review和Report评测使用的确定性输入场景。"""
+
+    BATTERY_ANALYSIS_APPROVED = (
+        "battery_analysis_approved"
+    )
+
+    APPROVED_WITH_MISSING_INFORMATION = (
+        "approved_with_missing_information"
+    )
+
+    RAG_INSUFFICIENT_EVIDENCE = (
+        "rag_insufficient_evidence"
+    )
+
+    SKILL_EXECUTION_FAILED = (
+        "skill_execution_failed"
+    )
+
+    CRITICAL_DIAGNOSIS = (
+        "critical_diagnosis"
+    )
+
+    DIAGNOSIS_PLACEHOLDER_EVIDENCE = (
+        "diagnosis_placeholder_evidence"
+    )
+
+    OPTIMIZATION_READY = (
+        "optimization_ready"
+    )
+
+    DISPATCH_REQUIRES_REVIEW = (
+        "dispatch_requires_review"
+    )
+
+    UNSUPPORTED_TOOL_OUTPUT = (
+        "unsupported_tool_output"
+    )
 
 
 # 概念期望
@@ -443,42 +485,72 @@ class RAGExpectation(StrictBaseModel):
 
 # 报告/复核阶段期望
 class ReportExpectation(StrictBaseModel):
-    """Review和Report阶段的期望结果。"""
+    """Review和Report联合评测期望。"""
+
+    scenario: ReviewReportScenario
 
     should_generate: bool
 
-    expected_review_status: (
-        ReviewStatus | None
-    ) = None
+    expected_review_status: ReviewStatus
 
-    expected_report_status: (
-        ReportStatus | None
-    ) = None
+    expected_report_status: ReportStatus
 
-    needs_human_review: bool | None = None
+    needs_human_review: bool
+
+    expected_risk_level: RiskLevel
+
+    expected_issue_severity: Severity
 
     required_fields: list[str] = Field(
         default_factory=list,
-        description="报告必须包含的结构化字段",
+        description="最终报告必须存在的字段",
     )
 
-    required_concepts: list[list[str]] = Field(
+    required_review_concepts: list[
+        list[str]
+    ] = Field(
         default_factory=list,
-        description="最终报告必须覆盖的概念组",
+        description="ReviewResult必须包含的概念组",
+    )
+
+    required_report_concepts: list[
+        list[str]
+    ] = Field(
+        default_factory=list,
+        description="最终报告必须包含的概念组",
+    )
+
+    required_evidence_concepts: list[
+        list[str]
+    ] = Field(
+        default_factory=list,
+        description="证据字段必须包含的概念组",
+    )
+
+    required_unresolved_concepts: list[
+        list[str]
+    ] = Field(
+        default_factory=list,
+        description="未解决事项必须包含的概念组",
     )
 
     forbidden_claims: list[str] = Field(
         default_factory=list,
-        description="报告中禁止出现的无依据结论",
+        description="Review和Report中禁止出现的结论",
     )
 
-    @field_validator("required_concepts")
+    @field_validator(
+        "required_review_concepts",
+        "required_report_concepts",
+        "required_evidence_concepts",
+        "required_unresolved_concepts",
+    )
     @classmethod
-    def validate_required_concepts(
+    def validate_concept_groups(
         cls,
         value: list[list[str]],
     ) -> list[list[str]]:
-        """禁止空概念组。"""
+        """概念组不能包含空值。"""
 
         for group in value:
             if (
@@ -489,34 +561,33 @@ class ReportExpectation(StrictBaseModel):
                 )
             ):
                 raise ValueError(
-                    "required_concepts中的"
-                    "每组概念都必须包含非空表达"
+                    "概念组必须包含非空表达"
                 )
 
         return value
 
     @model_validator(mode="after")
-    def validate_report_status(
+    def validate_report_expectation(
         self,
     ) -> "ReportExpectation":
-        """报告生成标志必须与报告状态一致。"""
+        """生成标志与报告状态必须一致。"""
 
         if (
             self.should_generate
             and self.expected_report_status
-            == ReportStatus.BLOCKED
+            != ReportStatus.GENERATED
         ):
             raise ValueError(
-                "应生成报告时不能期望blocked状态"
+                "应生成报告时状态必须为generated"
             )
 
         if (
             not self.should_generate
             and self.expected_report_status
-            == ReportStatus.GENERATED
+            != ReportStatus.BLOCKED
         ):
             raise ValueError(
-                "不应生成报告时不能期望generated状态"
+                "不生成报告时状态必须为blocked"
             )
 
         return self
