@@ -27,7 +27,8 @@ from workflows.rnd_models import (
     RndAnalysisRequest,
     RndAnalysisResult,
 )
-
+from agent_core.schemas import Subsystem
+from rag.schemas import DocumentType
 
 # 不同API业务数据使用的泛型类型。
 DataType = TypeVar("DataType")
@@ -124,6 +125,46 @@ class ApiResponse(
 
         return self
 
+
+class KnowledgeDocumentUploadData(
+    StrictBaseModel
+):
+    """知识文档上传结果。"""
+
+    document_id: str = Field(
+        description="知识文档唯一标识"
+    )
+
+    filename: str = Field(
+        description="上传文件名称"
+    )
+
+    file_type: DocumentType = Field(
+        description="文件类型"
+    )
+
+    chunk_count: int = Field(
+        ge=0,
+        description="生成知识块数量"
+    )
+
+    upserted_count: int = Field(
+        ge=0,
+        description="实际写入向量库数量"
+    )
+
+    updated: bool = Field(
+        description="是否覆盖已有文档"
+    )
+
+class KnowledgeDocumentUploadResponse(
+    ApiResponse[
+        KnowledgeDocumentUploadData
+    ]
+):
+    """知识文档上传接口响应。"""
+
+    pass
 
 # ------------------------------------------------------------------
 # 健康检查模型

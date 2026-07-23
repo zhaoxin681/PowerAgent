@@ -24,9 +24,12 @@ from uuid import uuid4
 from fastapi import (
     APIRouter,
     Depends,
+    File,
+    Form,
     HTTPException,
     Request,
     Response,
+    UploadFile,
     status,
 )
 
@@ -35,6 +38,9 @@ from app.dependencies import (
 )
 from app.schemas import (
     ApiResponseStatus,
+    DocumentIndexStatus,
+    DocumentUploadData,
+    DocumentUploadResponse,
     RndAnalysisApiRequest,
     RndAnalysisResponse,
     SkillListData,
@@ -42,6 +48,22 @@ from app.schemas import (
     SkillSummary,
     WorkflowAnalysisRequest,
     WorkflowAnalysisResponse,
+)
+from pathlib import Path
+import shutil
+import uuid
+from agent_core.schemas import Subsystem
+
+from app.document_service import (
+    DuplicateDocumentError,
+)
+from rag.exceptions import DocumentLoadError
+from app.document_service import (
+    DuplicateDocumentError,
+)
+
+from rag.exceptions import (
+    DocumentLoadError,
 )
 
 
@@ -91,6 +113,104 @@ health_router = APIRouter(
 api_router = APIRouter(
     tags=["poweragent"],
 )
+
+# 定义允许上传的文档类型
+ALLOWED_DOCUMENT_SUFFIXES = {
+    ".md",
+    ".txt",
+    ".pdf",
+}
+
+
+def _save_upload_file(
+    upload_file: UploadFile,
+    *,
+    temp_dir: Path,
+    max_bytes: int,
+) -> Path:
+    """
+    将上传文件流保存到受控临时目录。
+    """
+
+    filename = (
+        upload_file.filename
+        or ""
+    )
+
+    suffix = (
+        Path(filename)
+        .suffix
+        .lower()
+    )
+
+    if suffix not in (
+        ALLOWED_DOCUMENT_SUFFIXES
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "仅支持md/txt/pdf文件"
+            ),
+        )
+
+    temp_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    temp_path = (
+        temp_dir
+        /
+        f"{uuid.uuid4().hex}{suffix}"
+    )
+
+    total_size = 0
+
+    try:
+        with temp_path.open(
+            "wb"
+        ) as buffer:
+
+            while True:
+                chunk = (
+                    upload_file.file.read(
+                        1024 * 1024
+                    )
+                )
+                if not chunk:
+                    break
+
+                total_size += len(chunk)
+
+                if total_size > max_bytes:
+
+                    raise HTTPException(
+                        status_code=413,
+                        detail=(
+                            "上传文件超过大小限制"
+                        ),
+                    )
+                buffer.write(chunk)
+
+    except Exception:
+        if temp_path.exists():
+
+            temp_path.unlink()
+        raise
+
+    return temp_path
+
+
+def _cleanup_temp_file(
+    path: Path | None,
+) -> None:
+    """删除上传临时文件。"""
+
+    if (
+        path is not None
+        and path.exists()
+    ):
+        path.unlink()
 
 
 def _get_settings(
@@ -263,6 +383,88 @@ def analyze_workflow(
         data=result.data,
         error=None,
     )
+
+
+@api_router.post(
+    "/knowledge/documents",
+    response_model=DocumentUploadResponse,
+    status_code=status.HTTP_200_OK,
+    summary="上传知识文档",
+)
+def upload_knowledge_document(
+    request: Request,
+    services: ApplicationServicesDependency,
+    file: UploadFile = File(...),
+    topic: str | None = Form(default=None),
+    subsystem: Subsystem | None = Form(
+        default=None
+    ),
+    overwrite: bool = Form(default=False),
+) -> DocumentUploadResponse:
+    """上传动力系统知识文档并更新知识库。"""
+
+    settings = _get_settings(request)
+    temp_path: Path | None = None
+
+    try:
+        temp_path = _save_upload_file(
+            file,
+            temp_dir=settings.upload_temp_dir,
+            max_bytes=settings.max_upload_bytes,
+        )
+
+        result = (
+            services.document_service.ingest_file(
+                temp_path,
+                original_filename=(
+                    file.filename
+                    or temp_path.name
+                ),
+                subsystem=subsystem,
+                topic=topic,
+                overwrite=overwrite,
+            )
+        )
+
+        return DocumentUploadResponse(
+            request_id=uuid4().hex,
+            trace_id=None,
+            status=ApiResponseStatus.SUCCESS,
+            data=DocumentUploadData(
+                document_id=result.document_id,
+                filename=result.filename,
+                format=result.file_type.value,
+                chunk_count=result.chunk_count,
+                upserted_count=(
+                    result.upserted_count
+                ),
+                status=(
+                    DocumentIndexStatus.UPDATED
+                    if result.updated
+                    else DocumentIndexStatus.INDEXED
+                ),
+            ),
+            error=None,
+        )
+
+    except DuplicateDocumentError as exc:
+        raise HTTPException(
+            status_code=(
+                status.HTTP_409_CONFLICT
+            ),
+            detail=str(exc),
+        ) from exc
+
+    except DocumentLoadError as exc:
+        raise HTTPException(
+            status_code=(
+                status.HTTP_400_BAD_REQUEST
+            ),
+            detail=str(exc),
+        ) from exc
+
+    finally:
+        _cleanup_temp_file(temp_path)
 
 
 @api_router.post(

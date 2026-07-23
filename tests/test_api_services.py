@@ -101,12 +101,17 @@ def test_workflow_service_hides_optional_results(
         )
     )
 
-    assert result.route == (
-        TaskType.FAULT_DIAGNOSIS
+    assert result.trace_id == "trace_service_001"
+    assert (
+        result.data.route
+        == TaskType.FAULT_DIAGNOSIS
     )
-    assert result.execution_trace is None
-    assert result.intermediate_results is None
-    assert result.warnings == []
+    assert result.data.execution_trace is None
+    assert (
+        result.data.intermediate_results
+        is None
+    )
+    assert result.data.warnings == []
 
 
 def test_workflow_service_exposes_requested_details(
@@ -175,25 +180,42 @@ def test_workflow_service_exposes_requested_details(
         )
     )
 
-    assert result.execution_trace is not None
-    assert len(result.execution_trace) == 1
+    assert (
+        result.trace_id
+        == "trace_service_002"
+    )
 
     assert (
-        result.intermediate_results
+        result.data.execution_trace
         is not None
     )
     assert len(
-        result.intermediate_results.errors
+        result.data.execution_trace
     ) == 1
 
-    assert result.needs_human_review is True
+    assert (
+        result.data.intermediate_results
+        is not None
+    )
+    assert len(
+        result.data
+        .intermediate_results
+        .errors
+    ) == 1
+
+    assert (
+        result.data.needs_human_review
+        is True
+    )
+
     assert (
         "当前结果需要动力系统专业人员复核。"
-        in result.warnings
+        in result.data.warnings
     )
+
     assert (
         "证据不足，报告被阻断。"
-        in result.warnings
+        in result.data.warnings
     )
 
 
