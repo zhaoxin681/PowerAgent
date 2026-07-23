@@ -21,6 +21,11 @@ class RuntimeEnvironment(str, Enum):
     TEST = "test"
     PRODUCTION = "production"
 
+class EmbeddingBackend(str, Enum):
+    """PowerAgent知识库使用的Embedding类型。"""
+
+    CHROMA_DEFAULT = "chroma_default"  # 供本地真实知识查询使用
+    HASH = "hash"    # 供离线测试和确定性验证使用
 
 # 配置模型本体
 class AppSettings(StrictBaseModel):
@@ -71,6 +76,36 @@ class AppSettings(StrictBaseModel):
     log_dir: Path = Field(
         default=Path("logs"),
         description="结构化日志保存目录",
+    )
+
+    chroma_path: Path = Field(
+        default=Path("data/chroma"),
+        description="生产Chroma向量知识库目录",
+    )
+
+    chroma_collection: str = Field(
+        default="poweragent_knowledge",
+        min_length=1,
+        description="生产知识库集合名称",
+    )
+
+    embedding_backend: EmbeddingBackend = Field(
+        default=EmbeddingBackend.CHROMA_DEFAULT,
+        description="知识库使用的Embedding实现",
+    )
+
+    hash_embedding_dimension: int = Field(
+        default=256,
+        ge=32,
+        le=4096,
+        description="Hash Embedding向量维度",
+    )
+
+    max_replans: int = Field(
+        default=1,
+        ge=0,
+        le=5,
+        description="工作流允许的最大重新规划次数",
     )
 
     # 字段校验器
@@ -158,6 +193,26 @@ class AppSettings(StrictBaseModel):
                 "log_dir": os.getenv(
                     "POWERAGENT_LOG_DIR",
                     "logs",
+                ),
+                "chroma_path": os.getenv(
+                    "POWERAGENT_CHROMA_PATH",
+                    "data/chroma",
+                ),
+                "chroma_collection": os.getenv(
+                    "POWERAGENT_CHROMA_COLLECTION",
+                    "poweragent_knowledge",
+                ),
+                "embedding_backend": os.getenv(
+                    "POWERAGENT_EMBEDDING_BACKEND",
+                    "chroma_default",
+                ),
+                "hash_embedding_dimension": os.getenv(
+                    "POWERAGENT_HASH_EMBEDDING_DIMENSION",
+                    "256",
+                ),
+                "max_replans": os.getenv(
+                    "POWERAGENT_MAX_REPLANS",
+                    "1",
                 ),
             }
         )
