@@ -12,6 +12,21 @@ from app.config import (
 )
 from app.main import create_app
 from app.schemas import DependencyCheckStatus
+from typing import Any, cast
+
+from app.dependencies import (
+    ApplicationServices,
+)
+
+def build_stub_services(
+    _: AppSettings,
+) -> ApplicationServices:
+    """构造健康检查使用的空服务容器。"""
+
+    return cast(
+        ApplicationServices,
+        object(),
+    )
 
 # 测试专用配置构造器
 def make_test_settings(
@@ -39,7 +54,8 @@ def test_live_health_check_returns_ok(
     application = create_app(
         make_test_settings(
             tmp_path / "logs"
-        )
+        ),
+        service_builder=build_stub_services,
     )  # 独立临时目录
 
     with TestClient(application) as client:
@@ -63,7 +79,8 @@ def test_ready_health_check_returns_ready(
     application = create_app(
         make_test_settings(
             tmp_path / "logs"
-        )
+        ),
+        service_builder=build_stub_services,
     )
 
     with TestClient(application) as client:
@@ -90,7 +107,8 @@ def test_ready_health_check_returns_503(
     application = create_app(
         make_test_settings(
             tmp_path / "logs"
-        )
+        ),
+        service_builder=build_stub_services,
     )
 
     with TestClient(application) as client:

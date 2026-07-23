@@ -19,6 +19,7 @@ from workflows.rnd_models import (
     RndAnalysisResult,
 )
 
+from dataclasses import dataclass
 
 class PowerAgentWorkflowProtocol(Protocol):
     """通用工作流服务依赖的最小接口。"""
@@ -64,7 +65,7 @@ class WorkflowService:
     def analyze(
         self,
         request: WorkflowAnalysisRequest,
-    ) -> WorkflowAnalysisData:
+    ) -> WorkflowServiceResult:
         """执行通用工作流并生成公开结果。"""
 
         state = self.workflow.invoke(
@@ -79,6 +80,13 @@ class WorkflowService:
         if issue is None:
             raise RuntimeError(
                 "通用工作流没有返回PowerSystemIssue"
+            )
+
+        trace_id = state.get("trace_id")
+
+        if not trace_id:
+            raise RuntimeError(
+                "通用工作流没有返回trace_id"
             )
 
         execution_trace = (
@@ -117,7 +125,7 @@ class WorkflowService:
             else None
         )
 
-        return WorkflowAnalysisData(
+        data = WorkflowAnalysisData(
             issue=issue,
             route=state.get("route"),
             route_status=state.get(
@@ -145,6 +153,11 @@ class WorkflowService:
             intermediate_results=(
                 intermediate_results
             ),
+        )
+
+        return WorkflowServiceResult(
+            trace_id=trace_id,
+            data=data,
         )
 
     @classmethod
@@ -251,3 +264,11 @@ class RndAnalysisService:
             skill_inputs=request.skill_inputs,
             max_retries=request.max_retries,
         )
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowServiceResult:
+    """通用工作流服务的内部返回结果。"""
+
+    trace_id: str
+    data: WorkflowAnalysisData

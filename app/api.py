@@ -3,8 +3,6 @@
 
 from __future__ import annotations
 
-from typing import cast
-
 from fastapi import (
     APIRouter,
     Request,
@@ -20,10 +18,78 @@ from app.schemas import (
     HealthReadyResponse,
     HealthReadyStatus,
 )
+from typing import Annotated, cast
+from uuid import uuid4
+
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Request,
+    Response,
+    status,
+)
+
+from app.dependencies import (
+    ApplicationServices,
+)
+from app.schemas import (
+    ApiResponseStatus,
+    RndAnalysisApiRequest,
+    RndAnalysisResponse,
+    SkillListData,
+    SkillListResponse,
+    SkillSummary,
+    WorkflowAnalysisRequest,
+    WorkflowAnalysisResponse,
+)
+
+
+def _build_skill_list_data(
+    services: ApplicationServices,
+) -> SkillListData:
+    """将Registry元数据转换为公开Skill列表。"""
+
+    tool_schemas = (
+        services.registry.get_tool_schemas()
+    )
+
+    input_schemas_by_name = {
+        item["function"]["name"]: (
+            item["function"]["parameters"]
+        )
+        for item in tool_schemas
+    }
+
+    skills = [
+        SkillSummary(
+            name=definition.name,
+            description=definition.description,
+            version=definition.version,
+            input_schema=(
+                input_schemas_by_name.get(
+                    definition.name,
+                    {},
+                )
+            ),
+        )
+        for definition
+        in services.registry.list_skills()
+    ]
+
+    return SkillListData(
+        count=len(skills),
+        skills=skills,
+    )
 
 
 health_router = APIRouter(
     tags=["health"],
+)
+
+# 新建业务
+api_router = APIRouter(
+    tags=["poweragent"],
 )
 
 
@@ -48,6 +114,37 @@ def _get_readiness_checks(
         request.app.state.readiness_checks,
     )  # 应用启动时会执行各种依赖检查，并把结果汇总并挂到state上
 
+
+def get_application_services(
+    request: Request,
+) -> ApplicationServices:
+    """获取应用启动阶段创建的核心服务。"""
+
+    services = getattr(
+        request.app.state,
+        "services",
+        None,
+    )
+
+    if services is None:
+        raise HTTPException(
+            status_code=(
+                status.HTTP_503_SERVICE_UNAVAILABLE
+            ),
+            detail=(
+                "PowerAgent核心服务尚未准备完成"
+            ),
+        )
+
+    return cast(
+        ApplicationServices,
+        services,
+    )
+
+ApplicationServicesDependency = Annotated[
+    ApplicationServices,
+    Depends(get_application_services),
+]
 
 # 存活探针
 @health_router.get(
@@ -114,4 +211,81 @@ def health_ready(
         service=settings.service_name,
         version=settings.service_version,
         checks=checks,
+    )
+
+# 把WorkflowService(服务适配层)和ApiResponse统一信封（响应封装层）真正串联起来
+@api_router.get(
+    "/skills",
+    response_model=SkillListResponse,
+    status_code=status.HTTP_200_OK,
+    summary="查询已注册Skill",
+)
+def list_skills(
+    services: ApplicationServicesDependency,
+) -> SkillListResponse:
+    """返回当前注册的动力系统Skill目录。"""
+
+    data = _build_skill_list_data(
+        services
+    )
+
+    return SkillListResponse(
+        request_id=uuid4().hex,
+        trace_id=None,
+        status=ApiResponseStatus.SUCCESS,
+        data=data,
+        error=None,
+    )
+
+
+@api_router.post(
+    "/workflows/analyze",
+    response_model=WorkflowAnalysisResponse,
+    status_code=status.HTTP_200_OK,
+    summary="执行通用PowerAgent工作流",
+)
+def analyze_workflow(
+    request_data: WorkflowAnalysisRequest,
+    services: ApplicationServicesDependency,
+) -> WorkflowAnalysisResponse:
+    """执行知识查询、分析、诊断或参数寻优。"""
+
+    result = (
+        services.workflow_service.analyze(
+            request_data
+        )
+    )
+
+    return WorkflowAnalysisResponse(
+        request_id=uuid4().hex,
+        trace_id=result.trace_id,
+        status=ApiResponseStatus.SUCCESS,
+        data=result.data,
+        error=None,
+    )
+
+
+@api_router.post(
+    "/rnd/analyze",
+    response_model=RndAnalysisResponse,
+    status_code=status.HTTP_200_OK,
+    summary="执行研发问题分析工作流",
+)
+def analyze_rnd_issue(
+    request_data: RndAnalysisApiRequest,
+    services: ApplicationServicesDependency,
+) -> RndAnalysisResponse:
+    """生成根因假设、验证实验和团队任务。"""
+
+    result = (
+        services.rnd_analysis_service
+        .analyze(request_data)
+    )
+
+    return RndAnalysisResponse(
+        request_id=uuid4().hex,
+        trace_id=result.trace_id,
+        status=ApiResponseStatus.SUCCESS,
+        data=result,
+        error=None,
     )

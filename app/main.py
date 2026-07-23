@@ -13,13 +13,26 @@ from fastapi import FastAPI
 from agent_core.logging_config import (
     configure_logging,
 )
-from app.api import health_router
+from app.api import (
+    api_router,
+    health_router,
+)
 from app.config import (
     AppSettings,
     get_settings,
 )
 from app.schemas import DependencyCheckStatus
+from collections.abc import Callable
+from app.dependencies import (
+    ApplicationServices,
+    build_application_services,
+)
 
+# 测试时可以替换真实依赖构建器，接收AppSettings参数，返回ApplicationServices实例可调用对象
+ServiceBuilder = Callable[
+    [AppSettings],
+    ApplicationServices,
+]
 
 @asynccontextmanager
 async def lifespan(
@@ -37,6 +50,11 @@ async def lifespan(
         application.state.readiness_checks,
     )
 
+    service_builder = cast(
+        ServiceBuilder,
+        application.state.service_builder,
+    )
+
     logger = configure_logging(
         log_dir=settings.log_dir,
         level=settings.log_level,
@@ -47,9 +65,50 @@ async def lifespan(
     readiness_checks["logging"] = (
         DependencyCheckStatus.OK
     )
-    readiness_checks["application"] = (
-        DependencyCheckStatus.OK
+
+    core_check_names = (
+        "llm_client",
+        "skill_registry",
+        "vector_store",
+        "rag_pipeline",
+        "poweragent_workflow",
+        "rnd_analysis_workflow",
     )
+
+    try:
+        services = service_builder(
+            settings
+        )
+
+    except Exception as exc:
+        application.state.services = None
+
+        for check_name in core_check_names:
+            readiness_checks[check_name] = (
+                DependencyCheckStatus.FAILED
+            )
+
+        logger.error(
+            "PowerAgent核心服务初始化失败",
+            extra={
+                "event": (
+                    "api_services_initialization_failed"
+                ),
+                "error_type": type(exc).__name__,
+            },
+        )
+
+    else:
+        application.state.services = services
+
+        for check_name in core_check_names:
+            readiness_checks[check_name] = (
+                DependencyCheckStatus.OK
+            )
+
+    readiness_checks["application"] = (
+            DependencyCheckStatus.OK
+        )
 
     logger.info(
         "PowerAgent API启动完成",
@@ -81,10 +140,15 @@ async def lifespan(
                 "service": settings.service_name,
             },
         )
+        application.state.services = None
 
 
 def create_app(
     settings: AppSettings | None = None,
+    *,
+    service_builder: ServiceBuilder = (
+        build_application_services
+    ),
 ) -> FastAPI:
     """创建并配置PowerAgent FastAPI应用。"""
 
@@ -110,6 +174,12 @@ def create_app(
         resolved_settings
     )
 
+    application.state.service_builder = (
+        service_builder
+    )
+
+    application.state.services = None
+
     # 初始化就绪检查
     application.state.readiness_checks = {
         "configuration": (
@@ -121,10 +191,33 @@ def create_app(
         "application": (
             DependencyCheckStatus.FAILED
         ),
+        "llm_client": (
+            DependencyCheckStatus.FAILED
+        ),
+        "skill_registry": (
+            DependencyCheckStatus.FAILED
+        ),
+        "vector_store": (
+            DependencyCheckStatus.FAILED
+        ),
+        "rag_pipeline": (
+            DependencyCheckStatus.FAILED
+        ),
+        "poweragent_workflow": (
+            DependencyCheckStatus.FAILED
+        ),
+        "rnd_analysis_workflow": (
+            DependencyCheckStatus.FAILED
+        ),
     }
 
     application.include_router(
         health_router
+    )
+
+    application.include_router(
+        api_router,
+        prefix=resolved_settings.api_prefix,
     )
 
     return application

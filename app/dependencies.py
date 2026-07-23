@@ -31,6 +31,10 @@ from skills.catalog import create_default_skills
 from workflows.rnd_analysis_workflow import (
     RndAnalysisWorkflow,
 )
+from app.services import (
+    RndAnalysisService,
+    WorkflowService,
+)
 
 # 服务容器，该容器会被挂载到app.state上，避免每个请求都重新创建
 @dataclass(frozen=True, slots=True)
@@ -43,6 +47,8 @@ class ApplicationServices:
     rag_pipeline: RAGPipeline
     poweragent_workflow: PowerAgentWorkflow
     rnd_analysis_workflow: RndAnalysisWorkflow
+    workflow_service: WorkflowService
+    rnd_analysis_service: RndAnalysisService
 
 
 def create_skill_registry() -> SkillRegistry:
@@ -149,6 +155,14 @@ def build_application_services(
         )
     )
 
+    workflow_service = WorkflowService(
+        workflow=poweragent_workflow,
+    )
+
+    rnd_analysis_service = RndAnalysisService(
+        workflow=rnd_analysis_workflow,
+    )
+
     return ApplicationServices(
         llm_client=resolved_llm_client,
         registry=registry,
@@ -159,5 +173,9 @@ def build_application_services(
         ),
         rnd_analysis_workflow=(
             rnd_analysis_workflow
+        ),
+        workflow_service=workflow_service,
+        rnd_analysis_service=(
+            rnd_analysis_service
         ),
     )
