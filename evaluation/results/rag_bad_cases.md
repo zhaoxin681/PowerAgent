@@ -2,7 +2,7 @@
 
 该文件由RAG自动评测脚本生成。
 
-Bad Case数量：8
+Bad Case数量：7
 
 ## RAG-002
 
@@ -44,8 +44,8 @@ Bad Case数量：8
     "subsystem": "battery",
     "topic": "internal_short_circuit",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -78,8 +78,8 @@ Bad Case数量：8
     "subsystem": "battery",
     "topic": "internal_short_circuit",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   }
 ]
@@ -90,7 +90,7 @@ Bad Case数量：8
 ```json
 {
   "question": "为什么不能仅根据单一阈值直接确认电池内短路？",
-  "answer": "根据现有证据，不能仅依据单一阈值直接确认电池内短路，原因包括：内短路早期特征可能较弱，需要多源数据联合判断；外部采样和连接故障可能产生相似表象，容易误判；证据明确建议避免仅依据单一阈值直接确认内短路。",
+  "answer": "根据现有证据，不能仅依据单一阈值直接确认电池内短路，原因包括：内短路早期特征可能较弱，需要多源数据联合判断；外部采样和连接故障可能产生相似表象，容易误判；诊断需要长时间静置电压、自放电速率、温度、绝缘状态等多维数据综合评估。",
   "citations": [
     {
       "chunk_id": "battery_internal_short_circuit:e6d76ca14bff3a96",
@@ -98,7 +98,7 @@ Bad Case数量：8
       "title": "锂离子电池内短路候选诊断",
       "section_path": "处置建议",
       "page_number": null,
-      "supported_claim": "证据明确建议避免仅依据单一阈值直接确认内短路。",
+      "supported_claim": "避免仅依据单一阈值直接确认内短路",
       "evidence_text": "避免仅依据单一阈值直接确认内短路。"
     },
     {
@@ -107,7 +107,7 @@ Bad Case数量：8
       "title": "锂离子电池内短路候选诊断",
       "section_path": "定义",
       "page_number": null,
-      "supported_claim": "内短路早期特征可能较弱，需要多源数据联合判断。",
+      "supported_claim": "内短路早期特征可能较弱，需要多源数据联合判断",
       "evidence_text": "内短路是电池内部正负极之间形成非预期导电通路的故障形式，其早期特征可能较弱，通常需要多源数据联合判断。"
     },
     {
@@ -116,8 +116,17 @@ Bad Case数量：8
       "title": "锂离子电池内短路候选诊断",
       "section_path": "可能原因",
       "page_number": null,
-      "supported_claim": "外部采样和连接故障可能产生相似表象，容易误判。",
+      "supported_claim": "外部采样和连接故障可能产生相似表象",
       "evidence_text": "外部采样和连接故障可能产生相似表象。"
+    },
+    {
+      "chunk_id": "battery_internal_short_circuit:d98a238b060b1fc1",
+      "document_id": "battery_internal_short_circuit",
+      "title": "锂离子电池内短路候选诊断",
+      "section_path": "所需数据",
+      "page_number": null,
+      "supported_claim": "诊断需要多维数据综合评估",
+      "evidence_text": "章节：所需数据\n\n- 长时间静置电压、自放电速率和环境温度。\n- 单体温度、绝缘状态和历史工况。\n- 外部连接、采样回路和传感器检查结果。"
     }
   ],
   "confidence": 0.9,
@@ -192,7 +201,7 @@ Bad Case数量：8
   "citation_count": {
     "passed": true,
     "expected_minimum": 1,
-    "actual": 3
+    "actual": 4
   },
   "citation_validity": {
     "passed": true,
@@ -209,6 +218,11 @@ Bad Case数量：8
       },
       {
         "chunk_id": "battery_internal_short_circuit:a6783cbc2745451d",
+        "document_id": "battery_internal_short_circuit",
+        "valid": true
+      },
+      {
+        "chunk_id": "battery_internal_short_circuit:d98a238b060b1fc1",
         "document_id": "battery_internal_short_circuit",
         "valid": true
       }
@@ -326,7 +340,7 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
 ```json
 {
   "question": "排查充电通信中断时需要采集哪些数据并如何定位？",
-  "answer": "根据现有证据，充电通信中断的典型现象包括充电握手失败或充电流程中断、请求电压/电流与实际输出长时间不一致、报文超时、计数器异常或状态机停滞。但证据未提供具体需要采集的数据项和定位步骤。",
+  "answer": "根据现有证据，充电通信中断的典型现象包括充电握手失败或充电流程中断、请求电压/电流与实际输出长时间不一致、报文超时、计数器异常或状态机停滞。但证据未明确说明需要采集哪些具体数据以及定位步骤。",
   "citations": [
     {
       "chunk_id": "charging_communication_faults:6b86bd2ad14df3bd",
@@ -341,9 +355,8 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
   "confidence": 0.3,
   "sufficient_evidence": false,
   "missing_information": [
-    "需要采集的具体数据项（如CAN报文、电压电流波形等）",
-    "定位步骤或排查流程",
-    "协议字段和超时要求的具体定义"
+    "需要采集的具体数据项（如CAN报文、电压电流值、状态机状态等）",
+    "定位步骤或排查流程"
   ],
   "needs_human_review": true
 }
@@ -538,8 +551,8 @@ EVIDENCE_SECTION_MISS, WRONG_ANSWER_MODE, ANSWER_CONCEPT_MISS
     "subsystem": "multi_system",
     "topic": "safety_terms",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   },
   {
@@ -572,8 +585,8 @@ EVIDENCE_SECTION_MISS, WRONG_ANSWER_MODE, ANSWER_CONCEPT_MISS
     "subsystem": "multi_system",
     "topic": "fault_verification",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   }
 ]
@@ -783,8 +796,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "multi_system",
     "topic": "battery_digital_twin",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -800,8 +813,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "multi_system",
     "topic": "battery_digital_twin",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -834,8 +847,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "multi_system",
     "topic": "battery_digital_twin",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   }
 ]
@@ -846,7 +859,7 @@ ANSWER_CONCEPT_MISS
 ```json
 {
   "question": "数字孪生的输出能否直接等同于真实电池状态？",
-  "answer": "不能。根据现有证据，数字孪生通过模型、运行数据和参数更新描述真实电池的状态与行为，但数字孪生不等同于真实系统本身，模型结论必须结合传感数据和适用范围解释。此外，模型输出与真实电池数据可能存在偏差，且模型参数无法适应温度、SOC或老化变化时，预测精度会下降。因此，数字孪生的输出不能直接等同于真实电池状态。",
+  "answer": "不能。根据现有证据，数字孪生通过模型、运行数据和参数更新描述真实电池的状态与行为，但数字孪生不等同于真实系统本身，模型结论必须结合传感数据和适用范围解释。此外，模型输出与真实电池数据可能存在偏差，且模型参数无法适应温度、SOC或老化变化时会导致预测精度差异。因此，数字孪生的输出不能直接等同于真实电池状态。",
   "citations": [
     {
       "chunk_id": "battery_digital_twin:e42eb0f2e8e23318",
@@ -854,7 +867,7 @@ ANSWER_CONCEPT_MISS
       "title": "动力电池数字孪生基础",
       "section_path": "定义",
       "page_number": null,
-      "supported_claim": "数字孪生通过模型和数据描述真实电池，但并非等同。",
+      "supported_claim": "数字孪生通过模型和数据描述真实电池状态，但并非等同。",
       "evidence_text": "动力电池数字孪生通过模型、运行数据和参数更新描述真实电池的状态与行为。"
     },
     {
@@ -1032,268 +1045,6 @@ ANSWER_CONCEPT_MISS
 
 EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
 
-## RAG-010
-
-### 用户问题
-
-动力电池热失控风险通常需要关注哪些联合异常信号？
-
-### 检索结果
-
-```json
-[
-  {
-    "chunk_id": "battery_thermal_runaway:3cea8d378dcca6ec",
-    "document_id": "battery_thermal_runaway",
-    "title": "动力电池热失控风险识别",
-    "content": "章节：定义\n\n热失控是电池内部放热反应超过散热能力并导致温度快速、自加速上升的危险状态。",
-    "score": 0.319491446018219,
-    "rank": 1,
-    "source_path": "thermal/battery_thermal_runaway.md",
-    "section_path": "定义",
-    "page_number": null,
-    "subsystem": "thermal",
-    "topic": "thermal_runaway",
-    "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
-    }
-  },
-  {
-    "chunk_id": "battery_thermal_runaway:7d2928ec946122aa",
-    "document_id": "battery_thermal_runaway",
-    "title": "动力电池热失控风险识别",
-    "content": "章节：适用边界\n\n- 单点高温不能自动等同于热失控。\n- 安全动作应服从产品级保护策略和应急规范。",
-    "score": 0.28312259912490845,
-    "rank": 2,
-    "source_path": "thermal/battery_thermal_runaway.md",
-    "section_path": "适用边界",
-    "page_number": null,
-    "subsystem": "thermal",
-    "topic": "thermal_runaway",
-    "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
-    }
-  },
-  {
-    "chunk_id": "battery_thermal_runaway:972e5d4663f1404b",
-    "document_id": "battery_thermal_runaway",
-    "title": "动力电池热失控风险识别",
-    "content": "章节：典型现象\n\n- 单体温度或温升速率明显异常。\n- 局部热点与周围测点温差持续扩大。\n- 温度异常同时伴随电压突变、绝缘异常或气体信号。",
-    "score": 0.23763728141784668,
-    "rank": 3,
-    "source_path": "thermal/battery_thermal_runaway.md",
-    "section_path": "典型现象",
-    "page_number": null,
-    "subsystem": "thermal",
-    "topic": "thermal_runaway",
-    "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
-    }
-  },
-  {
-    "chunk_id": "battery_thermal_runaway:f93ab2525d9f9752",
-    "document_id": "battery_thermal_runaway",
-    "title": "动力电池热失控风险识别",
-    "content": "章节：处置建议\n\n- 出现快速温升或多信号异常时执行安全降级或停止运行。\n- 将高风险对象交由专业安全流程处置。",
-    "score": 0.20490944385528564,
-    "rank": 4,
-    "source_path": "thermal/battery_thermal_runaway.md",
-    "section_path": "处置建议",
-    "page_number": null,
-    "subsystem": "thermal",
-    "topic": "thermal_runaway",
-    "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
-    }
-  },
-  {
-    "chunk_id": "battery_thermal_runaway:495b7d947c05ffd8",
-    "document_id": "battery_thermal_runaway",
-    "title": "动力电池热失控风险识别",
-    "content": "章节：验证步骤\n\n- 检查温度信号连续性和相邻测点一致性。\n- 核对冷却执行状态与实际流量或风量。\n- 联合分析温度、电压、电流和绝缘信号。",
-    "score": 0.20107907056808472,
-    "rank": 5,
-    "source_path": "thermal/battery_thermal_runaway.md",
-    "section_path": "验证步骤",
-    "page_number": null,
-    "subsystem": "thermal",
-    "topic": "thermal_runaway",
-    "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
-    }
-  }
-]
-```
-
-### RAG回答
-
-```json
-{
-  "question": "动力电池热失控风险通常需要关注哪些联合异常信号？",
-  "answer": "根据现有证据，动力电池热失控风险需要关注温度异常（单体温度或温升速率明显异常、局部热点与周围测点温差持续扩大）同时伴随电压突变、绝缘异常或气体信号等联合异常信号。",
-  "citations": [
-    {
-      "chunk_id": "battery_thermal_runaway:972e5d4663f1404b",
-      "document_id": "battery_thermal_runaway",
-      "title": "动力电池热失控风险识别",
-      "section_path": "典型现象",
-      "page_number": null,
-      "supported_claim": "热失控风险需要关注温度异常伴随电压突变、绝缘异常或气体信号等联合异常信号。",
-      "evidence_text": "温度异常同时伴随电压突变、绝缘异常或气体信号。"
-    }
-  ],
-  "confidence": 0.6,
-  "sufficient_evidence": false,
-  "missing_information": [
-    "未提供具体的联合异常信号阈值或组合模式。"
-  ],
-  "needs_human_review": true
-}
-```
-
-### 检查结果
-
-```json
-{
-  "document_hit_at_k": {
-    "passed": true,
-    "expected": [
-      "battery_thermal_runaway"
-    ],
-    "actual": [
-      "battery_thermal_runaway",
-      "battery_thermal_runaway",
-      "battery_thermal_runaway",
-      "battery_thermal_runaway",
-      "battery_thermal_runaway"
-    ]
-  },
-  "chunk_hit_at_k": {
-    "passed": true,
-    "expected": [],
-    "actual": [
-      "battery_thermal_runaway:3cea8d378dcca6ec",
-      "battery_thermal_runaway:7d2928ec946122aa",
-      "battery_thermal_runaway:972e5d4663f1404b",
-      "battery_thermal_runaway:f93ab2525d9f9752",
-      "battery_thermal_runaway:495b7d947c05ffd8"
-    ],
-    "applicable": false
-  },
-  "reciprocal_rank": {
-    "passed": true,
-    "expected": [
-      "battery_thermal_runaway"
-    ],
-    "actual": 1.0
-  },
-  "source_keywords": {
-    "passed": true,
-    "expected": [
-      "典型现象"
-    ],
-    "matched": [
-      "典型现象"
-    ]
-  },
-  "retrieval_overall": {
-    "passed": true
-  },
-  "answer_mode": {
-    "passed": false,
-    "expected": "answer",
-    "actual": "refuse"
-  },
-  "sufficient_evidence": {
-    "passed": false,
-    "expected": true,
-    "actual": false
-  },
-  "question_preserved": {
-    "passed": true,
-    "expected": "动力电池热失控风险通常需要关注哪些联合异常信号？",
-    "actual": "动力电池热失控风险通常需要关注哪些联合异常信号？"
-  },
-  "citation_count": {
-    "passed": true,
-    "expected_minimum": 1,
-    "actual": 1
-  },
-  "citation_validity": {
-    "passed": true,
-    "details": [
-      {
-        "chunk_id": "battery_thermal_runaway:972e5d4663f1404b",
-        "document_id": "battery_thermal_runaway",
-        "valid": true
-      }
-    ]
-  },
-  "answer_concepts": {
-    "passed": true,
-    "matched": 3,
-    "total": 3,
-    "details": [
-      {
-        "alternatives": [
-          "温升速率明显异常",
-          "快速温升"
-        ],
-        "matched": true
-      },
-      {
-        "alternatives": [
-          "局部热点与周围测点温差持续扩大",
-          "局部温差扩大"
-        ],
-        "matched": true
-      },
-      {
-        "alternatives": [
-          "电压突变、绝缘异常或气体信号",
-          "多信号异常"
-        ],
-        "matched": true
-      }
-    ]
-  },
-  "forbidden_claims": {
-    "passed": true,
-    "expected_absent": [],
-    "matched": []
-  },
-  "human_review": {
-    "passed": true,
-    "applicable": true,
-    "expected": true,
-    "actual": true
-  },
-  "answer_overall": {
-    "passed": false
-  },
-  "overall": {
-    "passed": false
-  }
-}
-```
-
-### 人工分析
-
-- 错误层级：检索 / 生成 / 引用 / 标注
-- 错误类型：
-- 可能原因：
-- 修复建议：
-- 回归状态：待修复
-
-### 自动分类
-
-WRONG_ANSWER_MODE
-
 ## RAG-011
 
 ### 用户问题
@@ -1317,8 +1068,8 @@ WRONG_ANSWER_MODE
     "subsystem": "thermal",
     "topic": "thermal_runaway",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   },
   {
@@ -1334,8 +1085,8 @@ WRONG_ANSWER_MODE
     "subsystem": "thermal",
     "topic": "thermal_runaway",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -1351,8 +1102,8 @@ WRONG_ANSWER_MODE
     "subsystem": "thermal",
     "topic": "thermal_runaway",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -1380,7 +1131,7 @@ WRONG_ANSWER_MODE
 ```json
 {
   "question": "动力电池达到多少摄氏度时，必须统一判定为热失控？",
-  "answer": "现有证据未提供统一的热失控判定温度阈值。热失控被定义为电池内部放热反应超过散热能力并导致温度快速、自加速上升的危险状态，其判定需结合温度、温升速率、电压、绝缘、烟气等多维信号综合判断，且单点高温不能自动等同于热失控。",
+  "answer": "现有证据未提供统一的热失控判定温度阈值。热失控被定义为电池内部放热反应超过散热能力并导致温度快速、自加速上升的危险状态，其判定需结合温度、温升速率、电压、绝缘、烟气等多维信号，不能仅凭单点高温判定。",
   "citations": [
     {
       "chunk_id": "battery_thermal_runaway:3cea8d378dcca6ec",
@@ -1388,7 +1139,7 @@ WRONG_ANSWER_MODE
       "title": "动力电池热失控风险识别",
       "section_path": "定义",
       "page_number": null,
-      "supported_claim": "热失控的定义，未提及具体温度阈值",
+      "supported_claim": "热失控的定义是内部放热反应超过散热能力并导致温度快速自加速上升。",
       "evidence_text": "热失控是电池内部放热反应超过散热能力并导致温度快速、自加速上升的危险状态。"
     },
     {
@@ -1397,7 +1148,7 @@ WRONG_ANSWER_MODE
       "title": "动力电池热失控风险识别",
       "section_path": "典型现象",
       "page_number": null,
-      "supported_claim": "热失控的典型现象包括温度异常、温差扩大及伴随信号",
+      "supported_claim": "热失控的判定需结合温度、电压、绝缘、气体等多维信号。",
       "evidence_text": "章节：典型现象\n\n- 单体温度或温升速率明显异常。\n- 局部热点与周围测点温差持续扩大。\n- 温度异常同时伴随电压突变、绝缘异常或气体信号。"
     },
     {
@@ -1406,11 +1157,11 @@ WRONG_ANSWER_MODE
       "title": "动力电池热失控风险识别",
       "section_path": "适用边界",
       "page_number": null,
-      "supported_claim": "单点高温不能自动等同于热失控，需综合判断",
+      "supported_claim": "单点高温不能自动等同于热失控，安全动作应服从产品级保护策略。",
       "evidence_text": "章节：适用边界\n\n- 单点高温不能自动等同于热失控。\n- 安全动作应服从产品级保护策略和应急规范。"
     }
   ],
-  "confidence": 0.3,
+  "confidence": 0.1,
   "sufficient_evidence": false,
   "missing_information": [
     "统一的热失控判定温度阈值",
@@ -1602,8 +1353,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "charging",
     "topic": "charging_communication",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -1619,8 +1370,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "charging",
     "topic": "charging_communication",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -1648,7 +1399,7 @@ ANSWER_CONCEPT_MISS
 ```json
 {
   "question": "充电CAN报文超过多少毫秒必须判定为通信故障？",
-  "answer": "现有证据未提供充电CAN报文超时的具体毫秒阈值。证据指出“协议字段和超时要求应以具体接口定义为准”，因此判定通信故障的超时时间需依据具体接口协议定义，无法给出统一数值。",
+  "answer": "现有证据未提供充电CAN报文超时判定为通信故障的具体毫秒数阈值。证据指出协议字段和超时要求应以具体接口定义为准，且通信中断不一定代表电池本体故障。",
   "citations": [
     {
       "chunk_id": "charging_communication_faults:cc1811a929d847a3",
@@ -1656,15 +1407,14 @@ ANSWER_CONCEPT_MISS
       "title": "充电机与BMS通信异常",
       "section_path": "适用边界",
       "page_number": null,
-      "supported_claim": "超时阈值需依据具体接口定义",
+      "supported_claim": "超时阈值应以具体接口定义为准",
       "evidence_text": "协议字段和超时要求应以具体接口定义为准。"
     }
   ],
   "confidence": 0.1,
   "sufficient_evidence": false,
   "missing_information": [
-    "充电CAN报文超时判定的具体毫秒阈值",
-    "所依据的接口协议或标准"
+    "充电CAN报文超时判定为通信故障的具体毫秒数阈值"
   ],
   "needs_human_review": false
 }
@@ -1889,31 +1639,12 @@ ANSWER_CONCEPT_MISS
 {
   "question": "内短路等效电阻5.1kΩ是不是所有动力电池统一标准？",
   "answer": "现有证据未提及内短路等效电阻5.1kΩ，也未说明该值是否为所有动力电池的统一标准。证据仅描述了内短路的定义、典型现象、所需数据和处置建议，未涉及具体电阻阈值。",
-  "citations": [
-    {
-      "chunk_id": "battery_internal_short_circuit:7b5282965bfa7526",
-      "document_id": "battery_internal_short_circuit",
-      "title": "锂离子电池内短路候选诊断",
-      "section_path": "定义",
-      "page_number": null,
-      "supported_claim": "证据未提供内短路等效电阻的具体数值或标准。",
-      "evidence_text": "内短路是电池内部正负极之间形成非预期导电通路的故障形式，其早期特征可能较弱，通常需要多源数据联合判断。"
-    },
-    {
-      "chunk_id": "battery_internal_short_circuit:e6d76ca14bff3a96",
-      "document_id": "battery_internal_short_circuit",
-      "title": "锂离子电池内短路候选诊断",
-      "section_path": "处置建议",
-      "page_number": null,
-      "supported_claim": "证据强调不应仅依据单一阈值确认内短路。",
-      "evidence_text": "避免仅依据单一阈值直接确认内短路。"
-    }
-  ],
+  "citations": [],
   "confidence": 0.0,
   "sufficient_evidence": false,
   "missing_information": [
-    "内短路等效电阻5.1kΩ的来源或标准",
-    "动力电池内短路电阻的统一阈值或标准"
+    "内短路等效电阻的具体阈值或标准",
+    "不同动力电池类型的内短路电阻标准"
   ],
   "needs_human_review": true
 }
@@ -1982,24 +1713,13 @@ ANSWER_CONCEPT_MISS
     "actual": "内短路等效电阻5.1kΩ是不是所有动力电池统一标准？"
   },
   "citation_count": {
-    "passed": true,
+    "passed": false,
     "expected_minimum": 1,
-    "actual": 2
+    "actual": 0
   },
   "citation_validity": {
     "passed": true,
-    "details": [
-      {
-        "chunk_id": "battery_internal_short_circuit:7b5282965bfa7526",
-        "document_id": "battery_internal_short_circuit",
-        "valid": true
-      },
-      {
-        "chunk_id": "battery_internal_short_circuit:e6d76ca14bff3a96",
-        "document_id": "battery_internal_short_circuit",
-        "valid": true
-      }
-    ]
+    "details": []
   },
   "answer_concepts": {
     "passed": false,
@@ -2055,4 +1775,4 @@ ANSWER_CONCEPT_MISS
 
 ### 自动分类
 
-EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
+EVIDENCE_SECTION_MISS, INSUFFICIENT_CITATIONS, ANSWER_CONCEPT_MISS

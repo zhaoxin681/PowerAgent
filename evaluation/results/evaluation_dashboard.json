@@ -1,0 +1,526 @@
+{
+  "generated_at": "2026-07-23T03:58:30.211631+00:00",
+  "status": "conditional_pass",
+  "overall_score": 92.47,
+  "total_cases": 72,
+  "available_weight": 1.0,
+  "missing_modules": [],
+  "module_scores": {
+    "issue_parser": 81.1,
+    "router": 100.0,
+    "skill_call": 98.96,
+    "rag": 85.83,
+    "report": 100.0
+  },
+  "module_results": {
+    "issue_parser": {
+      "module": "issue_parser",
+      "label": "Issue Parser",
+      "score": 81.1,
+      "overall_weight": 0.2,
+      "total_cases": 12,
+      "metrics": [
+        {
+          "metric": "call_success_rate",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "subsystem_accuracy",
+          "value": 0.9167,
+          "weight": 0.2,
+          "contribution": 18.334
+        },
+        {
+          "metric": "task_type_accuracy",
+          "value": 1.0,
+          "weight": 0.2,
+          "contribution": 20.0
+        },
+        {
+          "metric": "severity_accuracy",
+          "value": 0.75,
+          "weight": 0.15,
+          "contribution": 11.25
+        },
+        {
+          "metric": "concept_coverage",
+          "value": 0.7632,
+          "weight": 0.2,
+          "contribution": 15.264
+        },
+        {
+          "metric": "overall_case_pass_rate",
+          "value": 0.4167,
+          "weight": 0.15,
+          "contribution": 6.2505
+        }
+      ]
+    },
+    "router": {
+      "module": "router",
+      "label": "Router Agent",
+      "score": 100.0,
+      "overall_weight": 0.15,
+      "total_cases": 10,
+      "metrics": [
+        {
+          "metric": "route_accuracy",
+          "value": 1.0,
+          "weight": 0.25,
+          "contribution": 25.0
+        },
+        {
+          "metric": "status_accuracy",
+          "value": 1.0,
+          "weight": 0.2,
+          "contribution": 20.0
+        },
+        {
+          "metric": "human_review_accuracy",
+          "value": 1.0,
+          "weight": 0.2,
+          "contribution": 20.0
+        },
+        {
+          "metric": "missing_information_accuracy",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "critical_human_review_recall",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "overall_case_pass_rate",
+          "value": 1.0,
+          "weight": 0.15,
+          "contribution": 15.0
+        }
+      ]
+    },
+    "skill_call": {
+      "module": "skill_call",
+      "label": "Skill Calling",
+      "score": 98.96,
+      "overall_weight": 0.2,
+      "total_cases": 28,
+      "metrics": [
+        {
+          "metric": "status_accuracy",
+          "value": 1.0,
+          "weight": 0.15,
+          "contribution": 15.0
+        },
+        {
+          "metric": "skill_accuracy",
+          "value": 1.0,
+          "weight": 0.25,
+          "contribution": 25.0
+        },
+        {
+          "metric": "argument_case_complete_rate",
+          "value": 0.9643,
+          "weight": 0.15,
+          "contribution": 14.4645
+        },
+        {
+          "metric": "required_argument_completeness",
+          "value": 0.9924,
+          "weight": 0.2,
+          "contribution": 19.848
+        },
+        {
+          "metric": "execution_success_rate",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "no_tool_accuracy",
+          "value": 1.0,
+          "weight": 0.05,
+          "contribution": 5.0
+        },
+        {
+          "metric": "overall_case_pass_rate",
+          "value": 0.9643,
+          "weight": 0.1,
+          "contribution": 9.643
+        }
+      ]
+    },
+    "rag": {
+      "module": "rag",
+      "label": "RAG",
+      "score": 85.83,
+      "overall_weight": 0.25,
+      "total_cases": 13,
+      "metrics": [
+        {
+          "metric": "document_hit_at_k",
+          "value": 1.0,
+          "weight": 0.15,
+          "contribution": 15.0
+        },
+        {
+          "metric": "mean_reciprocal_rank",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "source_keyword_accuracy",
+          "value": 0.7368,
+          "weight": 0.1,
+          "contribution": 7.368
+        },
+        {
+          "metric": "answer_mode_accuracy",
+          "value": 0.9231,
+          "weight": 0.1,
+          "contribution": 9.231
+        },
+        {
+          "metric": "sufficient_evidence_accuracy",
+          "value": 0.9231,
+          "weight": 0.05,
+          "contribution": 4.6155
+        },
+        {
+          "metric": "citation_validity_rate",
+          "value": 1.0,
+          "weight": 0.15,
+          "contribution": 15.0
+        },
+        {
+          "metric": "answer_concept_coverage",
+          "value": 0.6667,
+          "weight": 0.15,
+          "contribution": 10.0005
+        },
+        {
+          "metric": "forbidden_claim_avoidance_rate",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "overall_case_pass_rate",
+          "value": 0.4615,
+          "weight": 0.1,
+          "contribution": 4.615
+        }
+      ]
+    },
+    "report": {
+      "module": "report",
+      "label": "Review / Report",
+      "score": 100.0,
+      "overall_weight": 0.2,
+      "total_cases": 9,
+      "metrics": [
+        {
+          "metric": "review_status_accuracy",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "report_status_accuracy",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "report_generation_accuracy",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "human_review_accuracy",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "severity_preservation_rate",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "risk_preservation_rate",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "evidence_preservation_rate",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "unresolved_preservation_rate",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "required_concept_coverage",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        },
+        {
+          "metric": "overall_case_pass_rate",
+          "value": 1.0,
+          "weight": 0.1,
+          "contribution": 10.0
+        }
+      ]
+    }
+  },
+  "safety_gate_passed": true,
+  "quality_gate_passed": false,
+  "safety_gates": [
+    {
+      "gate_id": "parser_call_success",
+      "level": "safety",
+      "module": "issue_parser",
+      "metric": "call_success_rate",
+      "operator": "min",
+      "threshold": 1.0,
+      "actual": 1.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "Issue Parser全部样本必须成功完成调用。",
+      "reason": null
+    },
+    {
+      "gate_id": "critical_route_review",
+      "level": "safety",
+      "module": "router",
+      "metric": "critical_human_review_recall",
+      "operator": "min",
+      "threshold": 1.0,
+      "actual": 1.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "Critical问题必须全部触发人工复核。",
+      "reason": null
+    },
+    {
+      "gate_id": "skill_execution_success",
+      "level": "safety",
+      "module": "skill_call",
+      "metric": "execution_success_rate",
+      "operator": "min",
+      "threshold": 1.0,
+      "actual": 1.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "应调用Skill的样本必须全部执行成功。",
+      "reason": null
+    },
+    {
+      "gate_id": "rag_pipeline_error",
+      "level": "safety",
+      "module": "rag",
+      "metric": "pipeline_error_rate",
+      "operator": "max",
+      "threshold": 0.0,
+      "actual": 0.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "RAG Pipeline不得出现运行异常。",
+      "reason": null
+    },
+    {
+      "gate_id": "rag_citation_validity",
+      "level": "safety",
+      "module": "rag",
+      "metric": "citation_validity_rate",
+      "operator": "min",
+      "threshold": 1.0,
+      "actual": 1.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "RAG引用必须全部来自真实检索结果。",
+      "reason": null
+    },
+    {
+      "gate_id": "rag_forbidden_claims",
+      "level": "safety",
+      "module": "rag",
+      "metric": "forbidden_claim_avoidance_rate",
+      "operator": "min",
+      "threshold": 1.0,
+      "actual": 1.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "RAG不得生成禁止的无证据固定结论。",
+      "reason": null
+    },
+    {
+      "gate_id": "report_generation_boundary",
+      "level": "safety",
+      "module": "report",
+      "metric": "report_generation_accuracy",
+      "operator": "min",
+      "threshold": 1.0,
+      "actual": 1.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "报告生成与阻断边界必须完全正确。",
+      "reason": null
+    },
+    {
+      "gate_id": "report_severity_preservation",
+      "level": "safety",
+      "module": "report",
+      "metric": "severity_preservation_rate",
+      "operator": "min",
+      "threshold": 1.0,
+      "actual": 1.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "最终报告必须保留原始严重程度。",
+      "reason": null
+    },
+    {
+      "gate_id": "report_pipeline_error",
+      "level": "safety",
+      "module": "report",
+      "metric": "pipeline_error_rate",
+      "operator": "max",
+      "threshold": 0.0,
+      "actual": 0.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "Review和Report联合流程不得出现异常。",
+      "reason": null
+    }
+  ],
+  "quality_gates": [
+    {
+      "gate_id": "parser_end_to_end_quality",
+      "level": "quality",
+      "module": "issue_parser",
+      "metric": "overall_case_pass_rate",
+      "operator": "min",
+      "threshold": 0.6,
+      "actual": 0.4167,
+      "passed": false,
+      "evaluated": true,
+      "description": "Issue Parser完整样本通过率不低于60%。",
+      "reason": null
+    },
+    {
+      "gate_id": "router_end_to_end_quality",
+      "level": "quality",
+      "module": "router",
+      "metric": "overall_case_pass_rate",
+      "operator": "min",
+      "threshold": 0.95,
+      "actual": 1.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "Router完整样本通过率不低于95%。",
+      "reason": null
+    },
+    {
+      "gate_id": "skill_end_to_end_quality",
+      "level": "quality",
+      "module": "skill_call",
+      "metric": "overall_case_pass_rate",
+      "operator": "min",
+      "threshold": 0.9,
+      "actual": 0.9643,
+      "passed": true,
+      "evaluated": true,
+      "description": "Skill Calling完整样本通过率不低于90%。",
+      "reason": null
+    },
+    {
+      "gate_id": "rag_retrieval_quality",
+      "level": "quality",
+      "module": "rag",
+      "metric": "retrieval_case_pass_rate",
+      "operator": "min",
+      "threshold": 0.65,
+      "actual": 0.6923,
+      "passed": true,
+      "evaluated": true,
+      "description": "RAG检索层完整通过率不低于65%。",
+      "reason": null
+    },
+    {
+      "gate_id": "rag_end_to_end_quality",
+      "level": "quality",
+      "module": "rag",
+      "metric": "overall_case_pass_rate",
+      "operator": "min",
+      "threshold": 0.6,
+      "actual": 0.4615,
+      "passed": false,
+      "evaluated": true,
+      "description": "RAG完整样本通过率不低于60%。",
+      "reason": null
+    },
+    {
+      "gate_id": "report_end_to_end_quality",
+      "level": "quality",
+      "module": "report",
+      "metric": "overall_case_pass_rate",
+      "operator": "min",
+      "threshold": 0.95,
+      "actual": 1.0,
+      "passed": true,
+      "evaluated": true,
+      "description": "Review和Report完整通过率不低于95%。",
+      "reason": null
+    }
+  ],
+  "blocking_issues": [],
+  "quality_issues": [
+    {
+      "gate_id": "parser_end_to_end_quality",
+      "level": "quality",
+      "module": "issue_parser",
+      "metric": "overall_case_pass_rate",
+      "operator": "min",
+      "threshold": 0.6,
+      "actual": 0.4167,
+      "passed": false,
+      "evaluated": true,
+      "description": "Issue Parser完整样本通过率不低于60%。",
+      "reason": null
+    },
+    {
+      "gate_id": "rag_end_to_end_quality",
+      "level": "quality",
+      "module": "rag",
+      "metric": "overall_case_pass_rate",
+      "operator": "min",
+      "threshold": 0.6,
+      "actual": 0.4615,
+      "passed": false,
+      "evaluated": true,
+      "description": "RAG完整样本通过率不低于60%。",
+      "reason": null
+    }
+  ],
+  "low_score_modules": [],
+  "thresholds": {
+    "pass_score": 85.0,
+    "conditional_pass_score": 75.0,
+    "minimum_module_score": 75.0
+  }
+}

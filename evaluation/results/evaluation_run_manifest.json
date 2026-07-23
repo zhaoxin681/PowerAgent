@@ -1,0 +1,103 @@
+{
+  "started_at": "2026-07-23T03:56:21.363610+00:00",
+  "finished_at": "2026-07-23T03:58:30.227754+00:00",
+  "build_only": false,
+  "offline_only": false,
+  "skip_rag": false,
+  "continue_on_error": false,
+  "sleep_seconds": 0.2,
+  "selected_modules": [
+    "router",
+    "report",
+    "issue_parser",
+    "skill_call",
+    "rag"
+  ],
+  "executions": [
+    {
+      "command": [
+        "E:\\Poweragent\\.venv\\Scripts\\python.exe",
+        "-m",
+        "evaluation.evaluate_router"
+      ],
+      "return_code": 0,
+      "success": true,
+      "started_at": "2026-07-23T03:56:21.363985+00:00",
+      "finished_at": "2026-07-23T03:56:21.733079+00:00",
+      "duration_seconds": 0.3691,
+      "module": "router"
+    },
+    {
+      "command": [
+        "E:\\Poweragent\\.venv\\Scripts\\python.exe",
+        "-m",
+        "evaluation.evaluate_report"
+      ],
+      "return_code": 0,
+      "success": true,
+      "started_at": "2026-07-23T03:56:21.733394+00:00",
+      "finished_at": "2026-07-23T03:56:23.015814+00:00",
+      "duration_seconds": 1.2824,
+      "module": "report"
+    },
+    {
+      "command": [
+        "E:\\Poweragent\\.venv\\Scripts\\python.exe",
+        "-m",
+        "evaluation.evaluate_issue_parser",
+        "--sleep",
+        "0.2"
+      ],
+      "return_code": 0,
+      "success": true,
+      "started_at": "2026-07-23T03:56:23.016162+00:00",
+      "finished_at": "2026-07-23T03:56:45.716705+00:00",
+      "duration_seconds": 22.7005,
+      "module": "issue_parser"
+    },
+    {
+      "command": [
+        "E:\\Poweragent\\.venv\\Scripts\\python.exe",
+        "-m",
+        "evaluation.evaluate_skill_call",
+        "--sleep",
+        "0.2"
+      ],
+      "return_code": 0,
+      "success": true,
+      "started_at": "2026-07-23T03:56:45.717123+00:00",
+      "finished_at": "2026-07-23T03:57:48.778954+00:00",
+      "duration_seconds": 63.0618,
+      "module": "skill_call"
+    },
+    {
+      "command": [
+        "E:\\Poweragent\\.venv\\Scripts\\python.exe",
+        "-m",
+        "evaluation.evaluate_rag",
+        "--sleep",
+        "0.2"
+      ],
+      "return_code": 0,
+      "success": true,
+      "started_at": "2026-07-23T03:57:48.779201+00:00",
+      "finished_at": "2026-07-23T03:58:30.112804+00:00",
+      "duration_seconds": 41.3336,
+      "module": "rag"
+    },
+    {
+      "command": [
+        "E:\\Poweragent\\.venv\\Scripts\\python.exe",
+        "-m",
+        "evaluation.build_evaluation_dashboard"
+      ],
+      "return_code": 0,
+      "success": true,
+      "started_at": "2026-07-23T03:58:30.113046+00:00",
+      "finished_at": "2026-07-23T03:58:30.227724+00:00",
+      "duration_seconds": 0.1147,
+      "module": "dashboard"
+    }
+  ],
+  "success": true
+}

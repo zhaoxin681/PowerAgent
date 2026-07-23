@@ -7,7 +7,7 @@
   "execution_success_rate": 1.0,
   "no_tool_accuracy": 1.0,
   "overall_case_pass_rate": 0.9643,
-  "average_latency_seconds": 1.8128,
+  "average_latency_seconds": 1.9557,
   "counts": {
     "total_cases": 28,
     "status_correct": 28,
@@ -20,6 +20,6 @@
     "no_tool_total": 2,
     "no_tool_correct": 2,
     "case_passed": 27,
-    "total_latency_seconds": 50.75961580002331
+    "total_latency_seconds": 54.75864289992023
   }
 }
