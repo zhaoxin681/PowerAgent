@@ -274,6 +274,43 @@ class ChromaVectorStore:
                 component="chroma_vector_store",
             ) from exc
 
+
+    def document_exists(
+        self,
+        document_id: str,
+    ) -> bool:
+        """判断指定文档是否已存在于知识库。"""
+
+        normalized_id = document_id.strip()
+
+        if not normalized_id:
+            raise ValueError(
+                "document_id不能为空"
+            )
+
+        try:
+            matched = self.collection.get(
+                where={
+                    "document_id": normalized_id,
+                },
+                include=[],
+            )
+
+            return bool(
+                matched.get("ids") or []
+            )
+
+        except Exception as exc:
+            raise VectorStoreError(
+                (
+                    "检查文档是否存在失败："
+                    f"{type(exc).__name__}: {exc}"
+                ),
+                component="chroma_vector_store",
+                document_id=normalized_id,
+            ) from exc
+
+
     def delete_document(
         self,
         document_id: str,

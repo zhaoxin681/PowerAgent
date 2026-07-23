@@ -123,3 +123,17 @@ def test_build_application_services_wires_dependencies(
         is services.poweragent_workflow
     )
     assert services.vector_store.count() == 0
+    assert (
+        services.workflow_service.workflow
+        is services.poweragent_workflow
+    )
+
+    assert (
+        services.rnd_analysis_service.workflow
+        is services.rnd_analysis_workflow
+    )
+    assert (
+        services.document_service
+        .vector_store
+        is services.vector_store
+    )

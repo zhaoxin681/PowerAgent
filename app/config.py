@@ -9,7 +9,11 @@ from functools import lru_cache
 from pathlib import Path
 
 from dotenv import load_dotenv
-from pydantic import Field, field_validator
+from pydantic import (
+    Field,
+    field_validator,
+    model_validator,
+)
 
 from agent_core.schemas import StrictBaseModel
 
@@ -108,6 +112,32 @@ class AppSettings(StrictBaseModel):
         description="工作流允许的最大重新规划次数",
     )
 
+    max_upload_mb: int = Field(
+        default=20,
+        ge=1,
+        le=200,
+        description="单个上传文件的最大体积，单位MB",
+    )
+
+    upload_temp_dir: Path = Field(
+        default=Path("data/uploads/tmp"),
+        description="上传文件的受控临时目录",
+    )
+
+    document_chunk_size: int = Field(
+        default=600,
+        ge=100,
+        le=5000,
+        description="知识文档切分块的最大字符数",
+    )
+
+    document_chunk_overlap: int = Field(
+        default=80,
+        ge=0,
+        le=1000,
+        description="相邻知识块的重叠字符数",
+    )
+
     # 字段校验器
     @field_validator("api_prefix")
     @classmethod
@@ -153,6 +183,33 @@ class AppSettings(StrictBaseModel):
             )
 
         return normalized
+
+    @model_validator(mode="after")
+    def validate_document_split_settings(
+        self,
+    ) -> "AppSettings":
+        """文档重叠长度必须小于单块长度。"""
+
+        if (
+            self.document_chunk_overlap
+            >= self.document_chunk_size
+        ):
+            raise ValueError(
+                "document_chunk_overlap必须小于"
+                "document_chunk_size"
+            )
+
+        return self
+
+    @property
+    def max_upload_bytes(self) -> int:
+        """将上传文件上限转换为字节。"""
+
+        return (
+            self.max_upload_mb
+            * 1024
+            * 1024
+        )
 
     @classmethod
     def from_env(cls) -> "AppSettings":
@@ -213,6 +270,22 @@ class AppSettings(StrictBaseModel):
                 "max_replans": os.getenv(
                     "POWERAGENT_MAX_REPLANS",
                     "1",
+                ),
+                "max_upload_mb": os.getenv(
+                    "POWERAGENT_MAX_UPLOAD_MB",
+                    "20",
+                ),
+                "upload_temp_dir": os.getenv(
+                    "POWERAGENT_UPLOAD_TEMP_DIR",
+                    "data/uploads/tmp",
+                ),
+                "document_chunk_size": os.getenv(
+                    "POWERAGENT_DOCUMENT_CHUNK_SIZE",
+                    "600",
+                ),
+                "document_chunk_overlap": os.getenv(
+                    "POWERAGENT_DOCUMENT_CHUNK_OVERLAP",
+                    "80",
                 ),
             }
         )

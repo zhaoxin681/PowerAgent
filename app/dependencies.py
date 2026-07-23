@@ -35,6 +35,11 @@ from app.services import (
     RndAnalysisService,
     WorkflowService,
 )
+from app.document_service import (
+    DocumentIngestionService,
+)
+from rag.document_loader import DocumentLoader
+from rag.text_splitter import TextSplitter
 
 # 服务容器，该容器会被挂载到app.state上，避免每个请求都重新创建
 @dataclass(frozen=True, slots=True)
@@ -49,6 +54,7 @@ class ApplicationServices:
     rnd_analysis_workflow: RndAnalysisWorkflow
     workflow_service: WorkflowService
     rnd_analysis_service: RndAnalysisService
+    document_service: DocumentIngestionService
 
 
 def create_skill_registry() -> SkillRegistry:
@@ -117,6 +123,22 @@ def build_application_services(
         ),
     )
 
+    document_service = (
+        DocumentIngestionService(
+            loader=DocumentLoader(),
+            splitter=TextSplitter(
+                chunk_size=(
+                    settings.document_chunk_size
+                ),
+                chunk_overlap=(
+                    settings
+                    .document_chunk_overlap
+                ),
+            ),
+            vector_store=vector_store,
+        )
+    )
+
     # 启动阶段执行一次轻量本地访问，
     # 确认Chroma集合可以正常读取。
     vector_store.count()
@@ -178,4 +200,5 @@ def build_application_services(
         rnd_analysis_service=(
             rnd_analysis_service
         ),
+        document_service=document_service,
     )
