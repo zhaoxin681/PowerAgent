@@ -14,12 +14,15 @@ from app.config import (
     RuntimeEnvironment,
 )
 from app.dependencies import ApplicationServices
-from app.document_service import (
-    DocumentIngestionResult,
-    DuplicateDocumentError,
-)
 from app.main import create_app
 from rag.schemas import DocumentType
+
+from app.document_service import (
+    DocumentDeletionResult,
+    DocumentIngestionResult,
+    DuplicateDocumentError,
+    KnowledgeBaseStatusResult,
+)
 
 
 class FakeDocumentService:
@@ -73,6 +76,39 @@ class FakeDocumentService:
             chunk_count=2,
             upserted_count=2,
             updated=overwrite,
+        )
+
+    def get_status(
+        self,
+    ) -> KnowledgeBaseStatusResult:
+        """返回固定知识库状态。"""
+
+        return KnowledgeBaseStatusResult(
+            collection_name=(
+                "knowledge_upload_test"
+            ),
+            chunk_count=12,
+            embedding_provider=(
+                "hash_ngram_1_3_256"
+            ),
+        )
+
+    def delete_document(
+        self,
+        document_id: str,
+    ) -> DocumentDeletionResult:
+        """返回固定删除结果。"""
+
+        deleted = (
+            document_id != "not_found"
+        )
+
+        return DocumentDeletionResult(
+            document_id=document_id,
+            deleted_chunk_count=(
+                2 if deleted else 0
+            ),
+            deleted=deleted,
         )
 
 
@@ -356,4 +392,93 @@ def test_upload_duplicate_document_returns_409(
 
     assert_temp_directory_empty(
         settings.upload_temp_dir
+    )
+
+
+def test_get_knowledge_status(
+    tmp_path: Path,
+) -> None:
+    """知识库状态接口应返回集合和知识块数量。"""
+
+    document_service = FakeDocumentService()
+
+    application, _ = build_test_app(
+        tmp_path,
+        document_service,
+    )
+
+    with TestClient(application) as client:
+        response = client.get(
+            "/api/v1/knowledge/status"
+        )
+
+    payload = response.json()
+
+    assert response.status_code == 200
+    assert payload["status"] == "success"
+    assert payload["data"] == {
+        "collection_name": (
+            "knowledge_upload_test"
+        ),
+        "chunk_count": 12,
+        "embedding_provider": (
+            "hash_ngram_1_3_256"
+        ),
+    }
+
+
+def test_delete_knowledge_document(
+    tmp_path: Path,
+) -> None:
+    """已存在文档应返回删除数量。"""
+
+    document_service = FakeDocumentService()
+
+    application, _ = build_test_app(
+        tmp_path,
+        document_service,
+    )
+
+    with TestClient(application) as client:
+        response = client.delete(
+            (
+                "/api/v1/knowledge/"
+                "documents/battery_note"
+            )
+        )
+
+    payload = response.json()
+
+    assert response.status_code == 200
+    assert payload["data"] == {
+        "document_id": "battery_note",
+        "deleted_chunk_count": 2,
+        "deleted": True,
+    }
+
+
+def test_delete_missing_document_returns_404(
+    tmp_path: Path,
+) -> None:
+    """删除不存在文档时应返回404。"""
+
+    document_service = FakeDocumentService()
+
+    application, _ = build_test_app(
+        tmp_path,
+        document_service,
+    )
+
+    with TestClient(application) as client:
+        response = client.delete(
+            (
+                "/api/v1/knowledge/"
+                "documents/not_found"
+            )
+        )
+
+    assert response.status_code == 404
+    assert (
+        "not_found"
+        in response.json()["detail"]
     )

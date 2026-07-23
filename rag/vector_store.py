@@ -275,11 +275,11 @@ class ChromaVectorStore:
             ) from exc
 
 
-    def document_exists(
+    def _find_document_chunk_ids(
         self,
         document_id: str,
-    ) -> bool:
-        """判断指定文档是否已存在于知识库。"""
+    ) -> list[str]:
+        """查找普通文档或PDF父文档对应的知识块ID。"""
 
         normalized_id = document_id.strip()
 
@@ -289,21 +289,49 @@ class ChromaVectorStore:
             )
 
         try:
-            matched = self.collection.get(
+            matched_ids: set[str] = set()
+
+            # Markdown、TXT和PDF单页document_id。
+            direct_result = self.collection.get(
                 where={
                     "document_id": normalized_id,
                 },
                 include=[],
             )
 
-            return bool(
-                matched.get("ids") or []
+            matched_ids.update(
+                str(item)
+                for item in (
+                    direct_result.get("ids")
+                    or []
+                )
             )
+
+            # PDF上传响应返回父document_id，
+            # 各页知识块通过parent_document_id关联。
+            family_result = self.collection.get(
+                where={
+                    "parent_document_id": (
+                        normalized_id
+                    ),
+                },
+                include=[],
+            )
+
+            matched_ids.update(
+                str(item)
+                for item in (
+                    family_result.get("ids")
+                    or []
+                )
+            )
+
+            return sorted(matched_ids)
 
         except Exception as exc:
             raise VectorStoreError(
                 (
-                    "检查文档是否存在失败："
+                    "查询文档知识块失败："
                     f"{type(exc).__name__}: {exc}"
                 ),
                 component="chroma_vector_store",
@@ -311,11 +339,36 @@ class ChromaVectorStore:
             ) from exc
 
 
+    def document_exists(
+        self,
+        document_id: str,
+    ) -> bool:
+        """判断普通文档或PDF父文档是否存在。"""
+
+        return bool(
+            self._find_document_chunk_ids(
+                document_id
+            )
+        )
+
+    def count_document_chunks(
+        self,
+        document_id: str,
+    ) -> int:
+        """返回指定文档对应的知识块数量。"""
+
+        return len(
+            self._find_document_chunk_ids(
+                document_id
+            )
+        )
+
+
     def delete_document(
         self,
         document_id: str,
     ) -> int:
-        """删除指定文档对应的全部知识块。"""
+        """删除普通文档或PDF父文档的全部知识块。"""
 
         normalized_id = document_id.strip()
 
@@ -325,15 +378,10 @@ class ChromaVectorStore:
             )
 
         try:
-            matched = self.collection.get(
-                where={
-                    "document_id": normalized_id
-                },
-                include=[],
-            )
-
-            matched_ids = list(
-                matched.get("ids") or []
+            matched_ids = (
+                self._find_document_chunk_ids(
+                    normalized_id
+                )
             )
 
             if not matched_ids:
@@ -345,6 +393,9 @@ class ChromaVectorStore:
 
             return len(matched_ids)
 
+        except VectorStoreError:
+            raise
+
         except Exception as exc:
             raise VectorStoreError(
                 (
@@ -354,6 +405,7 @@ class ChromaVectorStore:
                 component="chroma_vector_store",
                 document_id=normalized_id,
             ) from exc
+        
 
     def count(self) -> int:
         """返回查询当前知识块数量。"""

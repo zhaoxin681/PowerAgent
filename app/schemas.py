@@ -238,36 +238,35 @@ class HealthReadyResponse(StrictBaseModel):
 # ------------------------------------------------------------------
 
 
-class WorkflowAnalysisRequest(StrictBaseModel):
-    """通用PowerAgent工作流API请求。"""
+class WorkflowAnalysisRequest(
+    StrictBaseModel
+):
+    """通用PowerAgent工作流请求。"""
 
     raw_input: str = Field(
         min_length=1,
-        description="用户输入的原始动力系统问题",
+        description="用户输入的动力系统问题",
     )
 
     trace_id: str | None = Field(
         default=None,
         min_length=1,
-        description=(
-            "调用方指定的工作流追踪标识；"
-            "为空时由核心工作流自动生成"
-        ),
+        description="可选调用链追踪标识",
     )
 
     max_retries: int = Field(
         default=2,
         ge=0,
         le=5,
-        description="工作流允许的最大自动重试次数",
+        description="单个工作流步骤的最大重试次数",
     )
 
     skill_inputs: dict[
         str,
         dict[str, Any],
-    ] = Field(
-        default_factory=dict,
-        description="按Skill名称保存的显式业务参数",
+    ] | None = Field(
+        default=None,
+        description="按Skill名称提供的结构化输入",
     )
 
     include_trace: bool = Field(
@@ -277,7 +276,7 @@ class WorkflowAnalysisRequest(StrictBaseModel):
 
     include_intermediate_results: bool = Field(
         default=False,
-        description="是否在响应中返回中间执行结果",
+        description="是否返回Tool、RAG和错误等中间结果",
     )
 
 
@@ -503,3 +502,56 @@ class DocumentUploadResponse(
     ApiResponse[DocumentUploadData]
 ):
     """文档上传API响应。"""
+
+
+class KnowledgeBaseStatusData(
+    StrictBaseModel
+):
+    """知识库状态数据。"""
+
+    collection_name: str = Field(
+        min_length=1,
+        description="Chroma知识集合名称",
+    )
+
+    chunk_count: int = Field(
+        ge=0,
+        description="当前知识块总数",
+    )
+
+    embedding_provider: str = Field(
+        min_length=1,
+        description="当前Embedding实现名称",
+    )
+
+
+class KnowledgeBaseStatusResponse(
+    ApiResponse[KnowledgeBaseStatusData]
+):
+    """知识库状态API响应。"""
+
+
+class DocumentDeleteData(
+    StrictBaseModel
+):
+    """知识文档删除结果。"""
+
+    document_id: str = Field(
+        min_length=1,
+        description="被删除的文档标识",
+    )
+
+    deleted_chunk_count: int = Field(
+        ge=0,
+        description="实际删除的知识块数量",
+    )
+
+    deleted: bool = Field(
+        description="是否找到并删除文档",
+    )
+
+
+class DocumentDeleteResponse(
+    ApiResponse[DocumentDeleteData]
+):
+    """知识文档删除API响应。"""

@@ -1,23 +1,6 @@
-"""PowerAgent FastAPI路由(健康检查路由模块)。
-实现云原生应用常见的两个探针接口（存活/就绪探针）"""
+"""PowerAgent FastAPI路由(健康检查路由模块)。"""
 
-from __future__ import annotations
-
-from fastapi import (
-    APIRouter,
-    Request,
-    Response,
-    status,
-)
-
-from app.config import AppSettings
-from app.schemas import (
-    DependencyCheckStatus,
-    HealthLiveResponse,
-    HealthLiveStatus,
-    HealthReadyResponse,
-    HealthReadyStatus,
-)
+from pathlib import Path
 from typing import Annotated, cast
 from uuid import uuid4
 
@@ -27,20 +10,33 @@ from fastapi import (
     File,
     Form,
     HTTPException,
+    Path as ApiPath,
     Request,
     Response,
     UploadFile,
     status,
 )
 
-from app.dependencies import (
-    ApplicationServices,
+from agent_core.schemas import Subsystem
+from app.config import AppSettings
+from app.dependencies import ApplicationServices
+from app.document_service import (
+    DuplicateDocumentError,
 )
 from app.schemas import (
     ApiResponseStatus,
+    DependencyCheckStatus,
+    DocumentDeleteData,
+    DocumentDeleteResponse,
     DocumentIndexStatus,
     DocumentUploadData,
     DocumentUploadResponse,
+    HealthLiveResponse,
+    HealthLiveStatus,
+    HealthReadyResponse,
+    HealthReadyStatus,
+    KnowledgeBaseStatusData,
+    KnowledgeBaseStatusResponse,
     RndAnalysisApiRequest,
     RndAnalysisResponse,
     SkillListData,
@@ -49,22 +45,7 @@ from app.schemas import (
     WorkflowAnalysisRequest,
     WorkflowAnalysisResponse,
 )
-from pathlib import Path
-import shutil
-import uuid
-from agent_core.schemas import Subsystem
-
-from app.document_service import (
-    DuplicateDocumentError,
-)
 from rag.exceptions import DocumentLoadError
-from app.document_service import (
-    DuplicateDocumentError,
-)
-
-from rag.exceptions import (
-    DocumentLoadError,
-)
 
 
 def _build_skill_list_data(
@@ -161,7 +142,7 @@ def _save_upload_file(
     temp_path = (
         temp_dir
         /
-        f"{uuid.uuid4().hex}{suffix}"
+        f"{uuid4().hex}{suffix}"
     )
 
     total_size = 0
@@ -381,6 +362,90 @@ def analyze_workflow(
         trace_id=result.trace_id,
         status=ApiResponseStatus.SUCCESS,
         data=result.data,
+        error=None,
+    )
+
+
+@api_router.get(
+    "/knowledge/status",
+    response_model=KnowledgeBaseStatusResponse,
+    status_code=status.HTTP_200_OK,
+    summary="查询知识库状态",
+)
+def get_knowledge_base_status(
+    services: ApplicationServicesDependency,
+) -> KnowledgeBaseStatusResponse:
+    """返回当前知识库集合和知识块数量。"""
+
+    result = (
+        services.document_service
+        .get_status()
+    )
+
+    return KnowledgeBaseStatusResponse(
+        request_id=uuid4().hex,
+        trace_id=None,
+        status=ApiResponseStatus.SUCCESS,
+        data=KnowledgeBaseStatusData(
+            collection_name=(
+                result.collection_name
+            ),
+            chunk_count=result.chunk_count,
+            embedding_provider=(
+                result.embedding_provider
+            ),
+        ),
+        error=None,
+    )
+
+
+@api_router.delete(
+    "/knowledge/documents/{document_id}",
+    response_model=DocumentDeleteResponse,
+    status_code=status.HTTP_200_OK,
+    summary="删除知识文档",
+)
+def delete_knowledge_document(
+    services: ApplicationServicesDependency,
+    document_id: Annotated[
+        str,
+        ApiPath(
+            min_length=1,
+            pattern=(
+                r"^[a-z0-9]"
+                r"[a-z0-9_-]*$"
+            ),
+            description="需要删除的文档标识",
+        ),
+    ],
+) -> DocumentDeleteResponse:
+    """删除文档对应的全部向量知识块。"""
+
+    result = (
+        services.document_service
+        .delete_document(document_id)
+    )
+
+    if not result.deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=(
+                "知识库中不存在指定文档："
+                f"{document_id}"
+            ),
+        )
+
+    return DocumentDeleteResponse(
+        request_id=uuid4().hex,
+        trace_id=None,
+        status=ApiResponseStatus.SUCCESS,
+        data=DocumentDeleteData(
+            document_id=result.document_id,
+            deleted_chunk_count=(
+                result.deleted_chunk_count
+            ),
+            deleted=result.deleted,
+        ),
         error=None,
     )
 

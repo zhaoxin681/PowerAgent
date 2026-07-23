@@ -42,6 +42,24 @@ class DocumentIngestionResult:
     updated: bool
 
 
+@dataclass(frozen=True, slots=True)
+class DocumentDeletionResult:
+    """知识文档删除结果。"""
+
+    document_id: str
+    deleted_chunk_count: int
+    deleted: bool
+
+
+@dataclass(frozen=True, slots=True)
+class KnowledgeBaseStatusResult:
+    """知识库运行状态。"""
+
+    collection_name: str
+    chunk_count: int
+    embedding_provider: str
+
+
 class DocumentIngestionService:
     """完成文档加载、切分和向量库写入。"""
 
@@ -216,3 +234,49 @@ class DocumentIngestionService:
             return parent_document_id
 
         return first_document.document_id
+
+
+    def delete_document(
+        self,
+        document_id: str,
+    ) -> DocumentDeletionResult:
+        """删除指定文档及其全部知识块。"""
+
+        normalized_id = document_id.strip()
+
+        if not normalized_id:
+            raise ValueError(
+                "document_id不能为空"
+            )
+
+        deleted_count = (
+            self.vector_store.delete_document(
+                normalized_id
+            )
+        )
+
+        return DocumentDeletionResult(
+            document_id=normalized_id,
+            deleted_chunk_count=deleted_count,
+            deleted=deleted_count > 0,
+        )
+
+
+    def get_status(
+        self,
+    ) -> KnowledgeBaseStatusResult:
+        """返回当前知识库基本状态。"""
+
+        return KnowledgeBaseStatusResult(
+            collection_name=(
+                self.vector_store.collection_name
+            ),
+            chunk_count=(
+                self.vector_store.count()
+            ),
+            embedding_provider=(
+                self.vector_store
+                .embedding_provider
+                .name
+            ),
+        )
