@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 from typing import Any, cast
-
+from pathlib import Path
 from fastapi.testclient import TestClient
 
 from agent_core.schemas import (
@@ -15,6 +15,7 @@ from agent_core.schemas import (
 )
 from app.config import (
     AppSettings,
+    EmbeddingBackend,
     RuntimeEnvironment,
 )
 from app.dependencies import (
@@ -33,8 +34,10 @@ from workflows.rnd_models import (
     RndAnalysisStatus,
 )
 
-def make_settings() -> AppSettings:
-    """构造API路由测试配置。"""
+def make_settings(
+    tmp_path: Path,
+) -> AppSettings:
+    """构造完全隔离的API路由测试配置。"""
 
     return AppSettings(
         service_name="PowerAgent Test",
@@ -44,12 +47,17 @@ def make_settings() -> AppSettings:
         host="127.0.0.1",
         port=8000,
         log_level="INFO",
-        log_dir="logs/test",
-        chroma_path="data/test_chroma",
+        log_dir=tmp_path / "logs",
+        chroma_path=tmp_path / "chroma",
         chroma_collection="test_collection",
-        embedding_backend="hash",
+        embedding_backend=(
+            EmbeddingBackend.HASH
+        ),
         hash_embedding_dimension=256,
         max_replans=1,
+        upload_temp_dir=(
+            tmp_path / "uploads" / "tmp"
+        ),
     )
 
 
@@ -151,11 +159,12 @@ def build_fake_services(
 
 
 def test_list_skills_returns_registered_catalog(
+    tmp_path: Path,
 ) -> None:
     """Skill接口应返回真实注册目录。"""
 
     application = create_app(
-        make_settings(),
+        make_settings(tmp_path),
         service_builder=build_fake_services,
     )
 
@@ -177,11 +186,12 @@ def test_list_skills_returns_registered_catalog(
 
 
 def test_workflow_route_returns_trace_id(
+    tmp_path: Path,
 ) -> None:
     """通用接口应返回工作流真实trace_id。"""
 
     application = create_app(
-        make_settings(),
+        make_settings(tmp_path),
         service_builder=build_fake_services,
     )
 
@@ -218,11 +228,12 @@ def test_workflow_route_returns_trace_id(
 
 
 def test_rnd_route_returns_domain_result(
+    tmp_path: Path,
 ) -> None:
     """研发接口应返回结构化领域结果。"""
 
     application = create_app(
-        make_settings(),
+        make_settings(tmp_path),
         service_builder=build_fake_services,
     )
 
@@ -254,9 +265,16 @@ def test_rnd_route_returns_domain_result(
         ]
         is True
     )
+    assert payload["trace_id"]
+
+    assert (
+        payload["trace_id"]
+        == payload["data"]["trace_id"]
+    )
 
 
 def test_business_route_returns_503_when_services_fail(
+    tmp_path: Path,
 ) -> None:
     """核心服务失败时业务接口不得继续执行。"""
 
@@ -268,7 +286,7 @@ def test_business_route_returns_503_when_services_fail(
         )
 
     application = create_app(
-        make_settings(),
+        make_settings(tmp_path),
         service_builder=failed_builder,
     )
 
