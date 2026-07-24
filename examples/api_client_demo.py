@@ -6,7 +6,9 @@ import argparse
 import json
 import sys
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 import httpx
 
@@ -18,6 +20,12 @@ DEFAULT_BASE_URL = (
 DEFAULT_TIMEOUT_SECONDS = 30.0
 
 REQUEST_ID_HEADER = "X-Request-ID"
+
+DOCUMENT_MIME_TYPES = {
+    ".txt": "text/plain",
+    ".md": "text/markdown",
+    ".pdf": "application/pdf",
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,6 +49,9 @@ class PowerAgentApiClient:
         base_url: str,
         timeout_seconds: float,
         request_id: str | None = None,
+        transport: (
+            httpx.BaseTransport | None
+        ) = None,
     ) -> None:
         """初始化API客户端。"""
 
@@ -61,6 +72,7 @@ class PowerAgentApiClient:
             base_url=normalized_base_url,
             timeout=timeout_seconds,
             headers=headers,
+            transport=transport,
         )
 
     def close(self) -> None:
@@ -71,6 +83,8 @@ class PowerAgentApiClient:
     def __enter__(
         self,
     ) -> "PowerAgentApiClient":
+        """进入客户端上下文。"""
+
         return self
 
     def __exit__(
@@ -79,6 +93,8 @@ class PowerAgentApiClient:
         exc: object,
         traceback: object,
     ) -> None:
+        """退出客户端上下文。"""
+
         self.close()
 
     def get(
@@ -91,6 +107,62 @@ class PowerAgentApiClient:
             method="GET",
             path=path,
         )
+
+    def delete(
+        self,
+        path: str,
+    ) -> ApiClientResult:
+        """发送DELETE请求。"""
+
+        return self._send(
+            method="DELETE",
+            path=path,
+        )
+
+    def post_json(
+        self,
+        path: str,
+        payload: dict[str, Any],
+    ) -> ApiClientResult:
+        """发送JSON格式POST请求。"""
+
+        return self._send(
+            method="POST",
+            path=path,
+            json=payload,
+        )
+
+    def post_document(
+        self,
+        *,
+        path: str,
+        file_path: Path,
+        form_data: dict[str, str],
+    ) -> ApiClientResult:
+        """以multipart/form-data上传文档。"""
+
+        mime_type = (
+            DOCUMENT_MIME_TYPES.get(
+                file_path.suffix.lower(),
+                "application/octet-stream",
+            )
+        )
+
+        with file_path.open(
+            "rb"
+        ) as file_stream:
+            return self._send(
+                method="POST",
+                path=path,
+                files={
+                    "file": (
+                        file_path.name,
+                        file_stream,
+                        mime_type,
+                    )
+                },
+                data=form_data,
+            )
 
     def _send(
         self,
@@ -111,16 +183,43 @@ class PowerAgentApiClient:
             response
         )
 
-        trace_id = (
+        payload_request_id = (
+            payload.get("request_id")
+            if isinstance(payload, dict)
+            else None
+        )
+
+        header_request_id = (
+            response.headers.get(
+                REQUEST_ID_HEADER
+            )
+        )
+
+        request_id = (
+            header_request_id
+            or (
+                payload_request_id
+                if isinstance(
+                    payload_request_id,
+                    str,
+                )
+                else None
+            )
+        )
+
+        payload_trace_id = (
             payload.get("trace_id")
             if isinstance(payload, dict)
             else None
         )
 
-        request_id = (
-            response.headers.get(
-                REQUEST_ID_HEADER
+        trace_id = (
+            payload_trace_id
+            if isinstance(
+                payload_trace_id,
+                str,
             )
+            else None
         )
 
         return ApiClientResult(
@@ -130,14 +229,7 @@ class PowerAgentApiClient:
                 response.status_code
             ),
             request_id=request_id,
-            trace_id=(
-                trace_id
-                if isinstance(
-                    trace_id,
-                    str,
-                )
-                else None
-            ),
+            trace_id=trace_id,
             payload=payload,
         )
 
@@ -149,10 +241,94 @@ class PowerAgentApiClient:
 
         try:
             return response.json()
-        except json.JSONDecodeError:
+        except ValueError:
             return {
                 "raw_text": response.text,
             }
+
+
+def parse_retry_count(
+    value: str,
+) -> int:
+    """解析0至5范围内的重试次数。"""
+
+    try:
+        parsed_value = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(
+            "重试次数必须为整数"
+        ) from exc
+
+    if not 0 <= parsed_value <= 5:
+        raise argparse.ArgumentTypeError(
+            "重试次数必须处于0至5之间"
+        )
+
+    return parsed_value
+
+
+def load_json_object(
+    path: Path,
+    *,
+    label: str,
+) -> dict[str, Any]:
+    """从文件加载JSON对象。"""
+
+    try:
+        content = path.read_text(
+            encoding="utf-8"
+        )
+    except OSError as exc:
+        raise ValueError(
+            f"无法读取{label}文件：{path}"
+        ) from exc
+
+    try:
+        payload = json.loads(content)
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            f"{label}文件不是合法JSON："
+            f"{path}"
+        ) from exc
+
+    if not isinstance(payload, dict):
+        raise ValueError(
+            f"{label}文件顶层必须是JSON对象"
+        )
+
+    return payload
+
+
+def load_json_list(
+    path: Path,
+    *,
+    label: str,
+) -> list[Any]:
+    """从文件加载JSON数组。"""
+
+    try:
+        content = path.read_text(
+            encoding="utf-8"
+        )
+    except OSError as exc:
+        raise ValueError(
+            f"无法读取{label}文件：{path}"
+        ) from exc
+
+    try:
+        payload = json.loads(content)
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            f"{label}文件不是合法JSON："
+            f"{path}"
+        ) from exc
+
+    if not isinstance(payload, list):
+        raise ValueError(
+            f"{label}文件顶层必须是JSON数组"
+        )
+
+    return payload
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -186,7 +362,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--request-id",
         default=None,
         help=(
-            "可选的客户端Request ID，"
+            "可选客户端Request ID，"
             "服务端会校验并透传"
         ),
     )
@@ -211,32 +387,379 @@ def build_parser() -> argparse.ArgumentParser:
         help="查询已注册Skill目录",
     )
 
+    subparsers.add_parser(
+        "knowledge-status",
+        help="查询当前知识库状态",
+    )
+
+    upload_parser = (
+        subparsers.add_parser(
+            "document-upload",
+            help="上传知识文档并更新知识库",
+        )
+    )
+
+    upload_parser.add_argument(
+        "--file",
+        type=Path,
+        required=True,
+        help="需要上传的md、txt或pdf文件",
+    )
+
+    upload_parser.add_argument(
+        "--topic",
+        default=None,
+        help="可选知识主题",
+    )
+
+    upload_parser.add_argument(
+        "--subsystem",
+        default=None,
+        help=(
+            "可选动力系统类型，"
+            "例如battery或charging"
+        ),
+    )
+
+    upload_parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="允许覆盖相同document_id的文档",
+    )
+
+    delete_parser = (
+        subparsers.add_parser(
+            "document-delete",
+            help="根据document_id删除知识文档",
+        )
+    )
+
+    delete_parser.add_argument(
+        "--document-id",
+        required=True,
+        help="需要删除的文档稳定标识",
+    )
+
+    workflow_parser = (
+        subparsers.add_parser(
+            "workflow-analyze",
+            help="执行通用PowerAgent工作流",
+        )
+    )
+
+    workflow_parser.add_argument(
+        "--input",
+        dest="raw_input",
+        required=True,
+        help="需要分析的动力系统问题",
+    )
+
+    workflow_parser.add_argument(
+        "--trace-id",
+        default=None,
+        help="可选工作流Trace ID",
+    )
+
+    workflow_parser.add_argument(
+        "--max-retries",
+        type=parse_retry_count,
+        default=2,
+        help="单个工作流步骤最大重试次数",
+    )
+
+    workflow_parser.add_argument(
+        "--skill-inputs-json",
+        type=Path,
+        default=None,
+        help=(
+            "可选Skill输入JSON对象文件"
+        ),
+    )
+
+    workflow_parser.add_argument(
+        "--include-trace",
+        action="store_true",
+        help="在响应中返回工作流执行轨迹",
+    )
+
+    workflow_parser.add_argument(
+        "--include-intermediate-results",
+        action="store_true",
+        help="返回Tool、RAG和错误等中间结果",
+    )
+
+    rnd_parser = (
+        subparsers.add_parser(
+            "rnd-analyze",
+            help="执行研发问题分析工作流",
+        )
+    )
+
+    rnd_parser.add_argument(
+        "--input",
+        dest="raw_input",
+        required=True,
+        help="需要分析的研发问题",
+    )
+
+    rnd_parser.add_argument(
+        "--trace-id",
+        default=None,
+        help="可选研发分析Trace ID",
+    )
+
+    rnd_parser.add_argument(
+        "--affected-scope",
+        action="append",
+        default=[],
+        help=(
+            "已知影响范围，可重复提供"
+        ),
+    )
+
+    rnd_parser.add_argument(
+        "--available-data",
+        action="append",
+        default=[],
+        help=(
+            "当前可用数据，可重复提供"
+        ),
+    )
+
+    rnd_parser.add_argument(
+        "--operating-conditions-json",
+        type=Path,
+        default=None,
+        help=(
+            "运行条件JSON数组文件"
+        ),
+    )
+
+    rnd_parser.add_argument(
+        "--deliverable",
+        action="append",
+        default=[],
+        help=(
+            "需要的研发交付物，可重复提供"
+        ),
+    )
+
+    rnd_parser.add_argument(
+        "--max-retries",
+        type=parse_retry_count,
+        default=2,
+        help="基础工作流最大重试次数",
+    )
+
+    rnd_parser.add_argument(
+        "--skill-inputs-json",
+        type=Path,
+        default=None,
+        help=(
+            "可选Skill输入JSON对象文件"
+        ),
+    )
+
     return parser
+
+
+def build_workflow_payload(
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    """构造通用工作流请求体。"""
+
+    skill_inputs = (
+        load_json_object(
+            args.skill_inputs_json,
+            label="Skill输入",
+        )
+        if args.skill_inputs_json
+        is not None
+        else None
+    )
+
+    payload: dict[str, Any] = {
+        "raw_input": args.raw_input,
+        "max_retries": args.max_retries,
+        "skill_inputs": skill_inputs,
+        "include_trace": (
+            args.include_trace
+        ),
+        "include_intermediate_results": (
+            args.include_intermediate_results
+        ),
+    }
+
+    if args.trace_id:
+        payload["trace_id"] = (
+            args.trace_id
+        )
+
+    return payload
+
+
+def build_rnd_payload(
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    """构造研发分析请求体。"""
+
+    operating_conditions = (
+        load_json_list(
+            args.operating_conditions_json,
+            label="运行条件",
+        )
+        if args.operating_conditions_json
+        is not None
+        else []
+    )
+
+    skill_inputs = (
+        load_json_object(
+            args.skill_inputs_json,
+            label="Skill输入",
+        )
+        if args.skill_inputs_json
+        is not None
+        else {}
+    )
+
+    payload: dict[str, Any] = {
+        "raw_input": args.raw_input,
+        "affected_scope": list(
+            args.affected_scope
+        ),
+        "available_data": list(
+            args.available_data
+        ),
+        "operating_conditions": (
+            operating_conditions
+        ),
+        "requested_deliverables": list(
+            args.deliverable
+        ),
+        "max_retries": args.max_retries,
+        "skill_inputs": skill_inputs,
+    }
+
+    if args.trace_id:
+        payload["trace_id"] = (
+            args.trace_id
+        )
+
+    return payload
 
 
 def execute_command(
     client: PowerAgentApiClient,
-    command: str,
+    args: argparse.Namespace,
 ) -> ApiClientResult:
     """执行指定客户端命令。"""
 
-    if command == "health":
+    if args.command == "health":
         return client.get(
             "/health/live"
         )
 
-    if command == "ready":
+    if args.command == "ready":
         return client.get(
             "/health/ready"
         )
 
-    if command == "skills":
+    if args.command == "skills":
         return client.get(
             "/api/v1/skills"
         )
 
+    if (
+        args.command
+        == "knowledge-status"
+    ):
+        return client.get(
+            "/api/v1/knowledge/status"
+        )
+
+    if (
+        args.command
+        == "document-upload"
+    ):
+        file_path: Path = args.file
+
+        if not file_path.is_file():
+            raise ValueError(
+                f"上传文件不存在：{file_path}"
+            )
+
+        form_data = {
+            "overwrite": (
+                "true"
+                if args.overwrite
+                else "false"
+            )
+        }
+
+        if args.topic:
+            form_data["topic"] = (
+                args.topic
+            )
+
+        if args.subsystem:
+            form_data["subsystem"] = (
+                args.subsystem
+            )
+
+        return client.post_document(
+            path=(
+                "/api/v1/knowledge/"
+                "documents"
+            ),
+            file_path=file_path,
+            form_data=form_data,
+        )
+
+    if (
+        args.command
+        == "document-delete"
+    ):
+        document_id = (
+            args.document_id.strip()
+        )
+
+        if not document_id:
+            raise ValueError(
+                "document_id不能为空"
+            )
+
+        encoded_document_id = quote(
+            document_id,
+            safe="",
+        )
+
+        return client.delete(
+            (
+                "/api/v1/knowledge/"
+                f"documents/"
+                f"{encoded_document_id}"
+            )
+        )
+
+    if (
+        args.command
+        == "workflow-analyze"
+    ):
+        return client.post_json(
+            "/api/v1/workflows/analyze",
+            build_workflow_payload(args),
+        )
+
+    if args.command == "rnd-analyze":
+        return client.post_json(
+            "/api/v1/rnd/analyze",
+            build_rnd_payload(args),
+        )
+
     raise ValueError(
-        f"不支持的客户端命令：{command}"
+        "不支持的客户端命令："
+        f"{args.command}"
     )
 
 
@@ -248,17 +771,21 @@ def print_result(
     print(
         f"HTTP方法: {result.method}"
     )
+
     print(
         f"请求地址: {result.url}"
     )
+
     print(
         "HTTP状态: "
         f"{result.status_code}"
     )
+
     print(
         "Request ID: "
         f"{result.request_id or '-'}"
     )
+
     print(
         "Trace ID: "
         f"{result.trace_id or '-'}"
@@ -275,15 +802,22 @@ def print_result(
     )
 
 
-def main() -> int:
+def main(
+    argv: list[str] | None = None,
+) -> int:
     """运行PowerAgent API客户端。"""
 
     parser = build_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if args.timeout <= 0:
         parser.error(
             "--timeout必须大于0"
+        )
+
+    if not args.base_url.strip():
+        parser.error(
+            "--base-url不能为空"
         )
 
     try:
@@ -294,7 +828,7 @@ def main() -> int:
         ) as client:
             result = execute_command(
                 client,
-                args.command,
+                args,
             )
 
     except httpx.ConnectError:
@@ -319,6 +853,16 @@ def main() -> int:
             file=sys.stderr,
         )
         return 4
+
+    except (
+        ValueError,
+        OSError,
+    ) as exc:
+        print(
+            f"客户端输入无效：{exc}",
+            file=sys.stderr,
+        )
+        return 5
 
     print_result(result)
 
