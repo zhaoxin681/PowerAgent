@@ -18,7 +18,10 @@ from agent_core.state import (
     WorkflowNode,
     WorkflowTraceEvent,
 )
-from agent_core.workflow_models import ReviewStatus
+from agent_core.workflow_models import (
+    ReviewResult,
+    ReviewStatus,
+)
 from workflows.rnd_models import (
     EvidenceSource,
     KnownFact,
@@ -191,7 +194,10 @@ class RndAnalysisWorkflow:
         failure_reason = (
             self._build_failure_reason(
                 workflow_errors=workflow_errors,
-                upstream_finished=upstream_finished,
+                upstream_finished=(
+                    upstream_finished
+                ),
+                review_result=review_result,
             )
             if upstream_failed
             else None
@@ -457,22 +463,45 @@ class RndAnalysisWorkflow:
         *,
         workflow_errors: list[WorkflowError],
         upstream_finished: bool,
+        review_result: ReviewResult | None,
     ) -> str:
-        """构造不暴露内部异常堆栈的失败说明。"""
+        """构造非空且不暴露内部堆栈的失败说明。"""
 
         reasons = [
-            f"{error.error_code}：{error.message}"
+            (
+                f"{error.error_code}："
+                f"{error.message}"
+            )
             for error in workflow_errors
+            if (
+                error.error_code.strip()
+                and error.message.strip()
+            )
         ]
+
+        if (
+            review_result is not None
+            and review_result.status
+            == ReviewStatus.EXECUTION_FAILED
+        ):
+            reasons.append(
+                "上游工作流审核未通过"
+            )
 
         if not upstream_finished:
             reasons.append(
                 "上游工作流未正常完成"
             )
 
+        if not reasons:
+            reasons.append(
+                "上游工作流未形成可用的"
+                "研发分析上下文"
+            )
+
         return "；".join(
             dict.fromkeys(reasons)
-        ) # 去重
+        )
 
     # 统一的失败态构造器
     @classmethod
