@@ -112,11 +112,22 @@ def test_document_service_controls_overwrite(
 
     service = make_service(tmp_path)
 
-    service.ingest_file(
+    initial_result = service.ingest_file(
         file_path,
         original_filename=(
             "charging_rule.txt"
         ),
+    )   
+
+    initial_chunk_count = (
+        initial_result.chunk_count
+    )
+
+    assert initial_chunk_count >= 1
+
+    assert (
+        service.vector_store.count()
+        == initial_chunk_count
     )
 
     with pytest.raises(
@@ -146,3 +157,17 @@ def test_document_service_controls_overwrite(
     )
 
     assert updated_result.updated is True
+    assert (
+        updated_result.document_id
+        == "charging_rule"
+    )
+
+    assert (
+        updated_result.upserted_count
+        == updated_result.chunk_count
+    )
+
+    assert (
+        service.vector_store.count()
+        == updated_result.chunk_count
+    )

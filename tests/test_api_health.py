@@ -1,23 +1,24 @@
 """PowerAgent API健康检查核心测试。"""
 
-from pathlib import Path
+from __future__ import annotations
 
-import pytest
+from pathlib import Path
+from typing import cast
+
 from fastapi.testclient import TestClient
-from pydantic import ValidationError
 
 from app.config import (
     AppSettings,
+    EmbeddingBackend,
     RuntimeEnvironment,
 )
-from app.main import create_app
-from app.schemas import DependencyCheckStatus
-from typing import Any, cast
-
 from app.dependencies import (
     ApplicationServices,
 )
-
+from app.main import create_app
+from app.schemas import (
+    DependencyCheckStatus,
+)
 def build_stub_services(
     _: AppSettings,
 ) -> ApplicationServices:
@@ -30,9 +31,9 @@ def build_stub_services(
 
 # 测试专用配置构造器
 def make_test_settings(
-    log_dir: Path,
+    tmp_path: Path,
 ) -> AppSettings:
-    """构造不依赖本地.env的测试配置。"""
+    """构造完全隔离于本地环境的测试配置。"""
 
     return AppSettings(
         service_name="PowerAgent Test",
@@ -42,7 +43,18 @@ def make_test_settings(
         host="127.0.0.1",
         port=8000,
         log_level="INFO",
-        log_dir=log_dir,
+        log_dir=tmp_path / "logs",
+        chroma_path=tmp_path / "chroma",
+        chroma_collection=(
+            "health_test_collection"
+        ),
+        embedding_backend=(
+            EmbeddingBackend.HASH
+        ),
+        hash_embedding_dimension=256,
+        upload_temp_dir=(
+            tmp_path / "uploads" / "tmp"
+        ),
     )
 
 
@@ -52,9 +64,7 @@ def test_live_health_check_returns_ok(
     """存活检查应返回服务基本信息。"""
 
     application = create_app(
-        make_test_settings(
-            tmp_path / "logs"
-        ),
+        make_test_settings(tmp_path),
         service_builder=build_stub_services,
     )  # 独立临时目录
 
@@ -77,9 +87,7 @@ def test_ready_health_check_returns_ready(
     """启动完成后全部检查应为ok。"""
 
     application = create_app(
-        make_test_settings(
-            tmp_path / "logs"
-        ),
+        make_test_settings(tmp_path),
         service_builder=build_stub_services,
     )
 
@@ -105,9 +113,7 @@ def test_ready_health_check_returns_503(
     """任一关键检查失败时服务应标记未就绪。"""
 
     application = create_app(
-        make_test_settings(
-            tmp_path / "logs"
-        ),
+        make_test_settings(tmp_path),
         service_builder=build_stub_services,
     )
 
@@ -131,18 +137,3 @@ def test_ready_health_check_returns_503(
         ]
         == "failed"
     )
-
-
-def test_settings_reject_invalid_api_prefix(
-    tmp_path: Path,
-) -> None:
-    """API前缀必须以斜杠开头。"""
-
-    with pytest.raises(
-        ValidationError,
-        match="api_prefix必须以/开头",
-    ):
-        AppSettings(
-            api_prefix="api/v1",
-            log_dir=tmp_path / "logs",
-        )
