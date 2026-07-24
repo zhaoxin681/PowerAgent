@@ -133,6 +133,7 @@ class RndAnalysisWorkflow:
                 request=request,
                 error_type="MissingPowerSystemIssue",
             )
+        issue = self._normalize_rnd_issue(issue)
 
         # 从state中提取各类中间产物
         review_result = state.get("review_result")
@@ -646,21 +647,27 @@ class RndAnalysisWorkflow:
 
         return RndAnalysisStatus.COMPLETED
     
-
-    @staticmethod
+    @classmethod
     def _build_failed_result(
+        cls,
         *,
         context: RndAnalysisContext,
         reason: str,
     ) -> RndAnalysisResult:
         """构造受限的研发分析失败结果。"""
 
+        normalized_issue = (
+            cls._normalize_rnd_issue(
+                context.issue
+            )
+        )
+
         return RndAnalysisResult(
             status=(
                 RndAnalysisStatus.EXECUTION_FAILED
             ),
             trace_id=context.request.trace_id,
-            issue=context.issue,
+            issue=normalized_issue,
             summary="研发分析流程未能生成有效方案",
             known_facts=context.known_facts,
             missing_information=(
@@ -671,7 +678,9 @@ class RndAnalysisWorkflow:
             team_assignments=[],
             dependencies=[],
             risks=[],
-            overall_risk_level=RiskLevel.MEDIUM,
+            overall_risk_level=(
+                RiskLevel.MEDIUM
+            ),
             needs_human_review=True,
             unresolved_items=[
                 "需要检查上游工作流和LLM结构化输出"
@@ -686,3 +695,24 @@ class RndAnalysisWorkflow:
         """保留原顺序并去重。"""
 
         return list(dict.fromkeys(items))
+
+
+    @staticmethod
+    def _normalize_rnd_issue(
+        issue: PowerSystemIssue,
+    ) -> PowerSystemIssue:
+        """保证研发工作流输出使用研发分析任务类型。"""
+
+        if (
+            issue.task_type
+            == TaskType.RND_ANALYSIS
+        ):
+            return issue
+
+        return issue.model_copy(
+            update={
+                "task_type": (
+                    TaskType.RND_ANALYSIS
+                )
+            }
+        )

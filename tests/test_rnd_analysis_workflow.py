@@ -32,6 +32,9 @@ from workflows.rnd_models import (
     TeamName,
     ValidationExperiment,
 )
+from agent_core.llm_client import (
+    LLMTruncatedResponseError,
+)
 
 
 class FakeRndLLM:
@@ -56,6 +59,21 @@ class FakeRndLLM:
         )
         assert "known_facts" in user_input
         return self.result
+
+
+class FakeTruncatedRndLLM:
+    """模拟LLM结构化响应被截断。"""
+
+    def parse_structured(
+        self,
+        *,
+        developer_prompt: str,
+        user_input: str,
+        response_model: type,
+    ) -> RndGenerationOutput:
+        raise LLMTruncatedResponseError(
+            "模拟结构化响应被截断"
+        )
 
 
 class FakeBaseWorkflow:
@@ -255,6 +273,34 @@ def test_upstream_exception_builds_failed_context() -> None:
     assert context.known_facts == []
 
 
+def test_missing_issue_builds_failed_context() -> None:
+    """缺少结构化问题时应返回受控失败上下文。"""
+
+    fake_workflow = FakeBaseWorkflow(
+        state={
+            "trace_id": "trace-rnd-001",
+            "issue": None,
+        }
+    )
+
+    context = RndAnalysisWorkflow(
+        base_workflow=fake_workflow
+    ).build_context(make_request())
+
+    assert context.upstream_finished is False
+    assert context.upstream_failed is True
+    assert context.needs_human_review is True
+    assert (
+        context.issue.task_type
+        == TaskType.RND_ANALYSIS
+    )
+    assert context.failure_reason is not None
+    assert (
+        "MissingPowerSystemIssue"
+        in context.failure_reason
+    )
+
+
 def test_analyze_builds_full_rnd_result() -> None:
     """研发上下文应生成完整根因、实验和团队任务。"""
 
@@ -412,4 +458,53 @@ def test_analyze_builds_full_rnd_result() -> None:
         result.hypotheses[0]
         .supporting_fact_ids
         == [fact_id]
+    )
+
+
+def test_truncated_llm_response_returns_failed_result() -> None:
+    """LLM响应被截断时应返回结构化失败结果。"""
+
+    knowledge_issue = make_issue().model_copy(
+        update={
+            "task_type": (
+                TaskType.KNOWLEDGE_QUERY
+            )
+        }
+    )
+
+    base_workflow = FakeBaseWorkflow(
+        state={
+            "trace_id": "trace-rnd-001",
+            "issue": knowledge_issue,
+            "tool_results": [],
+            "rag_answers": [],
+            "review_result": make_review(),
+            "final_report": None,
+            "errors": [],
+            "execution_trace": [],
+            "needs_human_review": False,
+            "is_finished": True,
+        }
+    )
+
+    workflow = RndAnalysisWorkflow(
+        base_workflow=base_workflow,
+        llm_client=FakeTruncatedRndLLM(),
+    )
+
+    result = workflow.analyze(make_request())
+
+    assert (
+        result.status
+        == RndAnalysisStatus.EXECUTION_FAILED
+    )
+    assert (
+        result.issue.task_type
+        == TaskType.RND_ANALYSIS
+    )
+    assert result.needs_human_review is True
+    assert result.failure_reason is not None
+    assert (
+        "LLMTruncatedResponseError"
+        in result.failure_reason
     )
