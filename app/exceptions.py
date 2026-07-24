@@ -46,6 +46,14 @@ class ApiException(Exception):
         return self.message
 
 
+class RequestValidationApiError(ApiException):
+    """请求参数未通过FastAPI或Pydantic校验。"""
+
+    status_code = 422
+    code = "request_validation_error"
+    default_message = "请求参数未通过校验"
+
+
 class InvalidRequestError(ApiException):
     """请求内容不符合当前接口要求。"""
 

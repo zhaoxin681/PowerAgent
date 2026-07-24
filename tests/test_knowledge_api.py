@@ -296,9 +296,22 @@ def test_upload_document_rejects_unsupported_type(
         )
 
     assert response.status_code == 400
+    payload = response.json()
+
+    assert payload["status"] == "error"
     assert (
-        "仅支持md/txt/pdf文件"
-        in response.json()["detail"]
+        payload["error"]["code"]
+        == "document_validation_error"
+    )
+    assert (
+        payload["error"]["message"]
+        == "仅支持md/txt/pdf文件"
+    )
+    assert (
+        payload["request_id"]
+        == response.headers[
+            "X-Request-ID"
+        ]
     )
     assert document_service.call_count == 0
 
@@ -338,9 +351,15 @@ def test_upload_document_rejects_oversized_file(
         )
 
     assert response.status_code == 413
+    payload = response.json()
+
     assert (
-        "上传文件超过大小限制"
-        in response.json()["detail"]
+        payload["error"]["code"]
+        == "request_too_large"
+    )
+    assert (
+        payload["error"]["message"]
+        == "上传文件超过大小限制"
     )
     assert document_service.call_count == 0
 
@@ -379,9 +398,17 @@ def test_upload_duplicate_document_returns_409(
         )
 
     assert response.status_code == 409
+    payload = response.json()
+
+    assert (
+        payload["error"]["code"]
+        == "document_conflict"
+    )
     assert (
         "battery_note"
-        in response.json()["detail"]
+        in " ".join(
+            payload["error"]["details"]
+        )
     )
     assert document_service.call_count == 1
     assert (
@@ -478,7 +505,13 @@ def test_delete_missing_document_returns_404(
         )
 
     assert response.status_code == 404
+    payload = response.json()
+
+    assert (
+        payload["error"]["code"]
+        == "resource_not_found"
+    )
     assert (
         "not_found"
-        in response.json()["detail"]
+        in payload["error"]["message"]
     )

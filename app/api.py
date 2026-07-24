@@ -9,12 +9,18 @@ from fastapi import (
     Depends,
     File,
     Form,
-    HTTPException,
     Path as ApiPath,
     Request,
     Response,
     UploadFile,
     status,
+)
+from app.exceptions import (
+    DocumentConflictError,
+    DocumentValidationError,
+    RequestTooLargeError,
+    ResourceNotFoundError,
+    ServiceUnavailableError,
 )
 
 from agent_core.schemas import Subsystem
@@ -128,11 +134,8 @@ def _save_upload_file(
     if suffix not in (
         ALLOWED_DOCUMENT_SUFFIXES
     ):
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                "仅支持md/txt/pdf文件"
-            ),
+        raise DocumentValidationError(
+            "仅支持md/txt/pdf文件"
         )
 
     temp_dir.mkdir(
@@ -165,12 +168,8 @@ def _save_upload_file(
                 total_size += len(chunk)
 
                 if total_size > max_bytes:
-
-                    raise HTTPException(
-                        status_code=413,
-                        detail=(
-                            "上传文件超过大小限制"
-                        ),
+                    raise RequestTooLargeError(
+                        "上传文件超过大小限制"
                     )
                 buffer.write(chunk)
 
@@ -229,14 +228,7 @@ def get_application_services(
     )
 
     if services is None:
-        raise HTTPException(
-            status_code=(
-                status.HTTP_503_SERVICE_UNAVAILABLE
-            ),
-            detail=(
-                "PowerAgent核心服务尚未准备完成"
-            ),
-        )
+        raise ServiceUnavailableError()
 
     return cast(
         ApplicationServices,
@@ -417,7 +409,12 @@ def delete_knowledge_document(
     document_id: Annotated[
         str,
         ApiPath(
-            ...
+            min_length=1,
+            pattern=(
+                r"^[a-z0-9]"
+                r"[a-z0-9_-]*$"
+            ),
+            description="需要删除的文档标识",
         ),
     ],
 ) -> DocumentDeleteResponse:
@@ -429,12 +426,14 @@ def delete_knowledge_document(
     )
 
     if not result.deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=(
+        raise ResourceNotFoundError(
+            (
                 "知识库中不存在指定文档："
                 f"{document_id}"
             ),
+            details=[
+                f"document_id={document_id}",
+            ],
         )
 
     return DocumentDeleteResponse(
@@ -515,23 +514,24 @@ def upload_knowledge_document(
         )
 
     except DuplicateDocumentError as exc:
-        raise HTTPException(
-            status_code=(
-                status.HTTP_409_CONFLICT
-            ),
-            detail=str(exc),
+        raise DocumentConflictError(
+            "知识库中已经存在同一文档",
+            details=[
+                str(exc),
+            ],
         ) from exc
 
     except DocumentLoadError as exc:
-        raise HTTPException(
-            status_code=(
-                status.HTTP_400_BAD_REQUEST
+        raise DocumentValidationError(
+            "知识文档无法读取或解析",
+            details=(
+                [
+                    f"document_id={exc.document_id}"
+                ]
+                if exc.document_id
+                else []
             ),
-            detail=str(exc),
         ) from exc
-
-    finally:
-        _cleanup_temp_file(temp_path)
 
 
 @api_router.post(

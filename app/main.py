@@ -30,6 +30,9 @@ from app.dependencies import (
 from app.middleware import (
     register_request_context_middleware,
 )
+from app.error_handlers import (
+    register_exception_handlers,
+)
 
 # 测试时可以替换真实依赖构建器，接收AppSettings参数，返回ApplicationServices实例可调用对象
 ServiceBuilder = Callable[
@@ -174,6 +177,10 @@ def create_app(
     )
 
     register_request_context_middleware(
+        application
+    )
+
+    register_exception_handlers(
         application
     )
 

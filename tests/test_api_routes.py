@@ -283,3 +283,24 @@ def test_business_route_returns_503_when_services_fail(
 
     assert ready_response.status_code == 503
     assert skills_response.status_code == 503
+
+    skills_payload = (
+        skills_response.json()
+    )
+
+    assert (
+        skills_payload["status"]
+        == "error"
+    )
+
+    assert (
+        skills_payload["error"]["code"]
+        == "service_unavailable"
+    )
+
+    assert (
+        skills_payload["request_id"]
+        == skills_response.headers[
+            "X-Request-ID"
+        ]
+    )
