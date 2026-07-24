@@ -81,6 +81,17 @@ def _get_logger(
         "poweragent.api"
     )
 
+def _set_error_context(
+    request: Request,
+    *,
+    error_type: str,
+    error_code: str,
+) -> None:
+    """把错误类型和稳定错误码写入请求上下文。"""
+
+    request.state.error_type = error_type
+    request.state.error_code = error_code
+
 
 def _build_error_response(
     request: Request,
@@ -103,6 +114,11 @@ def _build_error_response(
         if trace_id is not None
         else _get_trace_id(request)
     )
+
+    if resolved_trace_id is not None:
+        request.state.trace_id = (
+            resolved_trace_id
+        )
 
     payload = ApiResponse[Any](
         request_id=request_id,
@@ -283,6 +299,12 @@ async def handle_api_exception(
 ) -> JSONResponse:
     """处理PowerAgent显式API异常。"""
 
+    _set_error_context(
+        request,
+        error_type=type(exc).__name__,
+        error_code=exc.code,
+    )
+
     logger = _get_logger(request)
 
     log_method = (
@@ -352,6 +374,12 @@ async def handle_http_exception(
         )
     )
 
+    _set_error_context(
+        request,
+        error_type=type(exc).__name__,
+        error_code=code,
+    )
+
     return _build_error_response(
         request,
         status_code=exc.status_code,
@@ -369,6 +397,12 @@ async def handle_rag_error(
 
     status_code, message, retryable = (
         _resolve_rag_error(exc)
+    )
+
+    _set_error_context(
+        request,
+        error_type=type(exc).__name__,
+        error_code=exc.code,
     )
 
     logger = _get_logger(request)
@@ -415,6 +449,12 @@ async def handle_unexpected_exception(
     exc: Exception,
 ) -> JSONResponse:
     """处理未被识别的系统异常。"""
+
+    _set_error_context(
+        request,
+        error_type=type(exc).__name__,
+        error_code="internal_server_error",
+    )
 
     logger = _get_logger(request)
 

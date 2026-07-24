@@ -532,6 +532,8 @@ def upload_knowledge_document(
                 else []
             ),
         ) from exc
+    finally:
+        _cleanup_temp_file(temp_path)
 
 
 @api_router.post(

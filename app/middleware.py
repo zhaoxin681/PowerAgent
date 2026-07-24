@@ -1,13 +1,14 @@
-"""PowerAgent API请求上下文中间件。
-用于给每个HTTP请求生成/校验一个统一的Request ID，方便日志追踪和问题排查"""
+"""PowerAgent API请求上下文与访问日志中间件。"""
 
 from __future__ import annotations
 
+import logging
 import re
 from collections.abc import (
     Awaitable,
     Callable,
 )
+from time import perf_counter
 from uuid import uuid4
 
 from fastapi import (
@@ -62,25 +63,78 @@ def get_request_id(
     ):
         return request_id
 
-    # 防御性兜底：
-    # 即使中间件未执行，也保证调用方取得合法ID。
     generated_id = uuid4().hex
     request.state.request_id = generated_id
 
     return generated_id
 
 
+def _get_trace_id(
+    request: Request,
+) -> str | None:
+    """从请求上下文读取工作流Trace ID。"""
+
+    trace_id = getattr(
+        request.state,
+        "trace_id",
+        None,
+    )
+
+    if (
+        isinstance(trace_id, str)
+        and trace_id
+    ):
+        return trace_id
+
+    return None
+
+
+def _get_client_host(
+    request: Request,
+) -> str | None:
+    """安全读取客户端地址。"""
+
+    if request.client is None:
+        return None
+
+    return request.client.host
+
+
+def _get_access_logger(
+    request: Request,
+) -> logging.Logger:
+    """获取API访问日志器。"""
+
+    application_logger = getattr(
+        request.app.state,
+        "logger",
+        None,
+    )
+
+    if isinstance(
+        application_logger,
+        logging.Logger,
+    ):
+        return application_logger.getChild(
+            "api.access"
+        )
+
+    return logging.getLogger(
+        "poweragent.api.access"
+    )
+
+
 def register_request_context_middleware(
     application: FastAPI,
 ) -> None:
-    """为FastAPI应用注册请求上下文中间件。"""
+    """注册请求上下文和访问日志中间件。"""
 
     @application.middleware("http")
     async def add_request_context(
         request: Request,
         call_next: RequestHandler,
     ) -> Response:
-        """为每个HTTP请求创建统一追踪上下文。"""
+        """建立请求上下文并记录访问日志。"""
 
         request_id = resolve_request_id(
             request.headers.get(
@@ -89,14 +143,126 @@ def register_request_context_middleware(
         )
 
         request.state.request_id = request_id
-
-        # 为后续工作流trace_id关联预留位置。
         request.state.trace_id = None
+        request.state.error_type = None
+        request.state.error_code = None
 
-        response = await call_next(request)
+        started_at = perf_counter()
 
-        response.headers[
-            REQUEST_ID_HEADER
-        ] = request_id
+        status_code = 500
+        raised_error_type: str | None = None
+        raised_error_code: str | None = None
 
-        return response
+        try:
+            response = await call_next(
+                request
+            )
+
+            status_code = (
+                response.status_code
+            )
+
+            response.headers[
+                REQUEST_ID_HEADER
+            ] = request_id
+
+            return response
+
+        except Exception as exc:
+            raised_error_type = (
+                type(exc).__name__
+            )
+
+            exception_code = getattr(
+                exc,
+                "code",
+                None,
+            )
+
+            raised_error_code = (
+                exception_code
+                if isinstance(
+                    exception_code,
+                    str,
+                )
+                else "internal_server_error"
+            )
+
+            exception_trace_id = getattr(
+                exc,
+                "trace_id",
+                None,
+            )
+
+            if (
+                isinstance(
+                    exception_trace_id,
+                    str,
+                )
+                and exception_trace_id
+            ):
+                request.state.trace_id = (
+                    exception_trace_id
+                )
+
+            # 中间件只记录异常上下文，
+            # 具体响应仍交给全局异常处理器。
+            raise
+
+        finally:
+            latency_ms = round(
+                (
+                    perf_counter()
+                    - started_at
+                )
+                * 1000,
+                2,
+            )
+
+            state_error_type = getattr(
+                request.state,
+                "error_type",
+                None,
+            )
+
+            state_error_code = getattr(
+                request.state,
+                "error_code",
+                None,
+            )
+
+            access_logger = (
+                _get_access_logger(request)
+            )
+
+            access_logger.info(
+                "PowerAgent API请求完成",
+                extra={
+                    "event": (
+                        "api_request_completed"
+                    ),
+                    "method": request.method,
+                    "path": request.url.path,
+                    "status_code": status_code,
+                    "request_id": request_id,
+                    "trace_id": (
+                        _get_trace_id(
+                            request
+                        )
+                    ),
+                    "latency_ms": latency_ms,
+                    "client_host": (
+                        _get_client_host(
+                            request
+                        )
+                    ),
+                    "error_type": (
+                        raised_error_type
+                        or state_error_type
+                    ),
+                    "error_code": (
+                        raised_error_code
+                        or state_error_code
+                    ),
+                },
+            )
