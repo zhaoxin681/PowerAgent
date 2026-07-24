@@ -28,7 +28,7 @@ from workflows.rnd_models import (
     RndPriority,
 )
 import json
-
+from uuid import uuid4
 from typing import (
     Any,
     Protocol,
@@ -110,6 +110,17 @@ class RndAnalysisWorkflow:
         max_retries: int = 2,
     ) -> RndAnalysisContext:
         """运行基础工作流并转换为研发分析上下文。"""
+
+        resolved_trace_id = (
+            request.trace_id
+            or uuid4().hex
+        )
+
+        request = request.model_copy(
+            update={
+                "trace_id": resolved_trace_id,
+            }
+        )
 
         # 调用上游工作流，捕获异常
         try:

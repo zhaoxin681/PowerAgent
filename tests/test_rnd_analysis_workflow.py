@@ -499,6 +499,10 @@ def test_truncated_llm_response_returns_failed_result() -> None:
         == RndAnalysisStatus.EXECUTION_FAILED
     )
     assert (
+            result.trace_id
+            == "trace-rnd-001"
+        )
+    assert (
         result.issue.task_type
         == TaskType.RND_ANALYSIS
     )

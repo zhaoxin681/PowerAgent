@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import (
     Any,
     Protocol,
 )
+from uuid import uuid4
 
 from agent_core.state import PowerAgentState
+from app.exceptions import (
+    WorkflowExecutionError,
+)
 from app.schemas import (
     RndAnalysisApiRequest,
     WorkflowAnalysisData,
@@ -18,8 +23,6 @@ from workflows.rnd_models import (
     RndAnalysisRequest,
     RndAnalysisResult,
 )
-
-from dataclasses import dataclass
 
 class PowerAgentWorkflowProtocol(Protocol):
     """通用工作流服务依赖的最小接口。"""
@@ -68,9 +71,14 @@ class WorkflowService:
     ) -> WorkflowServiceResult:
         """执行通用工作流并生成公开结果。"""
 
+        resolved_trace_id = (
+            request.trace_id
+            or uuid4().hex
+        )
+
         state = self.workflow.invoke(
             request.raw_input,
-            trace_id=request.trace_id,
+            trace_id=resolved_trace_id,
             max_retries=request.max_retries,
             skill_inputs=request.skill_inputs,
         )
@@ -78,16 +86,22 @@ class WorkflowService:
         issue = state.get("issue")
 
         if issue is None:
-            raise RuntimeError(
-                "通用工作流没有返回PowerSystemIssue"
+            raise WorkflowExecutionError(
+                "通用工作流没有返回结构化问题",
+                trace_id=resolved_trace_id,
             )
 
-        trace_id = state.get("trace_id")
+        state_trace_id = state.get(
+            "trace_id"
+        )
 
-        if not trace_id:
-            raise RuntimeError(
-                "通用工作流没有返回trace_id"
+        if not state_trace_id:
+            raise WorkflowExecutionError(
+                "通用工作流没有返回追踪标识",
+                trace_id=resolved_trace_id,
             )
+
+        trace_id = str(state_trace_id)
 
         execution_trace = (
             list(
@@ -248,22 +262,43 @@ class RndAnalysisService:
     ) -> RndAnalysisResult:
         """执行研发分析并返回领域结果。"""
 
-        domain_request = (
-            RndAnalysisRequest.model_validate(
-                request.model_dump(
-                    exclude={
-                        "max_retries",
-                        "skill_inputs",
-                    }
-                )
+        resolved_trace_id = (
+            request.trace_id
+            or uuid4().hex
+        )
+
+        request_payload = (
+            request.model_dump(
+                exclude={
+                    "max_retries",
+                    "skill_inputs",
+                }
             )
         )
 
-        return self.workflow.analyze(
+        request_payload["trace_id"] = (
+            resolved_trace_id
+        )
+
+        domain_request = (
+            RndAnalysisRequest.model_validate(
+                request_payload
+            )
+        )
+
+        result = self.workflow.analyze(
             domain_request,
             skill_inputs=request.skill_inputs,
             max_retries=request.max_retries,
         )
+
+        if not result.trace_id:
+            raise WorkflowExecutionError(
+                "研发分析工作流没有返回追踪标识",
+                trace_id=resolved_trace_id,
+            )
+
+        return result
 
 
 @dataclass(frozen=True, slots=True)

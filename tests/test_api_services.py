@@ -35,6 +35,11 @@ from workflows.rnd_models import (
     RndAnalysisResult,
     RndAnalysisStatus,
 )
+import re
+import pytest
+from app.exceptions import (
+    WorkflowExecutionError,
+)
 
 def make_issue(
     *,
@@ -334,4 +339,65 @@ def test_rnd_service_separates_api_options(
     assert (
         workflow.received_skill_inputs
         is not None
+    )
+    assert (
+        workflow.received_request
+        is not None
+    )
+
+    assert (
+        workflow.received_request.trace_id
+        is not None
+    )
+
+    assert re.fullmatch(
+        r"[0-9a-f]{32}",
+        workflow.received_request.trace_id,
+    )
+
+    assert (
+        result.trace_id
+        == workflow.received_request.trace_id
+    )
+
+
+def test_workflow_service_contract_error_keeps_trace_id(
+) -> None:
+    """工作流缺少必要输出时应返回可追踪异常。"""
+
+    class FakeWorkflow:
+        def invoke(
+            self,
+            raw_input: str,
+            *,
+            trace_id: str | None = None,
+            **_: Any,
+        ) -> dict[str, Any]:
+            return {
+                "trace_id": trace_id,
+                "issue": None,
+            }
+
+    service = WorkflowService(
+        workflow=FakeWorkflow()
+    )
+
+    with pytest.raises(
+        WorkflowExecutionError
+    ) as exc_info:
+        service.analyze(
+            WorkflowAnalysisRequest(
+                raw_input="分析动力电池异常",
+                trace_id="trace_contract_001",
+            )
+        )
+
+    assert (
+        exc_info.value.code
+        == "workflow_execution_error"
+    )
+
+    assert (
+        exc_info.value.trace_id
+        == "trace_contract_001"
     )

@@ -41,7 +41,19 @@ from rag.exceptions import (
     TextSplitError,
     VectorStoreError,
 )
-
+from agent_core.llm_client import (
+    LLMAuthenticationError,
+    LLMClientError,
+    LLMConnectionError,
+    LLMEmptyResponseError,
+    LLMInsufficientBalanceError,
+    LLMInvalidRequestError,
+    LLMRateLimitError,
+    LLMResponseError,
+    LLMServerError,
+    LLMTruncatedResponseError,
+    LLMValidationError,
+)
 
 def _get_trace_id(
     request: Request,
@@ -293,6 +305,120 @@ def _resolve_rag_error(
     )
 
 
+def _resolve_llm_error(
+    exc: LLMClientError,
+) -> tuple[int, str, str, bool]:
+    """将LLM异常映射为安全HTTP错误。"""
+
+    if isinstance(
+        exc,
+        LLMAuthenticationError,
+    ):
+        return (
+            502,
+            "llm_authentication_error",
+            "上游智能服务认证失败",
+            False,
+        )
+
+    if isinstance(
+        exc,
+        LLMInsufficientBalanceError,
+    ):
+        return (
+            502,
+            "llm_balance_unavailable",
+            "上游智能服务账户当前不可用",
+            False,
+        )
+
+    if isinstance(
+        exc,
+        LLMInvalidRequestError,
+    ):
+        return (
+            502,
+            "llm_invalid_request",
+            "上游智能服务请求未被接受",
+            False,
+        )
+
+    if isinstance(
+        exc,
+        LLMRateLimitError,
+    ):
+        return (
+            503,
+            "llm_rate_limited",
+            "上游智能服务繁忙，请稍后重试",
+            True,
+        )
+
+    if isinstance(
+        exc,
+        (
+            LLMConnectionError,
+            LLMServerError,
+        ),
+    ):
+        return (
+            503,
+            "llm_service_unavailable",
+            "上游智能服务暂时不可用",
+            True,
+        )
+
+    if isinstance(
+        exc,
+        LLMTruncatedResponseError,
+    ):
+        return (
+            502,
+            "llm_response_truncated",
+            "上游智能服务返回内容不完整",
+            False,
+        )
+
+    if isinstance(
+        exc,
+        LLMEmptyResponseError,
+    ):
+        return (
+            502,
+            "llm_empty_response",
+            "上游智能服务没有返回有效内容",
+            True,
+        )
+
+    if isinstance(
+        exc,
+        LLMValidationError,
+    ):
+        return (
+            502,
+            "llm_response_validation_error",
+            "上游智能服务返回内容未通过结构校验",
+            True,
+        )
+
+    if isinstance(
+        exc,
+        LLMResponseError,
+    ):
+        return (
+            502,
+            "llm_response_error",
+            "上游智能服务返回了无效内容",
+            bool(exc.retryable),
+        )
+
+    return (
+        502,
+        "llm_upstream_error",
+        "上游智能服务调用失败",
+        bool(exc.retryable),
+    )
+
 async def handle_api_exception(
     request: Request,
     exc: ApiException,
@@ -443,6 +569,55 @@ async def handle_rag_error(
         details=details,
     )
 
+async def handle_llm_error(
+    request: Request,
+    exc: LLMClientError,
+) -> JSONResponse:
+    """处理DeepSeek调用和结构化输出异常。"""
+
+    (
+        status_code,
+        code,
+        message,
+        retryable,
+    ) = _resolve_llm_error(exc)
+
+    _set_error_context(
+        request,
+        error_type=type(exc).__name__,
+        error_code=code,
+    )
+
+    logger = _get_logger(request)
+
+    logger.error(
+        "PowerAgent上游LLM调用失败",
+        extra={
+            "event": "api_llm_error",
+            "request_id": get_request_id(
+                request
+            ),
+            "trace_id": _get_trace_id(
+                request
+            ),
+            "path": request.url.path,
+            "status_code": status_code,
+            "error_code": code,
+            "error_type": (
+                type(exc).__name__
+            ),
+            "retryable": retryable,
+        },
+    )
+
+    return _build_error_response(
+        request,
+        status_code=status_code,
+        code=code,
+        message=message,
+        retryable=retryable,
+    )
+
 
 async def handle_unexpected_exception(
     request: Request,
@@ -517,6 +692,11 @@ def register_exception_handlers(
     application.add_exception_handler(
         RAGError,
         handle_rag_error,
+    )
+
+    application.add_exception_handler(
+        LLMClientError,
+        handle_llm_error,
     )
 
     application.add_exception_handler(

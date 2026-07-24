@@ -194,6 +194,23 @@ def _cleanup_temp_file(
         path.unlink()
 
 
+def _bind_trace_id(
+    request: Request,
+    requested_trace_id: str | None,
+) -> str:
+    """为一次工作流HTTP请求绑定Trace ID。"""
+
+    trace_id = (
+        requested_trace_id
+        if requested_trace_id
+        else uuid4().hex
+    )
+
+    request.state.trace_id = trace_id
+
+    return trace_id
+
+
 def _get_settings(
     request: Request,
 ) -> AppSettings:
@@ -346,9 +363,22 @@ def analyze_workflow(
 ) -> WorkflowAnalysisResponse:
     """执行知识查询、分析、诊断或参数寻优。"""
 
+    trace_id = _bind_trace_id(
+        request,
+        request_data.trace_id,
+    )
+
+    normalized_request = (
+        request_data.model_copy(
+            update={
+                "trace_id": trace_id,
+            }
+        )
+    )
+
     result = (
         services.workflow_service.analyze(
-            request_data
+            normalized_request
         )
     )
 
@@ -549,16 +579,35 @@ def analyze_rnd_issue(
 ) -> RndAnalysisResponse:
     """生成根因假设、验证实验和团队任务。"""
 
-    result = (
-        services.rnd_analysis_service
-        .analyze(request_data)
+    trace_id = _bind_trace_id(
+        request,
+        request_data.trace_id,
     )
 
-    request.state.trace_id = result.trace_id
+    normalized_request = (
+        request_data.model_copy(
+            update={
+                "trace_id": trace_id,
+            }
+        )
+    )
+
+    result = (
+        services.rnd_analysis_service
+        .analyze(normalized_request)
+    )
+
+    request.state.trace_id = (
+        result.trace_id
+        or trace_id
+    )
 
     return RndAnalysisResponse(
         request_id=get_request_id(request),
-        trace_id=result.trace_id,
+        trace_id=(
+            result.trace_id
+            or trace_id
+        ),
         status=ApiResponseStatus.SUCCESS,
         data=result,
         error=None,

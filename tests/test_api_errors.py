@@ -5,7 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import cast
 
-from fastapi import FastAPI
+from agent_core.llm_client import (
+    LLMRateLimitError,
+    LLMTruncatedResponseError,
+)
 from fastapi.testclient import TestClient
 
 from app.config import (
@@ -14,6 +17,10 @@ from app.config import (
 )
 from app.dependencies import ApplicationServices
 from app.main import create_app
+from fastapi import (
+    FastAPI,
+    Request,
+)
 
 
 def make_settings(
@@ -194,4 +201,118 @@ def test_unhandled_exception_is_sanitized(
         == response.headers[
             "X-Request-ID"
         ]
+    )
+
+
+def test_llm_rate_limit_returns_retryable_503(
+    tmp_path: Path,
+) -> None:
+    """LLM限流应返回可重试503响应。"""
+
+    application = create_app(
+        make_settings(tmp_path),
+        service_builder=build_stub_services,
+    )
+
+    @application.get(
+        "/test/llm-rate-limit"
+    )
+    def raise_llm_rate_limit(
+        request: Request,
+    ) -> None:
+        request.state.trace_id = (
+            "trace_llm_rate_001"
+        )
+
+        raise LLMRateLimitError(
+            "供应商限流内部说明"
+        )
+
+    with TestClient(
+        application,
+        raise_server_exceptions=False,
+    ) as client:
+        response = client.get(
+            "/test/llm-rate-limit"
+        )
+
+    payload = response.json()
+
+    assert response.status_code == 503
+
+    assert (
+        payload["error"]["code"]
+        == "llm_rate_limited"
+    )
+
+    assert (
+        payload["error"]["retryable"]
+        is True
+    )
+
+    assert (
+        payload["trace_id"]
+        == "trace_llm_rate_001"
+    )
+
+    assert (
+        "供应商限流内部说明"
+        not in response.text
+    )
+
+
+def test_llm_truncated_response_returns_502(
+    tmp_path: Path,
+) -> None:
+    """LLM输出截断应返回不可重试502响应。"""
+
+    application = create_app(
+        make_settings(tmp_path),
+        service_builder=build_stub_services,
+    )
+
+    @application.get(
+        "/test/llm-truncated"
+    )
+    def raise_llm_truncated(
+        request: Request,
+    ) -> None:
+        request.state.trace_id = (
+            "trace_llm_truncated_001"
+        )
+
+        raise LLMTruncatedResponseError(
+            "内部max_tokens和输出内容"
+        )
+
+    with TestClient(
+        application,
+        raise_server_exceptions=False,
+    ) as client:
+        response = client.get(
+            "/test/llm-truncated"
+        )
+
+    payload = response.json()
+
+    assert response.status_code == 502
+
+    assert (
+        payload["error"]["code"]
+        == "llm_response_truncated"
+    )
+
+    assert (
+        payload["error"]["retryable"]
+        is False
+    )
+
+    assert (
+        payload["trace_id"]
+        == "trace_llm_truncated_001"
+    )
+
+    assert (
+        "max_tokens"
+        not in response.text
     )
