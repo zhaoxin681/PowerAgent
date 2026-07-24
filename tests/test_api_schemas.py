@@ -20,8 +20,9 @@ def test_workflow_analysis_request_uses_safe_defaults(
         raw_input="分析动力电池单体压差扩大问题"
     )
 
+    assert request.trace_id is None
     assert request.max_retries == 2
-    assert request.skill_inputs == {}
+    assert request.skill_inputs is None
     assert request.include_trace is False
     assert (
         request.include_intermediate_results

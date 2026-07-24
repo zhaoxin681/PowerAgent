@@ -53,7 +53,8 @@ def test_document_service_indexes_text_file(
     """TXT文档应完成加载、切分和入库。"""
 
     file_path = (
-        tmp_path / "battery_note.txt"
+        tmp_path
+        / "178d7dadc13c4a4a.txt"
     )
 
     file_path.write_text(
@@ -110,6 +111,16 @@ def test_document_service_controls_overwrite(
         encoding="utf-8",
     )
 
+    second_temp_path = (
+        tmp_path
+        / "second_random_upload.txt"
+    )
+
+    second_temp_path.write_text(
+        "高温快充时应监测最高温度。",
+        encoding="utf-8",
+    )
+
     service = make_service(tmp_path)
 
     initial_result = service.ingest_file(
@@ -134,13 +145,13 @@ def test_document_service_controls_overwrite(
         DuplicateDocumentError
     ):
         service.ingest_file(
-            file_path,
+            second_temp_path,
             original_filename=(
                 "charging_rule.txt"
             ),
         )
 
-    file_path.write_text(
+    second_temp_path.write_text(
         (
             "高温快充时应同时监测最高温度、"
             "单体电压和充电电流。"
@@ -149,7 +160,7 @@ def test_document_service_controls_overwrite(
     )
 
     updated_result = service.ingest_file(
-        file_path,
+        second_temp_path,
         original_filename=(
             "charging_rule.txt"
         ),

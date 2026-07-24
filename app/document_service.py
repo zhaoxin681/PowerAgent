@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import re
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
@@ -91,6 +93,14 @@ class DocumentIngestionService:
 
         documents = self.loader.load_file(
             file_path
+        )
+
+        documents = (
+            self._apply_original_file_identity(
+                documents,
+                temporary_path=Path(file_path),
+                original_filename=safe_filename,
+            )
         )
 
         normalized_topic = (
@@ -186,6 +196,31 @@ class DocumentIngestionService:
 
         return safe_filename
 
+
+    @staticmethod
+    def _build_document_id(
+        filename: str,
+    ) -> str:
+        """根据安全文件名生成稳定document_id。"""
+
+        normalized_stem = re.sub(
+            r"[^a-z0-9_-]+",
+            "_",
+            Path(filename).stem.lower(),
+        ).strip("_-")
+
+        if normalized_stem:
+            return normalized_stem
+
+        source_digest = hashlib.sha256(
+            filename.encode("utf-8")
+        ).hexdigest()[:12]
+
+        return (
+            f"document_{source_digest}"
+        )
+    
+
     @staticmethod
     def _apply_api_metadata(
         document: DocumentRecord,
@@ -280,3 +315,102 @@ class DocumentIngestionService:
                 .name
             ),
         )
+
+
+    @classmethod
+    def _apply_original_file_identity(
+        cls,
+        documents: list[DocumentRecord],
+        *,
+        temporary_path: Path,
+        original_filename: str,
+    ) -> list[DocumentRecord]:
+        """消除随机临时文件名对文档身份的影响。"""
+
+        stable_parent_id = (
+            cls._build_document_id(
+                original_filename
+            )
+        )
+
+        temporary_parent_id = (
+            cls._build_document_id(
+                temporary_path.name
+            )
+        )
+
+        original_title = (
+            Path(original_filename)
+            .stem
+            .strip()
+            or original_filename
+        )
+
+        temporary_title = (
+            temporary_path.stem
+        )
+
+        normalized_documents: list[
+            DocumentRecord
+        ] = []
+
+        for document in documents:
+            document_id = (
+                document.document_id
+            )
+
+            title = document.title
+
+            metadata = dict(
+                document.metadata
+            )
+
+            if (
+                document.file_type
+                == DocumentType.PDF
+            ):
+                page_number = (
+                    document.page_number
+                )
+
+                if page_number is None:
+                    raise ValueError(
+                        "PDF文档页缺少page_number"
+                    )
+
+                document_id = (
+                    f"{stable_parent_id}_"
+                    f"p{page_number:04d}"
+                )
+
+                metadata[
+                    "parent_document_id"
+                ] = stable_parent_id
+
+            elif (
+                document.file_type
+                == DocumentType.TEXT
+                or document.document_id
+                == temporary_parent_id
+            ):
+                # TXT使用原始文件名生成稳定ID。
+                # Markdown没有显式document_id时，
+                # 其加载结果也会等于临时文件ID。
+                document_id = stable_parent_id
+
+            if title == temporary_title:
+                title = original_title
+
+            normalized_documents.append(
+                document.model_copy(
+                    update={
+                        "document_id": (
+                            document_id
+                        ),
+                        "title": title,
+                        "metadata": metadata,
+                    }
+                )
+            )
+
+        return normalized_documents

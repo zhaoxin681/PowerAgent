@@ -207,6 +207,58 @@ def test_build_context_from_reviewed_state() -> None:
     )
 
 
+def test_review_failure_builds_nonempty_failure_reason(
+) -> None:
+    """审核失败且无WorkflowError时也应生成失败原因。"""
+
+    failed_review = make_review().model_copy(
+        update={
+            "status": (
+                ReviewStatus.EXECUTION_FAILED
+            ),
+            "approved_for_report": False,
+            "findings": [],
+            "evidence": [],
+            "unresolved_items": [
+                "通用工作流没有形成可审核结果"
+            ],
+            "needs_human_review": True,
+        }
+    )
+
+    fake_workflow = FakeBaseWorkflow(
+        state={
+            "trace_id": "trace-rnd-001",
+            "issue": make_issue(),
+            "tool_results": [],
+            "rag_answers": [],
+            "review_result": failed_review,
+            "final_report": None,
+            "errors": [],
+            "execution_trace": [],
+            "needs_human_review": True,
+            "is_finished": True,
+        }
+    )
+
+    workflow = RndAnalysisWorkflow(
+        base_workflow=fake_workflow
+    )
+
+    context = workflow.build_context(
+        make_request()
+    )
+
+    assert context.upstream_finished is True
+    assert context.upstream_failed is True
+    assert context.needs_human_review is True
+
+    assert (
+        context.failure_reason
+        == "上游工作流审核未通过"
+    )
+
+
 def test_missing_information_is_merged() -> None:
     """Issue、RAG和Review缺失信息应合并去重。"""
 
@@ -511,4 +563,116 @@ def test_truncated_llm_response_returns_failed_result() -> None:
     assert (
         "LLMTruncatedResponseError"
         in result.failure_reason
+    )
+
+
+def test_review_failure_returns_structured_result(
+) -> None:
+    """审核失败应返回结构化研发失败结果。"""
+
+    failed_review = make_review().model_copy(
+        update={
+            "status": (
+                ReviewStatus.EXECUTION_FAILED
+            ),
+            "approved_for_report": False,
+            "findings": [],
+            "evidence": [],
+            "unresolved_items": [
+                "通用工作流没有形成可审核结果"
+            ],
+            "needs_human_review": True,
+        }
+    )
+
+    fake_workflow = FakeBaseWorkflow(
+        state={
+            "trace_id": "trace-rnd-001",
+            "issue": make_issue(),
+            "tool_results": [],
+            "rag_answers": [],
+            "review_result": failed_review,
+            "final_report": None,
+            "errors": [],
+            "execution_trace": [],
+            "needs_human_review": True,
+            "is_finished": True,
+        }
+    )
+
+    workflow = RndAnalysisWorkflow(
+        base_workflow=fake_workflow,
+        llm_client=None,
+    )
+
+    result = workflow.analyze(
+        make_request()
+    )
+
+    assert (
+        result.status
+        == RndAnalysisStatus.EXECUTION_FAILED
+    )
+
+    assert result.needs_human_review is True
+
+    assert (
+        result.failure_reason
+        == "上游工作流审核未通过"
+    )
+
+    assert (
+        result.trace_id
+        == "trace-rnd-001"
+    )
+
+
+def test_review_failure_builds_nonempty_failure_reason(
+) -> None:
+    """审核失败且没有显式错误时应生成失败原因。"""
+
+    failed_review = make_review().model_copy(
+        update={
+            "status": (
+                ReviewStatus.EXECUTION_FAILED
+            ),
+            "approved_for_report": False,
+            "findings": [],
+            "evidence": [],
+            "unresolved_items": [
+                "通用工作流未形成可审核结果"
+            ],
+            "needs_human_review": True,
+        }
+    )
+
+    fake_workflow = FakeBaseWorkflow(
+        state={
+            "trace_id": "trace-rnd-001",
+            "issue": make_issue(),
+            "tool_results": [],
+            "rag_answers": [],
+            "review_result": failed_review,
+            "final_report": None,
+            "errors": [],
+            "execution_trace": [],
+            "needs_human_review": True,
+            "is_finished": True,
+        }
+    )
+
+    workflow = RndAnalysisWorkflow(
+        base_workflow=fake_workflow
+    )
+
+    context = workflow.build_context(
+        make_request()
+    )
+
+    assert context.upstream_finished is True
+    assert context.upstream_failed is True
+
+    assert (
+        context.failure_reason
+        == "上游工作流审核未通过"
     )
