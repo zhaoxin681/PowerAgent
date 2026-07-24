@@ -46,6 +46,7 @@ from app.schemas import (
     WorkflowAnalysisResponse,
 )
 from rag.exceptions import DocumentLoadError
+from app.middleware import get_request_id
 
 
 def _build_skill_list_data(
@@ -322,6 +323,7 @@ def health_ready(
     summary="查询已注册Skill",
 )
 def list_skills(
+    request: Request,
     services: ApplicationServicesDependency,
 ) -> SkillListResponse:
     """返回当前注册的动力系统Skill目录。"""
@@ -331,7 +333,7 @@ def list_skills(
     )
 
     return SkillListResponse(
-        request_id=uuid4().hex,
+        request_id=get_request_id(request),
         trace_id=None,
         status=ApiResponseStatus.SUCCESS,
         data=data,
@@ -346,6 +348,7 @@ def list_skills(
     summary="执行通用PowerAgent工作流",
 )
 def analyze_workflow(
+    request: Request,
     request_data: WorkflowAnalysisRequest,
     services: ApplicationServicesDependency,
 ) -> WorkflowAnalysisResponse:
@@ -357,8 +360,10 @@ def analyze_workflow(
         )
     )
 
+    request.state.trace_id = result.trace_id
+
     return WorkflowAnalysisResponse(
-        request_id=uuid4().hex,
+        request_id=get_request_id(request),
         trace_id=result.trace_id,
         status=ApiResponseStatus.SUCCESS,
         data=result.data,
@@ -373,6 +378,7 @@ def analyze_workflow(
     summary="查询知识库状态",
 )
 def get_knowledge_base_status(
+    request: Request,
     services: ApplicationServicesDependency,
 ) -> KnowledgeBaseStatusResponse:
     """返回当前知识库集合和知识块数量。"""
@@ -383,7 +389,7 @@ def get_knowledge_base_status(
     )
 
     return KnowledgeBaseStatusResponse(
-        request_id=uuid4().hex,
+        request_id=get_request_id(request),
         trace_id=None,
         status=ApiResponseStatus.SUCCESS,
         data=KnowledgeBaseStatusData(
@@ -406,16 +412,12 @@ def get_knowledge_base_status(
     summary="删除知识文档",
 )
 def delete_knowledge_document(
+    request: Request,
     services: ApplicationServicesDependency,
     document_id: Annotated[
         str,
         ApiPath(
-            min_length=1,
-            pattern=(
-                r"^[a-z0-9]"
-                r"[a-z0-9_-]*$"
-            ),
-            description="需要删除的文档标识",
+            ...
         ),
     ],
 ) -> DocumentDeleteResponse:
@@ -436,7 +438,7 @@ def delete_knowledge_document(
         )
 
     return DocumentDeleteResponse(
-        request_id=uuid4().hex,
+        request_id=get_request_id(request),
         trace_id=None,
         status=ApiResponseStatus.SUCCESS,
         data=DocumentDeleteData(
@@ -492,7 +494,7 @@ def upload_knowledge_document(
         )
 
         return DocumentUploadResponse(
-            request_id=uuid4().hex,
+            request_id=get_request_id(request),
             trace_id=None,
             status=ApiResponseStatus.SUCCESS,
             data=DocumentUploadData(
@@ -539,6 +541,7 @@ def upload_knowledge_document(
     summary="执行研发问题分析工作流",
 )
 def analyze_rnd_issue(
+    request: Request,
     request_data: RndAnalysisApiRequest,
     services: ApplicationServicesDependency,
 ) -> RndAnalysisResponse:
@@ -549,8 +552,10 @@ def analyze_rnd_issue(
         .analyze(request_data)
     )
 
+    request.state.trace_id = result.trace_id
+
     return RndAnalysisResponse(
-        request_id=uuid4().hex,
+        request_id=get_request_id(request),
         trace_id=result.trace_id,
         status=ApiResponseStatus.SUCCESS,
         data=result,

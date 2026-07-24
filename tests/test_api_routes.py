@@ -204,6 +204,17 @@ def test_workflow_route_returns_trace_id(
         payload["data"]["route"]
         == "fault_diagnosis"
     )
+    assert (
+        payload["request_id"]
+        == response.headers[
+            "X-Request-ID"
+        ]
+    )
+
+    assert (
+        payload["request_id"]
+        != payload["trace_id"]
+    )
 
 
 def test_rnd_route_returns_domain_result(

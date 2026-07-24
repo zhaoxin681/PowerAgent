@@ -27,6 +27,9 @@ from app.dependencies import (
     ApplicationServices,
     build_application_services,
 )
+from app.middleware import (
+    register_request_context_middleware,
+)
 
 # 测试时可以替换真实依赖构建器，接收AppSettings参数，返回ApplicationServices实例可调用对象
 ServiceBuilder = Callable[
@@ -168,6 +171,10 @@ def create_app(
         docs_url="/docs",
         openapi_url="/openapi.json",
         lifespan=lifespan,  # 将前面定义的生命周期管理器绑定在这个应用实例上
+    )
+
+    register_request_context_middleware(
+        application
     )
 
     application.state.settings = (
