@@ -5,22 +5,32 @@ from __future__ import annotations
 from pathlib import Path
 from typing import cast
 
+import pytest
+from fastapi import (
+    FastAPI,
+    Request,
+)
+from fastapi.testclient import TestClient
+
 from agent_core.llm_client import (
     LLMRateLimitError,
     LLMTruncatedResponseError,
 )
-from fastapi.testclient import TestClient
-
 from app.config import (
     AppSettings,
     RuntimeEnvironment,
 )
 from app.dependencies import ApplicationServices
-from app.main import create_app
-from fastapi import (
-    FastAPI,
-    Request,
+from app.exceptions import (
+    ApiException,
+    DocumentConflictError,
+    DocumentValidationError,
+    RequestTooLargeError,
+    ResourceNotFoundError,
+    ServiceUnavailableError,
+    WorkflowExecutionError,
 )
+from app.main import create_app
 
 
 def make_settings(
@@ -315,4 +325,139 @@ def test_llm_truncated_response_returns_502(
     assert (
         "max_tokens"
         not in response.text
+    )
+
+
+@pytest.mark.parametrize(
+    (
+        "error_type",
+        "expected_status",
+        "expected_code",
+        "expected_retryable",
+    ),
+    [
+        (
+            DocumentValidationError,
+            400,
+            "document_validation_error",
+            False,
+        ),
+        (
+            ResourceNotFoundError,
+            404,
+            "resource_not_found",
+            False,
+        ),
+        (
+            DocumentConflictError,
+            409,
+            "document_conflict",
+            False,
+        ),
+        (
+            RequestTooLargeError,
+            413,
+            "request_too_large",
+            False,
+        ),
+        (
+            WorkflowExecutionError,
+            500,
+            "workflow_execution_error",
+            False,
+        ),
+        (
+            ServiceUnavailableError,
+            503,
+            "service_unavailable",
+            True,
+        ),
+    ],
+)
+def test_api_exception_matrix_uses_stable_contract(
+    tmp_path: Path,
+    error_type: type[ApiException],
+    expected_status: int,
+    expected_code: str,
+    expected_retryable: bool,
+) -> None:
+    """API异常应遵守统一状态码和响应契约。"""
+
+    application = create_app(
+        make_settings(tmp_path),
+        service_builder=build_stub_services,
+    )
+
+    route_path = (
+        f"/test/error-matrix/"
+        f"{expected_code}"
+    )
+
+    def raise_matrix_error(
+        request: Request,
+    ) -> None:
+        request.state.trace_id = (
+            "trace_error_matrix_001"
+        )
+
+        raise error_type(
+            trace_id=(
+                "trace_error_matrix_001"
+            )
+        )
+
+    application.add_api_route(
+        route_path,
+        raise_matrix_error,
+        methods=["GET"],
+    )
+
+    with TestClient(
+        application,
+        raise_server_exceptions=False,
+    ) as client:
+        response = client.get(
+            route_path,
+            headers={
+                "X-Request-ID": (
+                    "matrix-request-001"
+                ),
+            },
+        )
+
+    payload = response.json()
+
+    assert (
+        response.status_code
+        == expected_status
+    )
+
+    assert payload["status"] == "error"
+    assert payload["data"] is None
+
+    assert (
+        payload["error"]["code"]
+        == expected_code
+    )
+
+    assert (
+        payload["error"]["retryable"]
+        is expected_retryable
+    )
+
+    assert (
+        payload["request_id"]
+        == "matrix-request-001"
+    )
+
+    assert (
+        response.headers[
+            "X-Request-ID"
+        ]
+        == "matrix-request-001"
+    )
+
+    assert (
+        payload["trace_id"]
+        == "trace_error_matrix_001"
     )

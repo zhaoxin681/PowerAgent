@@ -18,7 +18,9 @@ from app.exceptions import (
     DocumentValidationError,
 )
 from app.main import create_app
-
+from agent_core.llm_client import (
+    LLMRateLimitError,
+)
 
 class RecordCaptureHandler(
     logging.Handler
@@ -170,6 +172,25 @@ def test_access_log_contains_request_context(
 
     assert record.error_type is None
     assert record.error_code is None
+    assert not hasattr(
+        record,
+        "request_body",
+    )
+
+    assert not hasattr(
+        record,
+        "raw_input",
+    )
+
+    assert not hasattr(
+        record,
+        "authorization",
+    )
+
+    assert not hasattr(
+        record,
+        "api_key",
+    )
 
 
 def test_access_log_contains_error_context(
@@ -234,3 +255,101 @@ def test_access_log_contains_error_context(
     )
 
     assert record.latency_ms >= 0
+
+
+def test_access_log_correlates_llm_error(
+    tmp_path: Path,
+) -> None:
+    """LLM错误响应和访问日志应共享追踪上下文。"""
+
+    application = create_app(
+        make_settings(tmp_path),
+        service_builder=build_stub_services,
+    )
+
+    @application.get(
+        "/test/access-llm-error"
+    )
+    def access_llm_error(
+        request: Request,
+    ) -> None:
+        request.state.trace_id = (
+            "trace_access_llm_001"
+        )
+
+        raise LLMRateLimitError(
+            "内部供应商限流说明"
+        )
+
+    capture_handler = (
+        RecordCaptureHandler()
+    )
+
+    with TestClient(
+        application,
+        raise_server_exceptions=False,
+    ) as client:
+        application.state.logger.addHandler(
+            capture_handler
+        )
+
+        try:
+            response = client.get(
+                "/test/access-llm-error",
+                headers={
+                    "X-Request-ID": (
+                        "access-llm-request-001"
+                    ),
+                },
+            )
+        finally:
+            application.state.logger.removeHandler(
+                capture_handler
+            )
+
+    payload = response.json()
+
+    record = find_access_record(
+        capture_handler
+    )
+
+    assert response.status_code == 503
+
+    assert (
+        payload["error"]["code"]
+        == "llm_rate_limited"
+    )
+
+    assert (
+        payload["trace_id"]
+        == "trace_access_llm_001"
+    )
+
+    assert (
+        record.request_id
+        == "access-llm-request-001"
+    )
+
+    assert (
+        record.trace_id
+        == "trace_access_llm_001"
+    )
+
+    assert record.status_code == 503
+
+    assert (
+        record.error_type
+        == "LLMRateLimitError"
+    )
+
+    assert (
+        record.error_code
+        == "llm_rate_limited"
+    )
+
+    assert record.latency_ms >= 0
+
+    assert (
+        "内部供应商限流说明"
+        not in response.text
+    )
