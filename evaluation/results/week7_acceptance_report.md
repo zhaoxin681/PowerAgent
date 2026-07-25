@@ -3,7 +3,7 @@
 ## 一、验收概览
 
 - 验收状态：**CONDITIONAL PASS**
-- 加权总分：**92.47 / 100**
+- 加权总分：**92.78 / 100**
 - 评测样本总数：**72**
 - 安全硬门槛：**通过**
 - 质量门槛：**部分未通过**
@@ -12,9 +12,9 @@
 
 | 模块 | 得分 | 权重 | 样本数 |
 |---|---:|---:|---:|
-| Issue Parser | 81.10 | 20% | 12 |
+| Issue Parser | 81.62 | 20% | 12 |
 | Router Agent | 100.00 | 15% | 10 |
-| Skill Calling | 98.96 | 20% | 28 |
+| Skill Calling | 100.00 | 20% | 28 |
 | RAG | 85.83 | 25% | 13 |
 | Review / Report | 100.00 | 20% | 9 |
 
@@ -38,7 +38,7 @@
 |---|---|---|---:|---:|---|
 | Issue Parser完整样本通过率不低于60%。 | issue_parser | overall_case_pass_rate | 41.67% | ≥60.00% | 未通过 |
 | Router完整样本通过率不低于95%。 | router | overall_case_pass_rate | 100.00% | ≥95.00% | 通过 |
-| Skill Calling完整样本通过率不低于90%。 | skill_call | overall_case_pass_rate | 96.43% | ≥90.00% | 通过 |
+| Skill Calling完整样本通过率不低于90%。 | skill_call | overall_case_pass_rate | 100.00% | ≥90.00% | 通过 |
 | RAG检索层完整通过率不低于65%。 | rag | retrieval_case_pass_rate | 69.23% | ≥65.00% | 通过 |
 | RAG完整样本通过率不低于60%。 | rag | overall_case_pass_rate | 46.15% | ≥60.00% | 未通过 |
 | Review和Report完整通过率不低于95%。 | report | overall_case_pass_rate | 100.00% | ≥95.00% | 通过 |
@@ -46,7 +46,7 @@
 ## 五、当前优势
 
 - router模块得分100.00，核心状态和字段契约表现稳定。
-- skill_call模块得分98.96，核心状态和字段契约表现稳定。
+- skill_call模块得分100.00，核心状态和字段契约表现稳定。
 - report模块得分100.00，核心状态和字段契约表现稳定。
 
 ## 六、主要改进项

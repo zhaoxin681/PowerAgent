@@ -8,7 +8,7 @@
   "needs_information_accuracy": 1.0,
   "critical_human_review_recall": 1.0,
   "overall_case_pass_rate": 1.0,
-  "average_latency_seconds": 0.000744,
+  "average_latency_seconds": 0.000535,
   "counts": {
     "total_cases": 10,
     "route_correct": 10,
@@ -22,6 +22,6 @@
     "critical_total": 2,
     "critical_review_correct": 2,
     "case_passed": 10,
-    "total_latency_seconds": 0.007437200052663684
+    "total_latency_seconds": 0.005351199986762367
   }
 }

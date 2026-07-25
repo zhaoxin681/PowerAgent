@@ -17,7 +17,7 @@
   "answer_case_pass_rate": 0.4615,
   "overall_case_pass_rate": 0.4615,
   "pipeline_error_rate": 0.0,
-  "average_latency_seconds": 2.6881,
+  "average_latency_seconds": 2.8219,
   "counts": {
     "total_cases": 13,
     "document_expected_total": 13,
@@ -44,7 +44,7 @@
     "answer_passed": 6,
     "case_passed": 6,
     "pipeline_error_count": 0,
-    "total_latency_seconds": 34.94579100009287,
+    "total_latency_seconds": 36.68498029997863,
     "citation_case_total": 12
   }
 }

@@ -1,6 +1,6 @@
 {
-  "started_at": "2026-07-23T03:56:21.363610+00:00",
-  "finished_at": "2026-07-23T03:58:30.227754+00:00",
+  "started_at": "2026-07-25T09:11:01.730169+00:00",
+  "finished_at": "2026-07-25T09:13:10.096998+00:00",
   "build_only": false,
   "offline_only": false,
   "skip_rag": false,
@@ -22,9 +22,9 @@
       ],
       "return_code": 0,
       "success": true,
-      "started_at": "2026-07-23T03:56:21.363985+00:00",
-      "finished_at": "2026-07-23T03:56:21.733079+00:00",
-      "duration_seconds": 0.3691,
+      "started_at": "2026-07-25T09:11:01.730520+00:00",
+      "finished_at": "2026-07-25T09:11:02.117233+00:00",
+      "duration_seconds": 0.3867,
       "module": "router"
     },
     {
@@ -35,9 +35,9 @@
       ],
       "return_code": 0,
       "success": true,
-      "started_at": "2026-07-23T03:56:21.733394+00:00",
-      "finished_at": "2026-07-23T03:56:23.015814+00:00",
-      "duration_seconds": 1.2824,
+      "started_at": "2026-07-25T09:11:02.117497+00:00",
+      "finished_at": "2026-07-25T09:11:03.499357+00:00",
+      "duration_seconds": 1.3819,
       "module": "report"
     },
     {
@@ -50,9 +50,9 @@
       ],
       "return_code": 0,
       "success": true,
-      "started_at": "2026-07-23T03:56:23.016162+00:00",
-      "finished_at": "2026-07-23T03:56:45.716705+00:00",
-      "duration_seconds": 22.7005,
+      "started_at": "2026-07-25T09:11:03.499754+00:00",
+      "finished_at": "2026-07-25T09:11:26.903482+00:00",
+      "duration_seconds": 23.4037,
       "module": "issue_parser"
     },
     {
@@ -65,9 +65,9 @@
       ],
       "return_code": 0,
       "success": true,
-      "started_at": "2026-07-23T03:56:45.717123+00:00",
-      "finished_at": "2026-07-23T03:57:48.778954+00:00",
-      "duration_seconds": 63.0618,
+      "started_at": "2026-07-25T09:11:26.903707+00:00",
+      "finished_at": "2026-07-25T09:12:26.700175+00:00",
+      "duration_seconds": 59.7965,
       "module": "skill_call"
     },
     {
@@ -80,9 +80,9 @@
       ],
       "return_code": 0,
       "success": true,
-      "started_at": "2026-07-23T03:57:48.779201+00:00",
-      "finished_at": "2026-07-23T03:58:30.112804+00:00",
-      "duration_seconds": 41.3336,
+      "started_at": "2026-07-25T09:12:26.700346+00:00",
+      "finished_at": "2026-07-25T09:13:09.982241+00:00",
+      "duration_seconds": 43.2819,
       "module": "rag"
     },
     {
@@ -93,9 +93,9 @@
       ],
       "return_code": 0,
       "success": true,
-      "started_at": "2026-07-23T03:58:30.113046+00:00",
-      "finished_at": "2026-07-23T03:58:30.227724+00:00",
-      "duration_seconds": 0.1147,
+      "started_at": "2026-07-25T09:13:09.982574+00:00",
+      "finished_at": "2026-07-25T09:13:10.096969+00:00",
+      "duration_seconds": 0.1144,
       "module": "dashboard"
     }
   ],

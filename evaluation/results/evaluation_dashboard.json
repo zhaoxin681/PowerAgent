@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-07-23T03:58:30.211631+00:00",
+  "generated_at": "2026-07-25T09:13:10.080457+00:00",
   "status": "conditional_pass",
-  "overall_score": 92.47,
+  "overall_score": 92.78,
   "total_cases": 72,
   "available_weight": 1.0,
   "missing_modules": [],
   "module_scores": {
-    "issue_parser": 81.1,
+    "issue_parser": 81.62,
     "router": 100.0,
-    "skill_call": 98.96,
+    "skill_call": 100.0,
     "rag": 85.83,
     "report": 100.0
   },
@@ -16,7 +16,7 @@
     "issue_parser": {
       "module": "issue_parser",
       "label": "Issue Parser",
-      "score": 81.1,
+      "score": 81.62,
       "overall_weight": 0.2,
       "total_cases": 12,
       "metrics": [
@@ -46,9 +46,9 @@
         },
         {
           "metric": "concept_coverage",
-          "value": 0.7632,
+          "value": 0.7895,
           "weight": 0.2,
-          "contribution": 15.264
+          "contribution": 15.79
         },
         {
           "metric": "overall_case_pass_rate",
@@ -106,7 +106,7 @@
     "skill_call": {
       "module": "skill_call",
       "label": "Skill Calling",
-      "score": 98.96,
+      "score": 100.0,
       "overall_weight": 0.2,
       "total_cases": 28,
       "metrics": [
@@ -124,15 +124,15 @@
         },
         {
           "metric": "argument_case_complete_rate",
-          "value": 0.9643,
+          "value": 1.0,
           "weight": 0.15,
-          "contribution": 14.4645
+          "contribution": 15.0
         },
         {
           "metric": "required_argument_completeness",
-          "value": 0.9924,
+          "value": 1.0,
           "weight": 0.2,
-          "contribution": 19.848
+          "contribution": 20.0
         },
         {
           "metric": "execution_success_rate",
@@ -148,9 +148,9 @@
         },
         {
           "metric": "overall_case_pass_rate",
-          "value": 0.9643,
+          "value": 1.0,
           "weight": 0.1,
-          "contribution": 9.643
+          "contribution": 10.0
         }
       ]
     },
@@ -442,7 +442,7 @@
       "metric": "overall_case_pass_rate",
       "operator": "min",
       "threshold": 0.9,
-      "actual": 0.9643,
+      "actual": 1.0,
       "passed": true,
       "evaluated": true,
       "description": "Skill Calling完整样本通过率不低于90%。",

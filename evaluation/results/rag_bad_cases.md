@@ -44,8 +44,8 @@ Bad Case数量：7
     "subsystem": "battery",
     "topic": "internal_short_circuit",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   },
   {
@@ -61,8 +61,8 @@ Bad Case数量：7
     "subsystem": "battery",
     "topic": "internal_short_circuit",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   },
   {
@@ -78,8 +78,8 @@ Bad Case数量：7
     "subsystem": "battery",
     "topic": "internal_short_circuit",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   }
 ]
@@ -107,7 +107,7 @@ Bad Case数量：7
       "title": "锂离子电池内短路候选诊断",
       "section_path": "定义",
       "page_number": null,
-      "supported_claim": "内短路早期特征可能较弱，需要多源数据联合判断",
+      "supported_claim": "内短路早期特征较弱，需多源数据联合判断",
       "evidence_text": "内短路是电池内部正负极之间形成非预期导电通路的故障形式，其早期特征可能较弱，通常需要多源数据联合判断。"
     },
     {
@@ -116,7 +116,7 @@ Bad Case数量：7
       "title": "锂离子电池内短路候选诊断",
       "section_path": "可能原因",
       "page_number": null,
-      "supported_claim": "外部采样和连接故障可能产生相似表象",
+      "supported_claim": "外部故障可能产生相似表象，需排除误判",
       "evidence_text": "外部采样和连接故障可能产生相似表象。"
     },
     {
@@ -311,8 +311,8 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
     "subsystem": "charging",
     "topic": "charging_communication",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -328,8 +328,8 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
     "subsystem": "charging",
     "topic": "charging_communication",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   }
 ]
@@ -340,7 +340,7 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
 ```json
 {
   "question": "排查充电通信中断时需要采集哪些数据并如何定位？",
-  "answer": "根据现有证据，充电通信中断的典型现象包括充电握手失败或充电流程中断、请求电压/电流与实际输出长时间不一致、报文超时、计数器异常或状态机停滞。但证据未明确说明需要采集哪些具体数据以及定位步骤。",
+  "answer": "根据现有证据，充电通信中断的典型现象包括充电握手失败或充电流程中断、请求电压/电流与实际输出长时间不一致、报文超时、计数器异常或状态机停滞。但证据未提供具体需要采集的数据项和定位步骤。",
   "citations": [
     {
       "chunk_id": "charging_communication_faults:6b86bd2ad14df3bd",
@@ -348,15 +348,16 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
       "title": "充电机与BMS通信异常",
       "section_path": "典型现象",
       "page_number": null,
-      "supported_claim": "充电通信中断的典型现象包括充电握手失败或充电流程中断、请求电压/电流与实际输出长时间不一致、报文超时、计数器异常或状态机停滞。",
+      "supported_claim": "充电通信中断的典型现象包括充电握手失败、报文超时等。",
       "evidence_text": "章节：典型现象\n\n- 充电握手失败或充电流程中断。\n- 请求电压、电流与实际输出长时间不一致。\n- 报文超时、计数器异常或状态机停滞。"
     }
   ],
   "confidence": 0.3,
   "sufficient_evidence": false,
   "missing_information": [
-    "需要采集的具体数据项（如CAN报文、电压电流值、状态机状态等）",
-    "定位步骤或排查流程"
+    "需要采集的具体数据项（如CAN报文、电压电流值等）",
+    "定位步骤或排查流程",
+    "协议字段和超时要求的具体定义"
   ],
   "needs_human_review": true
 }
@@ -534,8 +535,8 @@ EVIDENCE_SECTION_MISS, WRONG_ANSWER_MODE, ANSWER_CONCEPT_MISS
     "subsystem": "multi_system",
     "topic": "safety_terms",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   },
   {
@@ -551,8 +552,8 @@ EVIDENCE_SECTION_MISS, WRONG_ANSWER_MODE, ANSWER_CONCEPT_MISS
     "subsystem": "multi_system",
     "topic": "safety_terms",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -568,8 +569,8 @@ EVIDENCE_SECTION_MISS, WRONG_ANSWER_MODE, ANSWER_CONCEPT_MISS
     "subsystem": "multi_system",
     "topic": "safety_terms",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -830,8 +831,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "multi_system",
     "topic": "battery_digital_twin",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -847,8 +848,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "multi_system",
     "topic": "battery_digital_twin",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   }
 ]
@@ -859,7 +860,7 @@ ANSWER_CONCEPT_MISS
 ```json
 {
   "question": "数字孪生的输出能否直接等同于真实电池状态？",
-  "answer": "不能。根据现有证据，数字孪生通过模型、运行数据和参数更新描述真实电池的状态与行为，但数字孪生不等同于真实系统本身，模型结论必须结合传感数据和适用范围解释。此外，模型输出与真实电池数据可能存在偏差，且模型参数无法适应温度、SOC或老化变化时会导致预测精度差异。因此，数字孪生的输出不能直接等同于真实电池状态。",
+  "answer": "不能。根据现有证据，数字孪生通过模型、运行数据和参数更新描述真实电池的状态与行为，但数字孪生不等同于真实系统本身，模型结论必须结合传感数据和适用范围解释。此外，模型输出与真实电池数据可能存在偏差，且模型参数可能无法适应温度、SOC或老化变化，因此数字孪生的输出不能直接等同于真实电池状态。",
   "citations": [
     {
       "chunk_id": "battery_digital_twin:e42eb0f2e8e23318",
@@ -867,7 +868,7 @@ ANSWER_CONCEPT_MISS
       "title": "动力电池数字孪生基础",
       "section_path": "定义",
       "page_number": null,
-      "supported_claim": "数字孪生通过模型和数据描述真实电池状态，但并非等同。",
+      "supported_claim": "数字孪生通过模型、运行数据和参数更新描述真实电池的状态与行为",
       "evidence_text": "动力电池数字孪生通过模型、运行数据和参数更新描述真实电池的状态与行为。"
     },
     {
@@ -876,7 +877,7 @@ ANSWER_CONCEPT_MISS
       "title": "动力电池数字孪生基础",
       "section_path": "适用边界",
       "page_number": null,
-      "supported_claim": "数字孪生不等同于真实系统本身。",
+      "supported_claim": "数字孪生不等同于真实系统本身，模型结论必须结合传感数据和适用范围解释",
       "evidence_text": "章节：适用边界\n\n- 数字孪生不等同于真实系统本身。\n- 模型结论必须结合传感数据和适用范围解释。"
     },
     {
@@ -885,7 +886,7 @@ ANSWER_CONCEPT_MISS
       "title": "动力电池数字孪生基础",
       "section_path": "典型现象",
       "page_number": null,
-      "supported_claim": "模型输出与真实数据可能存在偏差。",
+      "supported_claim": "模型输出与真实电池数据可能存在偏差，且模型参数可能无法适应温度、SOC或老化变化",
       "evidence_text": "章节：典型现象\n\n- 模型输出与真实电池数据偏差持续增大。\n- 模型参数无法适应温度、SOC或老化变化。\n- 不同运行阶段的预测精度差异明显。"
     }
   ],
@@ -1068,8 +1069,8 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
     "subsystem": "thermal",
     "topic": "thermal_runaway",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -1085,8 +1086,8 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
     "subsystem": "thermal",
     "topic": "thermal_runaway",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   },
   {
@@ -1139,7 +1140,7 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
       "title": "动力电池热失控风险识别",
       "section_path": "定义",
       "page_number": null,
-      "supported_claim": "热失控的定义是内部放热反应超过散热能力并导致温度快速自加速上升。",
+      "supported_claim": "热失控的定义，未给出具体温度阈值",
       "evidence_text": "热失控是电池内部放热反应超过散热能力并导致温度快速、自加速上升的危险状态。"
     },
     {
@@ -1148,7 +1149,7 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
       "title": "动力电池热失控风险识别",
       "section_path": "典型现象",
       "page_number": null,
-      "supported_claim": "热失控的判定需结合温度、电压、绝缘、气体等多维信号。",
+      "supported_claim": "热失控的典型现象包括温度异常、温差扩大及伴随信号",
       "evidence_text": "章节：典型现象\n\n- 单体温度或温升速率明显异常。\n- 局部热点与周围测点温差持续扩大。\n- 温度异常同时伴随电压突变、绝缘异常或气体信号。"
     },
     {
@@ -1157,11 +1158,11 @@ EVIDENCE_SECTION_MISS, ANSWER_CONCEPT_MISS
       "title": "动力电池热失控风险识别",
       "section_path": "适用边界",
       "page_number": null,
-      "supported_claim": "单点高温不能自动等同于热失控，安全动作应服从产品级保护策略。",
+      "supported_claim": "单点高温不能自动等同于热失控",
       "evidence_text": "章节：适用边界\n\n- 单点高温不能自动等同于热失控。\n- 安全动作应服从产品级保护策略和应急规范。"
     }
   ],
-  "confidence": 0.1,
+  "confidence": 0.3,
   "sufficient_evidence": false,
   "missing_information": [
     "统一的热失控判定温度阈值",
@@ -1336,8 +1337,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "charging",
     "topic": "charging_communication",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   },
   {
@@ -1370,8 +1371,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "charging",
     "topic": "charging_communication",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   },
   {
@@ -1399,7 +1400,7 @@ ANSWER_CONCEPT_MISS
 ```json
 {
   "question": "充电CAN报文超过多少毫秒必须判定为通信故障？",
-  "answer": "现有证据未提供充电CAN报文超时判定为通信故障的具体毫秒数阈值。证据指出协议字段和超时要求应以具体接口定义为准，且通信中断不一定代表电池本体故障。",
+  "answer": "现有证据未提供充电CAN报文超时判定为通信故障的具体毫秒阈值。证据指出“协议字段和超时要求应以具体接口定义为准”，表明超时阈值需依据具体接口协议确定。",
   "citations": [
     {
       "chunk_id": "charging_communication_faults:cc1811a929d847a3",
@@ -1407,14 +1408,15 @@ ANSWER_CONCEPT_MISS
       "title": "充电机与BMS通信异常",
       "section_path": "适用边界",
       "page_number": null,
-      "supported_claim": "超时阈值应以具体接口定义为准",
+      "supported_claim": "未提供具体毫秒阈值，超时要求以具体接口定义为准",
       "evidence_text": "协议字段和超时要求应以具体接口定义为准。"
     }
   ],
   "confidence": 0.1,
   "sufficient_evidence": false,
   "missing_information": [
-    "充电CAN报文超时判定为通信故障的具体毫秒数阈值"
+    "充电CAN报文超时判定为通信故障的具体毫秒阈值",
+    "所依据的接口协议或标准"
   ],
   "needs_human_review": false
 }
@@ -1575,8 +1577,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "battery",
     "topic": "internal_short_circuit",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   },
   {
@@ -1592,8 +1594,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "battery",
     "topic": "internal_short_circuit",
     "metadata": {
-      "document_version": "1.0",
-      "source_type": "curated_seed"
+      "source_type": "curated_seed",
+      "document_version": "1.0"
     }
   },
   {
@@ -1626,8 +1628,8 @@ ANSWER_CONCEPT_MISS
     "subsystem": "battery",
     "topic": "internal_short_circuit",
     "metadata": {
-      "source_type": "curated_seed",
-      "document_version": "1.0"
+      "document_version": "1.0",
+      "source_type": "curated_seed"
     }
   }
 ]
@@ -1644,7 +1646,7 @@ ANSWER_CONCEPT_MISS
   "sufficient_evidence": false,
   "missing_information": [
     "内短路等效电阻的具体阈值或标准",
-    "不同动力电池类型的内短路电阻标准"
+    "不同动力电池类型的内短路电阻参考值"
   ],
   "needs_human_review": true
 }

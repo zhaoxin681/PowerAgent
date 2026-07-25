@@ -28,8 +28,8 @@ required_concepts, overall
   "missing_information": [
     "当前PI参数值",
     "电机参数（如电感、电阻）",
+    "控制周期",
     "负载条件",
-    "目标响应时间指标",
     "当前响应时间和超调量数据"
   ],
   "severity": "low",
@@ -267,7 +267,7 @@ severity, overall
     "异常循环点"
   ],
   "missing_information": [
-    "电池循环数据的具体数值",
+    "电池循环数据的具体数值或文件",
     "循环次数",
     "容量和内阻的测量值"
   ],
@@ -386,7 +386,7 @@ required_concepts, overall
   "task_type": "fault_diagnosis",
   "symptoms": [
     "充电中断",
-    "仪表提示充电通信异常"
+    "充电通信异常"
   ],
   "operating_conditions": [
     {
@@ -404,11 +404,11 @@ required_concepts, overall
   "missing_information": [
     "充电桩型号",
     "车辆型号",
-    "充电中断时的具体故障码",
-    "充电桩与车辆通信日志"
+    "充电桩与车辆的历史通信记录",
+    "充电桩的故障代码"
   ],
   "severity": "medium",
-  "confidence": 0.85
+  "confidence": 0.8
 }
 ```
 
@@ -450,7 +450,7 @@ required_concepts, overall
           "连续三次中断",
           "三次中断"
         ],
-        "actual_text": "充电中断 仪表提示充电通信异常",
+        "actual_text": "充电中断 充电通信异常",
         "matched": false
       },
       {
@@ -459,7 +459,7 @@ required_concepts, overall
           "充电通信异常",
           "通信异常"
         ],
-        "actual_text": "充电中断 仪表提示充电通信异常",
+        "actual_text": "充电中断 充电通信异常",
         "matched": true
       },
       {
@@ -517,7 +517,7 @@ required_concepts, overall
 
 ### 未通过项目
 
-severity, required_concepts, overall
+severity, overall
 
 ### 预测结果
 
@@ -527,7 +527,8 @@ severity, required_concepts, overall
   "subsystem": "thermal",
   "task_type": "fault_diagnosis",
   "symptoms": [
-    "冷却液出口温度达到68℃"
+    "冷却液出口温度达到68℃",
+    "水泵指令为90%"
   ],
   "operating_conditions": [
     {
@@ -536,7 +537,7 @@ severity, required_concepts, overall
       "unit": "℃"
     },
     {
-      "name": "车辆状态",
+      "name": "车辆工况",
       "value": "低速爬坡",
       "unit": ""
     },
@@ -547,16 +548,18 @@ severity, required_concepts, overall
     }
   ],
   "user_hypotheses": [],
-  "requested_outputs": [],
+  "requested_outputs": [
+    "分析热管理系统异常原因"
+  ],
   "missing_information": [
     "冷却液出口温度正常范围",
-    "电机或电池功率",
+    "电机或电池温度",
     "冷却液流量",
     "散热器状态",
-    "风扇转速"
+    "风扇状态"
   ],
   "severity": "medium",
-  "confidence": 0.8
+  "confidence": 0.7
 }
 ```
 
@@ -587,8 +590,8 @@ severity, required_concepts, overall
     "actual": "环境温度35℃，车辆低速爬坡时冷却液出口温度达到68℃，水泵指令为90%，请分析热管理系统异常原因。"
   },
   "required_concepts": {
-    "passed": false,
-    "matched": 4,
+    "passed": true,
+    "matched": 5,
     "total": 5,
     "details": [
       {
@@ -597,7 +600,7 @@ severity, required_concepts, overall
           "冷却液出口温度达到68℃",
           "出口温度68℃"
         ],
-        "actual_text": "冷却液出口温度达到68℃",
+        "actual_text": "冷却液出口温度达到68℃ 水泵指令为90%",
         "matched": true
       },
       {
@@ -606,7 +609,7 @@ severity, required_concepts, overall
           "环境温度35℃",
           "35℃"
         ],
-        "actual_text": "环境温度 35 ℃ 车辆状态 低速爬坡  水泵指令 90 %",
+        "actual_text": "环境温度 35 ℃ 车辆工况 低速爬坡  水泵指令 90 %",
         "matched": true
       },
       {
@@ -614,7 +617,7 @@ severity, required_concepts, overall
         "alternatives": [
           "低速爬坡"
         ],
-        "actual_text": "环境温度 35 ℃ 车辆状态 低速爬坡  水泵指令 90 %",
+        "actual_text": "环境温度 35 ℃ 车辆工况 低速爬坡  水泵指令 90 %",
         "matched": true
       },
       {
@@ -623,7 +626,7 @@ severity, required_concepts, overall
           "水泵指令90%",
           "水泵90%"
         ],
-        "actual_text": "环境温度 35 ℃ 车辆状态 低速爬坡  水泵指令 90 %",
+        "actual_text": "环境温度 35 ℃ 车辆工况 低速爬坡  水泵指令 90 %",
         "matched": true
       },
       {
@@ -632,8 +635,8 @@ severity, required_concepts, overall
           "异常原因",
           "原因分析"
         ],
-        "actual_text": "",
-        "matched": false
+        "actual_text": "分析热管理系统异常原因",
+        "matched": true
       }
     ]
   },
@@ -810,7 +813,7 @@ required_concepts, overall
       "unit": "kW"
     },
     {
-      "name": "充电功率（降后）",
+      "name": "充电功率",
       "value": "70",
       "unit": "kW"
     }
@@ -885,7 +888,7 @@ required_concepts, overall
         "alternatives": [
           "快充"
         ],
-        "actual_text": "充电类型 快充  电池最高温度 50 ℃ 充电功率 150 kW 充电功率（降后） 70 kW",
+        "actual_text": "充电类型 快充  电池最高温度 50 ℃ 充电功率 150 kW 充电功率 70 kW",
         "matched": true
       },
       {

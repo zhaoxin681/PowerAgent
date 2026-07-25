@@ -6,10 +6,10 @@
   "task_type_accuracy": 1.0,
   "severity_accuracy": 0.75,
   "raw_text_accuracy": 1.0,
-  "concept_coverage": 0.7632,
+  "concept_coverage": 0.7895,
   "empty_field_accuracy": 1.0,
   "overall_case_pass_rate": 0.4167,
-  "average_latency_seconds": 1.4615,
+  "average_latency_seconds": 1.5136,
   "counts": {
     "total_cases": 12,
     "call_success": 12,
@@ -17,11 +17,11 @@
     "task_type_correct": 12,
     "severity_correct": 9,
     "raw_text_correct": 12,
-    "concept_matched": 29,
+    "concept_matched": 30,
     "concept_total": 38,
     "empty_correct": 24,
     "empty_total": 24,
     "case_passed": 5,
-    "total_latency_seconds": 17.537709399824962
+    "total_latency_seconds": 18.163262599991867
   }
 }

@@ -16,7 +16,7 @@
   "forbidden_claim_avoidance_rate": 1.0,
   "overall_case_pass_rate": 1.0,
   "pipeline_error_rate": 0.0,
-  "average_latency_seconds": 0.001383,
+  "average_latency_seconds": 0.001842,
   "counts": {
     "total_cases": 9,
     "review_status_correct": 9,
@@ -40,6 +40,6 @@
     "forbidden_claim_absent": 2,
     "case_passed": 9,
     "pipeline_error_count": 0,
-    "total_latency_seconds": 0.012444799940567464
+    "total_latency_seconds": 0.016581399977440014
   }
 }
