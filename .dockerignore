@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# 本地环境与密钥
+.env
+.env.*
+.venv
+
+# Python缓存
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+
+# 运行数据
+logs
+data
+*.log
+
+# 开发和测试内容
+tests
+evaluation
+docs
+examples
+scripts
+
+# Compose文件不需要进入镜像上下文
+docker-compose*.yml
+docker-compose*.yaml

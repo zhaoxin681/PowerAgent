@@ -1,0 +1,49 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: poweragent:0.1.0
+
+    env_file:
+      - .env
+
+    environment:
+      POWERAGENT_ENV: production
+      POWERAGENT_HOST: 0.0.0.0
+      POWERAGENT_PORT: "8000"
+      POWERAGENT_LOG_DIR: /app/logs
+      POWERAGENT_CHROMA_PATH: /app/data/chroma
+      POWERAGENT_UPLOAD_TEMP_DIR: /app/data/uploads/tmp
+
+    ports:
+      - "${POWERAGENT_DOCKER_HOST_PORT:-8000}:8000"
+
+    volumes:
+      - poweragent_chroma:/app/data/chroma
+      - poweragent_logs:/app/logs
+      - poweragent_cache:/home/poweragent/.cache
+
+    restart: unless-stopped
+
+    init: true
+
+    stop_grace_period: 30s
+
+    security_opt:
+      - no-new-privileges:true
+
+    cap_drop:
+      - ALL
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  poweragent_chroma:
+  poweragent_logs:
+  poweragent_cache:

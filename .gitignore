@@ -1,9 +1,27 @@
+# Python虚拟环境与缓存
 .venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# 测试覆盖率
+.coverage
+htmlcov/
+
+# 本地环境变量与密钥
 .env
+.env.*
+!.env.example
+
+# 运行日志和数据
 logs/
 data/
-data/evaluation/
+*.log
+
+# 评测输出
 evaluation/results/*.jsonl
+
+# 本地Compose覆盖配置
+docker-compose.override.yml
