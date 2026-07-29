@@ -1,0 +1,27 @@
+name: poweragent
+
+services:
+  api:
+    # 完整替换基础Compose端口配置，禁止意外监听公网网卡。
+    ports: !override
+      - name: poweragent-api
+        target: 8000
+        published: "8000"
+        host_ip: 127.0.0.1
+        protocol: tcp
+
+    # 为2核4GiB云服务器保留必要的宿主机资源。
+    cpus: "1.50"
+    mem_limit: 3g
+    mem_reservation: 512m
+    pids_limit: 256
+
+    # 限制单个容器可打开的文件描述符数量。
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 8192
+
+    labels:
+      com.poweragent.environment: production
+      com.poweragent.managed-by: docker-compose
