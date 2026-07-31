@@ -71,6 +71,10 @@ COPY --chown=poweragent:poweragent \
     ./workflows
 
 # 构建阶段执行一次模块导入检查。
+COPY --chown=poweragent:poweragent docs ./docs
+
+COPY --chown=poweragent:poweragent scripts ./scripts
+
 RUN python -c \
     "from app.main import create_app; application = create_app(); print(application.title)"
 

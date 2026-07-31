@@ -351,137 +351,6 @@ def list_skills(
 
 
 @api_router.post(
-    "/workflows/analyze",
-    response_model=WorkflowAnalysisResponse,
-    status_code=status.HTTP_200_OK,
-    summary="执行通用PowerAgent工作流",
-)
-def analyze_workflow(
-    request: Request,
-    request_data: WorkflowAnalysisRequest,
-    services: ApplicationServicesDependency,
-) -> WorkflowAnalysisResponse:
-    """执行知识查询、分析、诊断或参数寻优。"""
-
-    trace_id = _bind_trace_id(
-        request,
-        request_data.trace_id,
-    )
-
-    normalized_request = (
-        request_data.model_copy(
-            update={
-                "trace_id": trace_id,
-            }
-        )
-    )
-
-    result = (
-        services.workflow_service.analyze(
-            normalized_request
-        )
-    )
-
-    request.state.trace_id = result.trace_id
-
-    return WorkflowAnalysisResponse(
-        request_id=get_request_id(request),
-        trace_id=result.trace_id,
-        status=ApiResponseStatus.SUCCESS,
-        data=result.data,
-        error=None,
-    )
-
-
-@api_router.get(
-    "/knowledge/status",
-    response_model=KnowledgeBaseStatusResponse,
-    status_code=status.HTTP_200_OK,
-    summary="查询知识库状态",
-)
-def get_knowledge_base_status(
-    request: Request,
-    services: ApplicationServicesDependency,
-) -> KnowledgeBaseStatusResponse:
-    """返回当前知识库集合和知识块数量。"""
-
-    result = (
-        services.document_service
-        .get_status()
-    )
-
-    return KnowledgeBaseStatusResponse(
-        request_id=get_request_id(request),
-        trace_id=None,
-        status=ApiResponseStatus.SUCCESS,
-        data=KnowledgeBaseStatusData(
-            collection_name=(
-                result.collection_name
-            ),
-            chunk_count=result.chunk_count,
-            embedding_provider=(
-                result.embedding_provider
-            ),
-        ),
-        error=None,
-    )
-
-
-@api_router.delete(
-    "/knowledge/documents/{document_id}",
-    response_model=DocumentDeleteResponse,
-    status_code=status.HTTP_200_OK,
-    summary="删除知识文档",
-)
-def delete_knowledge_document(
-    request: Request,
-    services: ApplicationServicesDependency,
-    document_id: Annotated[
-        str,
-        ApiPath(
-            min_length=1,
-            pattern=(
-                r"^[a-z0-9]"
-                r"[a-z0-9_-]*$"
-            ),
-            description="需要删除的文档标识",
-        ),
-    ],
-) -> DocumentDeleteResponse:
-    """删除文档对应的全部向量知识块。"""
-
-    result = (
-        services.document_service
-        .delete_document(document_id)
-    )
-
-    if not result.deleted:
-        raise ResourceNotFoundError(
-            (
-                "知识库中不存在指定文档："
-                f"{document_id}"
-            ),
-            details=[
-                f"document_id={document_id}",
-            ],
-        )
-
-    return DocumentDeleteResponse(
-        request_id=get_request_id(request),
-        trace_id=None,
-        status=ApiResponseStatus.SUCCESS,
-        data=DocumentDeleteData(
-            document_id=result.document_id,
-            deleted_chunk_count=(
-                result.deleted_chunk_count
-            ),
-            deleted=result.deleted,
-        ),
-        error=None,
-    )
-
-
-@api_router.post(
     "/knowledge/documents",
     response_model=DocumentUploadResponse,
     status_code=status.HTTP_200_OK,
@@ -564,6 +433,138 @@ def upload_knowledge_document(
         ) from exc
     finally:
         _cleanup_temp_file(temp_path)
+
+
+@api_router.delete(
+    "/knowledge/documents/{document_id}",
+    response_model=DocumentDeleteResponse,
+    status_code=status.HTTP_200_OK,
+    summary="删除知识文档",
+)
+def delete_knowledge_document(
+    request: Request,
+    services: ApplicationServicesDependency,
+    document_id: Annotated[
+        str,
+        ApiPath(
+            min_length=1,
+            pattern=(
+                r"^[a-z0-9]"
+                r"[a-z0-9_-]*$"
+            ),
+            description="需要删除的文档标识",
+        ),
+    ],
+) -> DocumentDeleteResponse:
+    """删除文档对应的全部向量知识块。"""
+
+    result = (
+        services.document_service
+        .delete_document(document_id)
+    )
+
+    if not result.deleted:
+        raise ResourceNotFoundError(
+            (
+                "知识库中不存在指定文档："
+                f"{document_id}"
+            ),
+            details=[
+                f"document_id={document_id}",
+            ],
+        )
+
+    return DocumentDeleteResponse(
+        request_id=get_request_id(request),
+        trace_id=None,
+        status=ApiResponseStatus.SUCCESS,
+        data=DocumentDeleteData(
+            document_id=result.document_id,
+            deleted_chunk_count=(
+                result.deleted_chunk_count
+            ),
+            deleted=result.deleted,
+        ),
+        error=None,
+    )
+
+
+@api_router.get(
+    "/knowledge/status",
+    response_model=KnowledgeBaseStatusResponse,
+    status_code=status.HTTP_200_OK,
+    summary="查询知识库状态",
+)
+def get_knowledge_base_status(
+    request: Request,
+    services: ApplicationServicesDependency,
+) -> KnowledgeBaseStatusResponse:
+    """返回当前知识库集合和知识块数量。"""
+
+    result = (
+        services.document_service
+        .get_status()
+    )
+
+    return KnowledgeBaseStatusResponse(
+        request_id=get_request_id(request),
+        trace_id=None,
+        status=ApiResponseStatus.SUCCESS,
+        data=KnowledgeBaseStatusData(
+            collection_name=(
+                result.collection_name
+            ),
+            chunk_count=result.chunk_count,
+            embedding_provider=(
+                result.embedding_provider
+            ),
+        ),
+        error=None,
+    )
+
+
+@api_router.post(
+    "/workflows/analyze",
+    response_model=WorkflowAnalysisResponse,
+    status_code=status.HTTP_200_OK,
+    summary="执行通用PowerAgent工作流",
+)
+def analyze_workflow(
+    request: Request,
+    request_data: WorkflowAnalysisRequest,
+    services: ApplicationServicesDependency,
+) -> WorkflowAnalysisResponse:
+    """执行知识查询、分析、诊断或参数寻优。"""
+
+    trace_id = _bind_trace_id(
+        request,
+        request_data.trace_id,
+    )
+
+    normalized_request = (
+        request_data.model_copy(
+            update={
+                "trace_id": trace_id,
+            }
+        )
+    )
+
+    result = (
+        services.workflow_service.analyze(
+            normalized_request
+        )
+    )
+
+    request.state.trace_id = result.trace_id
+
+    return WorkflowAnalysisResponse(
+        request_id=get_request_id(request),
+        trace_id=result.trace_id,
+        status=ApiResponseStatus.SUCCESS,
+        data=result.data,
+        error=None,
+    )
+
 
 
 @api_router.post(
