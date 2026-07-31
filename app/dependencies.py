@@ -102,7 +102,9 @@ def build_application_services(
     resolved_llm_client = (
         llm_client
         if llm_client is not None
-        else LLMClient()
+        else LLMClient(
+            max_tokens=settings.llm_max_tokens
+        )
     )
 
     registry = create_skill_registry()

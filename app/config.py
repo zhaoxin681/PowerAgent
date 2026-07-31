@@ -112,6 +112,13 @@ class AppSettings(StrictBaseModel):
         description="工作流允许的最大重新规划次数",
     )
 
+    llm_max_tokens: int = Field(
+        default=4096,
+        ge=512,
+        le=32768,
+        description="LLM单次结构化输出允许的最大token数",
+    )
+
     max_upload_mb: int = Field(
         default=20,
         ge=1,
@@ -270,6 +277,10 @@ class AppSettings(StrictBaseModel):
                 "max_replans": os.getenv(
                     "POWERAGENT_MAX_REPLANS",
                     "1",
+                ),
+                "llm_max_tokens": os.getenv(
+                    "POWERAGENT_LLM_MAX_TOKENS",
+                    "4096",
                 ),
                 "max_upload_mb": os.getenv(
                     "POWERAGENT_MAX_UPLOAD_MB",
